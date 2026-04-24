@@ -179,7 +179,7 @@ STATIC=1 DIST=1 npm start   # Use Express to serve (minimized) production files
 I've made several changes to this Weather Star 4000 simulation compared to the original hardware unit and the code that this was forked from.
 
 * Radar displays the timestamp of the image.
-* A new hour-by-hour graph of the temperature, cloud cover and precipitation chances for the next 24 hours.
+* A new hour-by-hour graph of the temperature, cloud cover and precipitation chances for the next 36 hours.
 * A new hourly forecast display for the next 24 hours is available, and is shown in the style of the travel cities forecast. (off by default because it duplicates the hourly graph)
 * The SPC Outlook is shown in the style of the old air quality screen. This shows the probability of severe weather over the next 3 days at your location. SPC outlook only displays if you're within one of the highlight areas over the next 3 day. You can view the [maps](https://www.weather.gov/crh/outlooks) and pick a location within one of the risk categories to see if the screen is working for you.
 * The "Local Forecast" and "Extended Forecast" provide several additional days of information compared to the original format in the 90s.
@@ -225,7 +225,7 @@ When using the Docker container, these environment variables are read on contain
 - Standard: Classic 4:3 display with the classic (not enhanced, below) screen layouts.
 - Widescreen: Stretches the background to 16:9 to avoid "pillarboxing" on modern displays
 - Widescreen Enhanced: Stretches as above, and makes use of the additional space to provide wider maps, more weather data and/or additional days in the forecast
-- Portrait Enhanced: (in progress) Rotates the screen to a 16:9 portrait orientation and enhances the original displays by adjusting them to fit the new orientation.
+- Portrait Enhanced: (in progress) Rotates the screen to a 16:9 portrait orientation and enhances the original displays by adjusting them to fit the new orientation and filling with additional data where possible
 
 
 
