@@ -48,7 +48,7 @@ body {
 		}
 
 		button {
-			font-size: 16pt;
+			font-size: 21px;
 			border: 1px solid darkgray;
 
 			@media (prefers-color-scheme: dark) {
@@ -98,7 +98,7 @@ body {
 	#txtLocation {
 		width: calc(100% - 170px);
 		max-width: 490px;
-		font-size: 16pt;
+		font-size: 21px;
 		min-width: 200px;
 		display: inline-block;
 
@@ -132,7 +132,7 @@ body {
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		font-size: 16pt;
+		font-size: 21px;
 
 		&.selected {
 			background-color: #0000ff;
@@ -400,7 +400,7 @@ body {
 	}
 
 	.instructions {
-		font-size: 18pt;
+		font-size: 24px;
 	}
 }
 

@@ -29,7 +29,7 @@
 			div {
 				display: inline-block;
 				font-family: 'Star4000 Small';
-				font-size: 24pt;
+				font-size: 32px;
 				position: absolute;
 				top: -14px;
 				@include u.text-shadow();
@@ -108,7 +108,7 @@
 
 			.observation-row {
 				font-family: 'Star4000';
-				font-size: 24pt;
+				font-size: 32px;
 				@include u.text-shadow();
 				position: relative;
 				height: 40px;
@@ -125,7 +125,7 @@
 
 				.portrait.enhanced & {
 					font-family: 'Star4000 Large';
-					font-size: 16pt;
+					font-size: 21px;
 					height: 48px;
 					font-weight: bold;
 				}

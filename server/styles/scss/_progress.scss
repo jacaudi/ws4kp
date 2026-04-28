@@ -5,7 +5,7 @@
 .weather-display .progress {
 	@include u.text-shadow();
 	font-family: 'Star4000 Extended';
-	font-size: 19pt;
+	font-size: 25px;
 
 	// clamp width to standard
 	&.main {

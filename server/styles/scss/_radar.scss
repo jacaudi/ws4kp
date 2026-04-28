@@ -16,7 +16,7 @@
 			color: white;
 			font-family: 'Arial', sans-serif;
 			font-weight: bold;
-			font-size: 28pt;
+			font-size: 38px;
 			left: 155px;
 
 			.top {
@@ -34,7 +34,7 @@
 			width: 360px;
 			margin-top: 2px;
 			font-family: 'Star4000';
-			font-size: 18pt;
+			font-size: 24px;
 			font-weight: bold;
 			@include u.text-shadow();
 			text-align: center;
@@ -100,7 +100,7 @@
 				font-weight: normal;
 				top: -14px;
 				font-family: 'Star4000 Small';
-				font-size: 24pt;
+				font-size: 32px;
 			}
 		}
 	}

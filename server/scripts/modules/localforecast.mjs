@@ -70,7 +70,7 @@ class LocalForecast extends WeatherDisplay {
 		// Get page height for screen calculations
 		this.pageHeight = 280;
 		if (settings.portrait?.value && settings.enhanced?.value) {
-			this.pageHeight = 960;
+			this.pageHeight = 950;
 		}
 
 		this.calculateContentAwareTiming(templates);
@@ -146,7 +146,7 @@ class LocalForecast extends WeatherDisplay {
 		// Measure each forecast period to get actual line counts
 		const forecastLineCounts = [];
 
-		const maxLinesPerScreen = this.pageHeight / 40; // page height / 40px line height
+		const maxLinesPerScreen = Math.floor(this.pageHeight / 40); // page height / 40px line height
 
 		templates.forEach((template, index) => {
 			const currentHeight = template.offsetHeight;

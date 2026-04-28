@@ -7,11 +7,14 @@
 		width: calc(p.$standard-width - (2 * p.$blue-box-margin));
 		@include u.text-shadow();
 
+		.portrait.enhanced & {
+			align-content: center;
+		}
+
 		.portrait-location {
 			text-align: center;
-			margin-top: 175px;
 			font-family: "Star4000 Large";
-			font-size: 32pt;
+			font-size: 42px;
 			color: c.$title-color;
 		}
 
@@ -42,10 +45,10 @@
 
 			&.left {
 				font-family: 'Star4000 Extended';
-				font-size: 24pt;
+				font-size: 32px;
 
 				.portrait.enhanced & {
-					font-size: 30pt;
+					font-size: 38px;
 					line-height: 40px;
 
 					.icon {
@@ -65,7 +68,7 @@
 
 				.portrait.enhanced & {
 					font-family: "Star4000 Extended";
-					font-size: 28pt;
+					font-size: 38px;
 					font-weight: 300;
 					line-height: 36px;
 				}
@@ -73,6 +76,10 @@
 
 				.row {
 					margin-bottom: 12px;
+
+					&.hidden {
+						display: none;
+					}
 
 					.label,
 					.value {
@@ -100,7 +107,7 @@
 
 		.temp {
 			font-family: 'Star4000 Large';
-			font-size: 24pt;
+			font-size: 32px;
 		}
 
 		.icon {
@@ -112,20 +119,25 @@
 
 		.wind-container {
 			margin-left: 10px;
-			display: flex;
+
+			.standard-only & {
+				display: flex;
+			}
 
 			&>div {
-				width: 50%;
+				width: 45%;
+				display: inline-block;
 			}
 
 			.wind {
 				text-align: right;
+				float: right;
 			}
 		}
 
 		.wind-gusts {
 			text-align: right;
-			font-size: 28px;
+			font-size: 32px;
 		}
 
 		.location {
