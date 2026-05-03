@@ -17,7 +17,7 @@
 
 .weather-display .main.almanac {
 	font-family: 'Star4000';
-	font-size: 24pt;
+	font-size: 32px;
 	@include u.text-shadow();
 
 	.sun {
@@ -75,7 +75,7 @@
 	}
 
 	.portrait.enhanced & {
-		font-size: 28pt;
+		font-size: 38px;
 
 	}
 

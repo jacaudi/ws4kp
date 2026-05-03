@@ -202,6 +202,7 @@ class CurrentWeather extends WeatherDisplay {
 			condition,
 			wind,
 			'wind-portrait': wind,
+			'wind-gust-portrait': this.data.WindGust,
 			location,
 			'portrait-location': location,
 			humidity: `${this.data.Humidity}%`,
@@ -227,7 +228,14 @@ class CurrentWeather extends WeatherDisplay {
 		const area = this.elem.querySelector('.main');
 
 		area.innerHTML = '';
-		area.append(this.fillTemplate('weather', fill));
+		const filledTemplate = this.fillTemplate('weather', fill);
+
+		// adjust visibility of wind gust/portrait
+		if (this.data.WindGust !== '-') {
+			filledTemplate.querySelector('.row:has(.wind-gust-portrait)').classList.remove('hidden');
+		}
+
+		area.append(filledTemplate);
 
 		this.finishDraw();
 	}

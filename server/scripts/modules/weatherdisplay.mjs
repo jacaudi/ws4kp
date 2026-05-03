@@ -218,6 +218,9 @@ class WeatherDisplay {
 		if (navCmd === msg.command.firstFrame) this.navNext(navCmd);
 		if (navCmd === msg.command.lastFrame) this.navPrev(navCmd);
 
+		// if total screens was zero our work is done, the above commands will skip to the next screen
+		if (this.timing.totalScreens === 0) return;
+
 		this.startNavCount();
 
 		this.elem.classList.add('show');
