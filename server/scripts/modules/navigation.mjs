@@ -384,6 +384,26 @@ const SCALING_PROPERTIES = {
 	positioning: ['transform', 'transform-origin', 'width', 'height', 'position', 'left', 'top', 'margin-left', 'margin-top'],
 };
 
+// set up spacing and scales
+const scaling = () => {
+	// available space
+	const BASE_SIZE = {
+		width: 640,
+		height: 480,
+	};
+
+	if (settings.wide?.value) {
+		BASE_SIZE.width = 640 + 107 + 107;
+	}
+
+	if (settings.portrait?.value) {
+		BASE_SIZE.height = 1137;
+	}
+	return {
+		BASE_SIZE,
+	};
+};
+
 // resize the container on a page resize
 const resize = (force = false) => {
 	// Ignore resize events caused by pinch-to-zoom on mobile
@@ -391,14 +411,17 @@ const resize = (force = false) => {
 		return;
 	}
 
+	// get the base size
+	const { BASE_SIZE } = scaling();
+
 	const isFullscreen = !!document.fullscreenElement;
 	const isKioskMode = settings.kiosk?.value || false;
 	const isMobileSafariKiosk = isIOS() && isKioskMode;	// Detect Mobile Safari in kiosk mode (regardless of standalone status)
-	const targetWidth = settings.wide.value ? 640 + 107 + 107 : 640;
+	const targetWidth = BASE_SIZE.width;
 
 	// Use window width instead of bottom container width to avoid zero-dimension issues
 	const widthZoomPercent = window.innerWidth / targetWidth;
-	const heightZoomPercent = window.innerHeight / 480;
+	const heightZoomPercent = window.innerHeight / BASE_SIZE.height;
 
 	// Standard scaling: fit within both dimensions
 	const scale = Math.min(widthZoomPercent, heightZoomPercent);
@@ -471,11 +494,11 @@ const resize = (force = false) => {
 		wrapper.style.setProperty('transform-origin', 'top left'); // Scale from top-left corner
 
 		// Set explicit dimensions to prevent layout issues on mobile
-		const wrapperWidth = settings.wide.value ? 854 : 640;
+		const wrapperWidth = BASE_SIZE.width;
 		// Calculate total height: main content (480px) + bottom navigation bar
 		const bottomBar = document.querySelector('#divTwcBottom');
 		const bottomBarHeight = bottomBar ? bottomBar.offsetHeight : 40; // fallback to ~40px
-		const totalHeight = 480 + bottomBarHeight;
+		const totalHeight = BASE_SIZE.height + bottomBarHeight;
 		const scaledHeight = totalHeight * scale; // Height after scaling
 
 		wrapper.style.setProperty('width', `${wrapperWidth}px`);
@@ -485,8 +508,8 @@ const resize = (force = false) => {
 	}
 
 	// KIOSK/FULLSCREEN SCALING: Two different positioning approaches for different platforms
-	const wrapperWidth = settings.wide.value ? 854 : 640;
-	const wrapperHeight = 480;
+	const wrapperWidth = BASE_SIZE.width;
+	const wrapperHeight = BASE_SIZE.height;
 
 	// Reset wrapper styles to avoid double scaling (wrapper remains unstyled)
 	clearElementStyles(wrapper, SCALING_PROPERTIES.wrapper);
