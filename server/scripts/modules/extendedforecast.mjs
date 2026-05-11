@@ -16,6 +16,11 @@ class ExtendedForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
 		super(navId, elemId, 'Extended Forecast', true);
 
+		this.setTimings();
+	}
+
+	// set up timings
+	setTimings() {
 		// set timings
 		if (settings.portrait?.value) {
 			this.timing.totalScreens = 1;
@@ -57,6 +62,9 @@ class ExtendedForecast extends WeatherDisplay {
 
 	async drawCanvas() {
 		super.drawCanvas();
+
+		// reset the timings in case the mode changes
+		this.setTimings();
 
 		// determine bounds
 		// grab the first three or second set of three array elements

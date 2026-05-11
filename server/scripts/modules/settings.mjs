@@ -71,8 +71,8 @@ const enhancedChange = (value) => {
 	} else {
 		container.classList.remove('enhanced');
 	}
-	// Trigger resize to recalculate scaling for new width
-	window.dispatchEvent(new Event('redraw'));
+	// Trigger resize to recalculate scaling for new width, on next event loop to allow settings to propigate
+	setTimeout(() => window.dispatchEvent(new Event('redraw')), 0);
 };
 
 const viewModeChange = (value) => {
