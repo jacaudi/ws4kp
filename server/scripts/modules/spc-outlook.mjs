@@ -179,7 +179,7 @@ class SpcOutlook extends WeatherDisplay {
 		}).flat(1);
 
 		// add the lines to the page
-		const details = this.elem.querySelector('.container-details');
+		const details = this.elem.querySelector('.container-details .table');
 		const replaceable = details.querySelectorAll('.replaceable');
 		replaceable.forEach((elem) => elem.remove());
 		details.append(...detailLines);
@@ -220,6 +220,8 @@ class SpcOutlook extends WeatherDisplay {
 		this.data.forEach((day, index) => {
 			// loop through each category
 			Object.entries(day).forEach(([category, value]) => {
+				// initialize the result
+				if (!result[index]) result[index] = {};
 				// skip values that do not have data
 				if (!value) return;
 				// check for category match
@@ -232,7 +234,6 @@ class SpcOutlook extends WeatherDisplay {
 					if (inPolygon) categoryResult.push(polygon.properties);
 				});
 				if (categoryResult.length > 0) {
-					if (!result[index]) result[index] = {};
 					const sorted = categoryResult.sort(labelSortAlgorithm);
 					const highestProbability = sorted[0];
 					result[index][category] = highestProbability;
