@@ -14,6 +14,7 @@ import {
 import { debugFlag } from './utils/debug.mjs';
 import { isDataStale, enhanceObservationWithMapClick } from './utils/mapclick.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
+import settings from './settings.mjs';
 
 class CurrentWeather extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -192,13 +193,18 @@ class CurrentWeather extends WeatherDisplay {
 		const wind = (typeof this.data.WindSpeed === 'number') ? this.data.WindDirection.padEnd(3, '') + this.data.WindSpeed.toString().padStart(3, ' ') : this.data.WindSpeed;
 
 		// get location (city name) from StationInfo if available (allows for overrides)
-		const location = (StationInfo[this.data.station.properties.stationIdentifier]?.city ?? locationCleanup(this.data.station.properties.name)).substr(0, 20);
+		// longer name allowed if in wide-enhanced
+		const locationLimit = (settings.wide?.value && settings.enhanced?.value) ? 25 : 20;
+		const location = (StationInfo[this.data.station.properties.stationIdentifier]?.city ?? locationCleanup(this.data.station.properties.name)).substr(0, locationLimit);
 
 		const fill = {
 			temp: this.data.Temperature + String.fromCharCode(176),
 			condition,
 			wind,
+			'wind-portrait': wind,
+			'wind-gust-portrait': this.data.WindGust,
 			location,
+			'portrait-location': location,
 			humidity: `${this.data.Humidity}%`,
 			dewpoint: this.data.DewPoint + String.fromCharCode(176),
 			ceiling: (this.data.Ceiling === 0 ? 'Unlimited' : this.data.Ceiling + this.data.CeilingUnit),
@@ -207,7 +213,9 @@ class CurrentWeather extends WeatherDisplay {
 			icon: { type: 'img', src: this.data.Icon },
 		};
 
-		if (this.data.WindGust !== '-') fill['wind-gusts'] = `Gusts to ${this.data.WindGust}`;
+		if (this.data.WindGust !== '-') {
+			fill['wind-gusts'] = `Gusts to ${this.data.WindGust}`;
+		}
 
 		if (this.data.observations.heatIndex.value && this.data.HeatIndex !== this.data.Temperature) {
 			fill['heat-index-label'] = 'Heat Index:';
@@ -220,7 +228,14 @@ class CurrentWeather extends WeatherDisplay {
 		const area = this.elem.querySelector('.main');
 
 		area.innerHTML = '';
-		area.append(this.fillTemplate('weather', fill));
+		const filledTemplate = this.fillTemplate('weather', fill);
+
+		// adjust visibility of wind gust/portrait
+		if (this.data.WindGust !== '-') {
+			filledTemplate.querySelector('.row:has(.wind-gust-portrait)').classList.remove('hidden');
+		}
+
+		area.append(filledTemplate);
 
 		this.finishDraw();
 	}

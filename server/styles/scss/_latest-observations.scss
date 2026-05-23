@@ -1,10 +1,21 @@
 @use 'shared/_colors'as c;
 @use 'shared/_utils'as u;
+@use 'shared/_positions'as p;
 
 .weather-display .latest-observations {
 
 	&.main {
 		overflow-y: hidden;
+
+		.container {
+			// adjust for the height of the column headers
+			max-height: calc(p.$standard-scroll-height - 10px);
+			overflow: hidden;
+
+			.portrait.enhanced & {
+				max-height: calc(p.$portrait-scroll-height - 20px);
+			}
+		}
 
 		.column-headers {
 			height: 20px;
@@ -18,7 +29,7 @@
 			div {
 				display: inline-block;
 				font-family: 'Star4000 Small';
-				font-size: 24pt;
+				font-size: 32px;
 				position: absolute;
 				top: -14px;
 				@include u.text-shadow();
@@ -32,6 +43,12 @@
 					display: inline-block;
 				}
 			}
+
+			.like {
+				display: none;
+			}
+
+
 		}
 
 		.temp {
@@ -46,13 +63,52 @@
 			left: 430px;
 		}
 
+		.like {
+			display: none;
+		}
+
+		// wide and enhanced moves the columns and enables the like column
+		.wide.enhanced & {
+			.temp {
+				left: 320px;
+			}
+
+			.like {
+				left: 380px;
+				display: block;
+
+				&.heat-index {
+					color: c.$heat-index;
+					display: block;
+				}
+
+				&.wind-chill {
+					display: block;
+					color: c.$wind-chill;
+				}
+			}
+
+			.weather {
+				left: 470px;
+			}
+
+			.wind {
+				left: 630px;
+			}
+
+		}
+
 		.observation-lines {
 			min-height: 338px;
 			padding-top: 10px;
 
+			.portrait.enhanced & {
+				padding-top: 40px;
+			}
+
 			.observation-row {
 				font-family: 'Star4000';
-				font-size: 24pt;
+				font-size: 32px;
 				@include u.text-shadow();
 				position: relative;
 				height: 40px;
@@ -65,6 +121,13 @@
 				.wind {
 					white-space: pre;
 					text-align: right;
+				}
+
+				.portrait.enhanced & {
+					font-family: 'Star4000 Large';
+					font-size: 21px;
+					height: 48px;
+					font-weight: bold;
 				}
 			}
 		}

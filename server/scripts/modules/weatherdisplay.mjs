@@ -55,8 +55,9 @@ class WeatherDisplay {
 		// no checkbox if progress
 		if (this.elemId === 'progress') return false;
 
-		// get url provided state
-		const urlValue = parseQueryString()?.[`${this.elemId}-checkbox`];
+		// get url provided state, and fall back to the older suffix naming convention
+		const queryString = parseQueryString();
+		const urlValue = queryString?.[this.elemId] ?? queryString?.[`${this.elemId}-checkbox`];
 		let urlState;
 		if (urlValue !== undefined) {
 			urlState = urlValue === 'true';
@@ -78,7 +79,7 @@ class WeatherDisplay {
 		checkbox.type = 'checkbox';
 		checkbox.value = true;
 		checkbox.id = `${this.elemId}-checkbox`;
-		checkbox.name = `${this.elemId}-checkbox`;
+		checkbox.name = this.elemId;
 		checkbox.checked = this.isEnabled;
 		checkbox.addEventListener('change', (e) => this.checkboxChange(e));
 		const span = document.createElement('span');
@@ -216,6 +217,9 @@ class WeatherDisplay {
 		// if a nav command is present call it to set the screen index
 		if (navCmd === msg.command.firstFrame) this.navNext(navCmd);
 		if (navCmd === msg.command.lastFrame) this.navPrev(navCmd);
+
+		// if total screens was zero our work is done, the above commands will skip to the next screen
+		if (this.timing.totalScreens === 0) return;
 
 		this.startNavCount();
 
