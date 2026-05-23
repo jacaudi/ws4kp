@@ -39,9 +39,10 @@ class LatestObservations extends WeatherDisplay {
 		// We start with the 7 closest stations and only fetch more if some fail,
 		// stopping as soon as we have 7 valid stations with data.
 		const actualConditions = [];
-		let lastStation = Math.min(regionalStations.length, 7);
+		const stationLimit = this.MaximumRegionalStations * ((settings.portrait?.value) ? 2 : 1);
+		let lastStation = Math.min(regionalStations.length, stationLimit);
 		let firstStation = 0;
-		while (actualConditions.length < 7 && (lastStation) <= regionalStations.length) {
+		while (actualConditions.length < stationLimit && (lastStation) <= regionalStations.length) {
 			// Sequential fetching is intentional here - we want to try closest stations first
 			// and only fetch additional batches if needed, rather than hitting all 30 stations at once
 			// eslint-disable-next-line no-await-in-loop
@@ -50,11 +51,11 @@ class LatestObservations extends WeatherDisplay {
 			actualConditions.push(...someStations);
 			// update counters
 			firstStation += lastStation;
-			lastStation = Math.min(regionalStations.length + 1, firstStation + 7 - actualConditions.length);
+			lastStation = Math.min(regionalStations.length + 1, firstStation + stationLimit - actualConditions.length);
 		}
 
-		// cut down to the maximum of 7
-		this.data = actualConditions.slice(0, this.MaximumRegionalStations);
+		// cut down to the maximum that fit on the page
+		this.data = actualConditions.slice(0, stationLimit);
 
 		// test for at least one station
 		if (this.data.length === 0) {
@@ -159,12 +160,17 @@ class LatestObservations extends WeatherDisplay {
 			const windDirection = directionToNSEW(condition.windDirection.value);
 
 			const Temperature = temperatureConverter(condition.temperature.value);
+			const Like = likeTemperature(condition.heatIndex?.value, condition.windChill?.value, Temperature, temperatureConverter);
 			const WindSpeed = windConverter(condition.windSpeed.value);
 
+			const locationLimit = (settings.wide?.value && settings.enhanced?.value) ? 20 : 14;
+			const weatherLimit = (settings.wide?.value && settings.enhanced?.value) ? 10 : 9;
+
 			const fill = {
-				location: locationCleanup(condition.city).substr(0, 14),
+				location: locationCleanup(condition.city).substr(0, locationLimit),
 				temp: Temperature,
-				weather: shortenCurrentConditions(condition.textDescription).substr(0, 9),
+				like: Like.value,
+				weather: shortenCurrentConditions(condition.textDescription).substr(0, weatherLimit),
 			};
 
 			if (WindSpeed > 0) {
@@ -175,7 +181,12 @@ class LatestObservations extends WeatherDisplay {
 				fill.wind = 'Calm';
 			}
 
-			return this.fillTemplate('observation-row', fill);
+			const filledRow = this.fillTemplate('observation-row', fill);
+
+			// add the feels like class
+			if (Like.cssClass) filledRow.querySelector('.like').classList.add(Like.cssClass);
+
+			return filledRow;
 		});
 
 		const linesContainer = this.elem.querySelector('.observation-lines');
@@ -185,6 +196,25 @@ class LatestObservations extends WeatherDisplay {
 		this.finishDraw();
 	}
 }
+
+// generate a "feels like" temperature from heat index and wind chill.
+const likeTemperature = (heat, wind, actual, converter) => {
+	// figure out the feels like value
+	let value = '';
+	if (heat) value = converter(heat);
+	if (wind) value = converter(wind);
+
+	// determine if there's a red/blue color class to add
+	let cssClass;
+	if (value !== '') {
+		if (value > actual) cssClass = 'heat-index';
+		if (value < actual) cssClass = 'wind-chill';
+	}
+	return {
+		value,
+		cssClass,
+	};
+};
 
 const shortenCurrentConditions = (_condition) => {
 	let condition = _condition;

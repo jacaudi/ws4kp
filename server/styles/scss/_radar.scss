@@ -1,8 +1,13 @@
 @use 'shared/_colors'as c;
 @use 'shared/_utils'as u;
+@use 'shared/positions'as p;
 
 #radar-html.weather-display {
 	background-image: url('../images/backgrounds/4.png');
+
+	.wide & {
+		background: url(../images/backgrounds/4-wide.png);
+	}
 
 	.header {
 		height: 83px;
@@ -11,7 +16,7 @@
 			color: white;
 			font-family: 'Arial', sans-serif;
 			font-weight: bold;
-			font-size: 28pt;
+			font-size: 38px;
 			left: 155px;
 
 			.top {
@@ -29,7 +34,7 @@
 			width: 360px;
 			margin-top: 2px;
 			font-family: 'Star4000';
-			font-size: 18pt;
+			font-size: 24px;
 			font-weight: bold;
 			@include u.text-shadow();
 			text-align: center;
@@ -95,7 +100,7 @@
 				font-weight: normal;
 				top: -14px;
 				font-family: 'Star4000 Small';
-				font-size: 24pt;
+				font-size: 32px;
 			}
 		}
 	}
@@ -104,12 +109,17 @@
 .weather-display .main.radar {
 	overflow: hidden;
 	height: 367px;
+	width: p.$standard-width;
+
+	.portrait.enhanced & {
+		height: 1024px;
+	}
 
 	.container {
 
 		.tiles {
 			position: absolute;
-			width: 1400px;
+			width: 2040px;
 
 			img {
 				vertical-align: middle;
@@ -120,8 +130,4 @@
 			position: relative;
 		}
 	}
-}
-
-.wide.radar #container {
-	background: url(../images/backgrounds/4-wide.png);
 }

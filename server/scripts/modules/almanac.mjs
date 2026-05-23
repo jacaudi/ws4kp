@@ -30,12 +30,13 @@ class Almanac extends WeatherDisplay {
 		const superResponse = super.getData(weatherParameters, refresh);
 
 		// get sun/moon data
-		const { sun, moon } = this.calcSunMoonData(this.weatherParameters);
+		const { sun, moon, moonTransit } = this.calcSunMoonData(this.weatherParameters);
 
 		// store the data
 		this.data = {
 			sun,
 			moon,
+			moonTransit,
 		};
 		// share data
 		this.getDataCallback();
@@ -47,10 +48,9 @@ class Almanac extends WeatherDisplay {
 	}
 
 	calcSunMoonData(weatherParameters) {
-		const sun = [
-			SunCalc.getTimes(new Date(), weatherParameters.latitude, weatherParameters.longitude),
-			SunCalc.getTimes(DateTime.local().plus({ days: 1 }).toJSDate(), weatherParameters.latitude, weatherParameters.longitude),
-		];
+		const dayOffsets = [0, 1, 2, 3, 4, 5, 6];
+		const sun = dayOffsets.map((days) => SunCalc.getTimes(DateTime.local().plus({ days }).toJSDate(), weatherParameters.latitude, weatherParameters.longitude));
+		const moonTransit = dayOffsets.map((days) => SunCalc.getMoonTimes(DateTime.local().plus({ days }).toJSDate(), weatherParameters.latitude, weatherParameters.longitude));
 
 		// brute force the moon phases by scanning the next 30 days
 		const moon = [];
@@ -72,11 +72,12 @@ class Almanac extends WeatherDisplay {
 
 			// stop after 30 days or 4 moon phases
 			iterations += 1;
-		} while (iterations <= 30 && moon.length < 4);
+		} while (iterations <= 45 && moon.length < 5);
 
 		return {
 			sun,
 			moon,
+			moonTransit,
 		};
 	}
 
@@ -124,26 +125,52 @@ class Almanac extends WeatherDisplay {
 
 		// Generate sun data grid in reading order (left-to-right, top-to-bottom)
 
-		// Set day names
+		// Set day names and sunset times
 		const Today = DateTime.local();
-		const Tomorrow = Today.plus({ days: 1 });
-		this.elem.querySelector('.day-1').textContent = Today.toLocaleString({ weekday: 'long' });
-		this.elem.querySelector('.day-2').textContent = Tomorrow.toLocaleString({ weekday: 'long' });
+		const portraitLines = [];
+		const moonPortraitLines = [];
+		// fill all days, even if some are hidden by the mode selection.
+		for (let i = 0; i < 7; i += 1) {
+			// format some data
+			const dayName = Today.plus({ days: i }).toLocaleString({ weekday: 'long' });
+			const sunrise = formatTimeForColumn(DateTime.fromJSDate(info.sun[i].sunrise));
+			const sunset = formatTimeForColumn(DateTime.fromJSDate(info.sun[i].sunset));
 
-		const todaySunrise = DateTime.fromJSDate(info.sun[0].sunrise);
-		const todaySunset = DateTime.fromJSDate(info.sun[0].sunset);
-		const [todaySunriseFormatted, todaySunsetFormatted] = formatTimesForColumn([todaySunrise, todaySunset]);
-		this.elem.querySelector('.rise-1').textContent = todaySunriseFormatted;
-		this.elem.querySelector('.set-1').textContent = todaySunsetFormatted;
+			// these only use the first 3 for standard and wide
+			if (i < 3) {
+				this.elem.querySelector(`.day-${i}`).textContent = dayName;
+				this.elem.querySelector(`.rise-${i}`).textContent = sunrise;
+				this.elem.querySelector(`.set-${i}`).textContent = sunset;
+			}
 
-		const tomorrowSunrise = DateTime.fromJSDate(info.sun[1].sunrise);
-		const tomorrowSunset = DateTime.fromJSDate(info.sun[1].sunset);
-		const [tomorrowSunriseFormatted, tomorrowSunsetformatted] = formatTimesForColumn([tomorrowSunrise, tomorrowSunset]);
-		this.elem.querySelector('.rise-2').textContent = tomorrowSunriseFormatted;
-		this.elem.querySelector('.set-2').textContent = tomorrowSunsetformatted;
+			// and also fill the portrait oriented info
+			portraitLines.push(this.fillTemplate('dayname', { 'grid-item': dayName }));
+			portraitLines.push(this.fillTemplate('sunrise', { 'grid-item': sunrise }));
+			portraitLines.push(this.fillTemplate('sunset', { 'grid-item': sunset }));
+
+			// including the bonus moon rise/set data in portrait
+			const moonrise = formatTimeForColumn(DateTime.fromJSDate(info.moonTransit[i].rise));
+			const moonset = formatTimeForColumn(DateTime.fromJSDate(info.moonTransit[i].set));
+
+			moonPortraitLines.push(this.fillTemplate('dayname', { 'grid-item': dayName }));
+			moonPortraitLines.push(this.fillTemplate('sunrise', { 'grid-item': moonrise }));
+			moonPortraitLines.push(this.fillTemplate('sunset', { 'grid-item': moonset }));
+		}
+
+		// add the portrait lines to the page
+		const sunPortrait = this.elem.querySelector('.sun-portrait');
+		const replaceable = sunPortrait.querySelectorAll(':has(.replaceable)');
+		replaceable.forEach((elem) => elem.remove());
+		sunPortrait.append(...portraitLines);
+
+		// and the moon too
+		const moonPortrait = this.elem.querySelector('.moonrise.sun-portrait');
+		const moonReplaceable = moonPortrait.querySelectorAll(':has(.replaceable)');
+		moonReplaceable.forEach((elem) => elem.remove());
+		moonPortrait.append(...moonPortraitLines);
 
 		// Moon data
-		const days = info.moon.map((MoonPhase) => {
+		const days = info.moon.map((MoonPhase, idx) => {
 			const fill = {};
 
 			const date = MoonPhase.date.toLocaleString({ month: 'short', day: 'numeric' });
@@ -152,7 +179,14 @@ class Almanac extends WeatherDisplay {
 			fill.type = MoonPhase.phase;
 			fill.icon = { type: 'img', src: this.iconPaths[MoonPhase.phase] };
 
-			return this.fillTemplate('day', fill);
+			const filledTemplate = this.fillTemplate('day', fill);
+
+			// add class to hide >4 moon phases when not wide-enhanced
+			if (idx > 3) {
+				filledTemplate.classList.add('wide-enhanced');
+			}
+
+			return filledTemplate;
 		});
 
 		const daysContainer = this.elem.querySelector('.moon .days');
@@ -189,19 +223,16 @@ const imageName = (type) => {
 	}
 };
 
-const formatTimesForColumn = (times) => {
-	const formatted = times.map((dt) => dt.setZone(timeZone()).toFormat('h:mm a').toUpperCase());
-
-	// Check if any time has a 2-digit hour (starts with '1')
-	const hasTwoDigitHour = formatted.some((time) => time.startsWith('1'));
+const formatTimeForColumn = (time) => {
+	// moonrise and set may not have a time each day
+	if (!time.isValid) return '-';
+	const formatted = time.setZone(timeZone()).toFormat('h:mm a').toUpperCase();
 
 	// If mixed digit lengths, pad single-digit hours with non-breaking space
-	if (hasTwoDigitHour) {
-		return formatted.map((time) => (time.startsWith('1') ? time : `\u00A0${time}`));
+	if (formatted.length === 8) {
+		return formatted;
 	}
-
-	// Otherwise, no padding needed
-	return formatted;
+	return `\u00A0${formatted}`;
 };
 
 // register display

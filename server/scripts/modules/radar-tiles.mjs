@@ -31,28 +31,42 @@ const setTiles = (data) => {
 
 	// determine the basemap images needed
 	const baseMapTiles = [
-		pixelToFile(sourceXY.x, sourceXY.y),
-		pixelToFile(sourceXY.x + TILE_SIZE.x, sourceXY.y),
-		pixelToFile(sourceXY.x, sourceXY.y + TILE_SIZE.y),
-		pixelToFile(sourceXY.x + TILE_SIZE.x, sourceXY.y + TILE_SIZE.y),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 0, sourceXY.y),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 1, sourceXY.y),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 2, sourceXY.y),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 0, sourceXY.y + TILE_SIZE.y),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 1, sourceXY.y + TILE_SIZE.y),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 2, sourceXY.y + TILE_SIZE.y),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 0, sourceXY.y + TILE_SIZE.y * 2),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 1, sourceXY.y + TILE_SIZE.y * 2),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 2, sourceXY.y + TILE_SIZE.y * 2),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 0, sourceXY.y + TILE_SIZE.y * 3),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 1, sourceXY.y + TILE_SIZE.y * 3),
+		pixelToFile(sourceXY.x + TILE_SIZE.x * 2, sourceXY.y + TILE_SIZE.y * 3),
 	];
 
 	// do some calculations
 	// the tiles are arranged as follows, with the horizontal axis as x, and correlating with the second set of digits in the image file number
-	// T[0] T[1]
-	// T[2] T[3]
+	// T[0] T[1] T[2]
+	// T[3] T[4] T[5]
 
 	// calculate the shift of tile 0 (upper left)
 	const tileShift = modTile(sourceXY.x, sourceXY.y);
 
 	// determine which tiles are used
+	const secondRow = TILE_SIZE.y - tileShift.y < RADAR_FINAL_SIZE().height;
+	const thirdRow = (TILE_SIZE.y * 2) - tileShift.y < RADAR_FINAL_SIZE().height;
+	const fourthRow = (TILE_SIZE.y * 3) - tileShift.y < RADAR_FINAL_SIZE().height;
 	const usedTiles = [
 		true,
-		tileShift.x + TILE_SIZE.x > RADAR_FINAL_SIZE.width,
-		tileShift.y + TILE_SIZE.y > RADAR_FINAL_SIZE.height,
+		TILE_SIZE.x - tileShift.x < RADAR_FINAL_SIZE().width,
+		(TILE_SIZE.x * 2) - tileShift.x < RADAR_FINAL_SIZE().width,
 	];
-	// if we need t[1] and t[2] then we also need t[3]
-	usedTiles.push(usedTiles[1] && usedTiles[2]);
+	// rows 2, 3 and 4 are a copy of the first row when in use
+	// calculate T[4] and T[5]
+	usedTiles.push(secondRow && usedTiles[0], secondRow && usedTiles[1], secondRow && usedTiles[2]);
+	usedTiles.push(thirdRow && usedTiles[0], thirdRow && usedTiles[1], thirdRow && usedTiles[2]);
+	usedTiles.push(fourthRow && usedTiles[0], fourthRow && usedTiles[1], fourthRow && usedTiles[2]);
 
 	// helper function for populating tiles
 	const populateTile = (tileName) => (elem, index) => {
