@@ -38,7 +38,7 @@ const scaling = () => {
 	// curatedCap: soft ceiling on curated picks in pass 1a
 	// maxPass2Dist: pass 2 skips cells whose center is farther than this (°)
 	// gcols/grows: grid subdivision of the bbox used by pass 2
-	let base = 0.70;
+	let base = 1.20;
 	let bias = 0.35;
 	let cap = 10;
 	let pass1 = 7;
@@ -51,7 +51,7 @@ const scaling = () => {
 		if (settings.wide?.value) {
 			mapOffsetXY.x = 320;
 			available.x = 854;
-			base = 0.55;
+			base = 0.95;
 			cap = 14;
 			pass1 = 10;
 			curatedCap = 4;
@@ -62,7 +62,7 @@ const scaling = () => {
 		if (settings.portrait?.value) {
 			mapOffsetXY.y = 400;
 			available.y = 970;
-			base = 0.50;
+			base = 0.85;
 			cap = 20;
 			pass1 = 12;
 			curatedCap = 6;

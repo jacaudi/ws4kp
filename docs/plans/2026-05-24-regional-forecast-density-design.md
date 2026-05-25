@@ -37,9 +37,11 @@ A two-pass selection per display mode, replacing the current array-order single-
 
 | Mode | `base`° | `bias` | `cap` | `pass1` | `curatedCap` | `maxPass2Dist`° | grid |
 |---|---|---|---|---|---|---|---|
-| Standard 4:3 | 0.70 | 0.35 | 10 | 7 | 3 | 5.0 | 3×3 |
-| Widescreen Enhanced 16:9 | 0.55 | 0.35 | 14 | 10 | 4 | 6.0 | 4×3 |
-| Portrait Enhanced | 0.50 | 0.35 | 20 | 12 | 6 | 8.0 | 3×5 |
+| Standard 4:3 | 1.20 | 0.35 | 10 | 7 | 3 | 5.0 | 3×3 |
+| Widescreen Enhanced 16:9 | 0.95 | 0.35 | 14 | 10 | 4 | 6.0 | 4×3 |
+| Portrait Enhanced | 0.85 | 0.35 | 20 | 12 | 6 | 8.0 | 3×5 |
+
+The `base` values above were increased from the original design values (0.70 / 0.55 / 0.50) during implementation after observing marker overlap in the running application. Initial validation used a browser-based Leaflet preview whose marker glyphs are noticeably smaller than the icon + temperature + city-name labels rendered on the ws4kp canvas; at the canvas's pixel scale (~57 px/° longitude, ~70 px/° latitude), the original spacing left insufficient room between adjacent markers in the near-user cluster. All other constants (`bias`, `cap`, `pass1`, `curatedCap`, `maxPass2Dist`, grid) are unchanged from the original design.
 
 Meanings:
 
