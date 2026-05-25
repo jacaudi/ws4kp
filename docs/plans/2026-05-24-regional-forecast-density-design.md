@@ -67,6 +67,19 @@ The pixel coordinates come from a single `getXYForCity` call tagged onto each ca
 
 Independent of the selection algorithm, the marker projection in `regionalforecast-utils.mjs` clamps each marker's `y` to a minimum to keep it on-canvas. The original floor of `y = 30` placed top-edge picks beneath the title/logo chrome whenever the user's location sat far enough south that the bbox's top edge mapped near the top of the canvas. The floor was raised iteratively — `30 → 80 → 130 → 115 → 55` — in all three variants (CONUS, AK, HI) as visual review refined the target clearance. The final `55` value leaves roughly 1–2 px of vertical clearance between the bottom of the header chrome (~y=50) and any clamped marker — the user explicitly preferred this minimal gap over the wider buffers earlier iterations applied. This is an adjacency-readability fix, not an algorithm change — the projection math, the per-mode tuning constants, and the selection passes are unchanged.
 
+### Portrait cell bbox (pass-2 grid optimization)
+
+In Portrait Enhanced mode the canvas-sized bbox is unusually tall, so when the user's location is near a coast or an otherwise sparsely-populated edge, the bottom (or top) rows of the pass-2 cell grid can land over ocean or empty terrain. Those cells have no candidates and pass 2 cannot fill them, leaving the canvas visibly sparse.
+
+To fix this without changing the visible bbox or the basemap projection, pass 2 builds its cell grid from a **tighter bbox derived from the actual extent of the surviving candidates** (after pre-filter, USER_EXCLUSION, and sort). Specifically:
+
+- After pre-filter, compute `candMinLat / candMaxLat / candMinLon / candMaxLon` across `candidates`.
+- Use that tighter rectangle as `cellBbox` for `latStep`, `lonStep`, `cellOf`, and `cellCenter` — pass 2's whole grid math.
+- Fall back to the visible bbox if `candidates.length === 0` or the candidate extent is degenerate (zero-width in either axis), to avoid divide-by-zero in `latStep`/`lonStep`.
+- `cellOf` adds a `Math.max(0, ...)` lower-bound clamp so the user's `userCell` stays in-range even if the user sits outside the tightened rectangle.
+
+This is scoped to Portrait via a `tightCellBbox` flag emitted by `scaling()`; Standard 4:3 and Widescreen Enhanced 16:9 use the visible bbox unchanged. Pre-filter still runs against the visible bbox (we still consider all candidates in the user's region), and the basemap continues to render at its visible-bbox geometry. Only pass 2's cell geometry sees the tighter bbox.
+
 ### Pre-filter
 
 1. Compute the bbox via existing `getXYFromLatLon` + `getMinMaxLatitudeLongitude` (no change to those functions).
