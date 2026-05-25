@@ -55,10 +55,16 @@ const akCity = { lat: 64.5, lon: -165.4 };
 const akMaxLat = 71.5;
 const akMinLon = -168.0;
 
-// HI fixture — HI variant uses same *57 multiplier as CONUS, so the test verifies
-// control flow (function returns rather than falling through) rather than numeric difference.
-const hiCity = { lat: 21.3, lon: -157.8 };
-const hiMaxLat = 22.5;
+// HI fixture — HI uses the same *57/*70 formula as CONUS, so equal inputs produce equal
+// numbers and a tautological test cannot detect a fall-through regression. To break that
+// equivalence, the HI test calls getXYForCity with custom maxX/maxY (100, 100) below HI's
+// hardcoded 580/282 ceilings. HI ignores those args (its variant uses hardcoded clamps),
+// while the CONUS fall-through path honors them — yielding divergent results.
+//
+// With lon - minLon = 5: raw x = 5 * 57 = 285, raw y = (22 - 20) * 70 = 140.
+// HI path → (285, 140); CONUS path with maxX=100, maxY=100 → (100, 100).
+const hiCity = { lat: 20.0, lon: -155.0 };
+const hiMaxLat = 22.0;
 const hiMinLon = -160.0;
 
 // CONUS fixture
@@ -82,11 +88,21 @@ test('AK result uses * 37 multiplier (not CONUS * 57) — bug guard', () => {
 });
 
 test('getXYForCity returns HI variant result when state === "HI"', () => {
-	// HI variant uses the same *57 multiplier as CONUS, so we verify control flow:
-	// the function must return a value (not undefined) and it must equal the HI formula output.
-	const result = getXYForCity(hiCity, hiMaxLat, hiMinLon, 'HI');
+	// Pass maxX=100, maxY=100. HI's hardcoded clamps (580/282) ignore these args; if the
+	// function falls through to CONUS the args take effect and the result will be (100, 100)
+	// instead of the HI formula's (285, 140).
+	const result = getXYForCity(hiCity, hiMaxLat, hiMinLon, 'HI', 100, 100);
 	const expected = expectedHI(hiCity, hiMaxLat, hiMinLon);
 	assert.deepStrictEqual(result, expected, `Expected HI result ${JSON.stringify(expected)}, got ${JSON.stringify(result)}`);
+});
+
+test('HI result ignores caller-supplied maxX/maxY — bug guard', () => {
+	// Companion to the AK bug guard. If getXYForCity falls through to CONUS math,
+	// it honors the custom maxX/maxY (100/100) and clamps to those values instead of
+	// returning HI's hardcoded clamps. The two paths must produce different results.
+	const hiResult = getXYForCity(hiCity, hiMaxLat, hiMinLon, 'HI', 100, 100);
+	const conusWithLimits = expectedCONUS(hiCity, hiMaxLat, hiMinLon, 100, 100);
+	assert.notDeepStrictEqual(hiResult, conusWithLimits, `HI result should differ from CONUS-with-custom-limits result. Got: HI=${JSON.stringify(hiResult)}, CONUS=${JSON.stringify(conusWithLimits)}`);
 });
 
 test('getXYForCity returns CONUS result when state is undefined', () => {
