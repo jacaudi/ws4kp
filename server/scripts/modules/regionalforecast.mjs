@@ -30,22 +30,75 @@ const scaling = () => {
 		y: 117,
 	};
 
+	// per-mode density tuning constants
+	// base: minimum spacing (°) between picks at the user's location
+	// bias: radial growth factor — required spacing = base × (1 + bias × dist)
+	// cap: soft total ceiling on picked cities
+	// pass1: proximity-phase ceiling (pass 1a + 1b combined)
+	// curatedCap: soft ceiling on curated picks in pass 1a
+	// maxPass2Dist: pass 2 skips cells whose center is farther than this (°)
+	// gcols/grows: grid subdivision of the bbox used by pass 2
+	let base = 1.25;
+	let bias = 0.20;
+	let cap = 10;
+	let pass1 = 7;
+	let curatedCap = 3;
+	let maxPass2Dist = 6.5;
+	let gcols = 3;
+	let grows = 3;
+
 	if (settings.enhanced?.value) {
 		if (settings.wide?.value) {
 			mapOffsetXY.x = 320;
 			available.x = 854;
+			base = 1.00;
+			cap = 14;
+			pass1 = 10;
+			curatedCap = 4;
+			maxPass2Dist = 9.0;
+			gcols = 4;
 		}
 
 		if (settings.portrait?.value) {
 			mapOffsetXY.y = 400;
 			available.y = 970;
+			base = 0.90;
+			cap = 20;
+			pass1 = 12;
+			curatedCap = 6;
+			maxPass2Dist = 12.0;
+			grows = 5;
 		}
 	}
+	// tightCellBbox: when true, pass-2's cell grid is built from the actual
+	// candidate extent rather than the visible bbox — keeps cells over populated
+	// area when the user is near an ocean/sparse edge. Portrait only.
+	const tightCellBbox = !!(settings.enhanced?.value && settings.portrait?.value);
+
 	return {
 		mapOffsetXY,
 		available,
+		base,
+		bias,
+		cap,
+		pass1,
+		curatedCap,
+		maxPass2Dist,
+		gcols,
+		grows,
+		tightCellBbox,
 	};
 };
+
+const USER_EXCLUSION = 0.25; // ° — skip candidates co-located with the user
+
+// pixel-asymmetric spacing guard (applied in addition to degree-spacing).
+// Labels render ~80 px to the right of each marker, so two markers can be far
+// enough apart in lat/lon to pass the degree rule yet still collide visually
+// when their pixel rows are similar. Require at least one of:
+//   |Δx_px| ≥ PX_MIN_DX   OR   |Δy_px| ≥ PX_MIN_DY
+const PX_MIN_DX = 110;
+const PX_MIN_DY = 40;
 
 class RegionalForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -71,37 +124,133 @@ class RegionalForecast extends WeatherDisplay {
 		this.elem.querySelector('.map img').src = baseMap;
 
 		// get user's location in x/y
-		const { available, mapOffsetXY } = scaling();
+		const {
+			available, mapOffsetXY, base, bias, cap, pass1, curatedCap, maxPass2Dist, gcols, grows, tightCellBbox,
+		} = scaling();
 		const sourceXY = utils.getXYFromLatitudeLongitude(this.weatherParameters.latitude, this.weatherParameters.longitude, mapOffsetXY.x, mapOffsetXY.y, weatherParameters.state);
 
 		// get latitude and longitude limits
 		const minMaxLatLon = utils.getMinMaxLatitudeLongitude(sourceXY.x, sourceXY.y, mapOffsetXY.x, mapOffsetXY.y, this.weatherParameters.state);
 
-		// get a target distance
-		let targetDistance = 2.4;
-		if (this.weatherParameters.state === 'HI') targetDistance = 1;
+		const userLat = this.weatherParameters.latitude;
+		const userLon = this.weatherParameters.longitude;
 
-		// make station info into an array
-		const stationInfoArray = Object.values(StationInfo).map((station) => ({ ...station, targetDistance }));
-		// combine regional cities with station info for additional stations
-		// stations are intentionally after cities to allow cities priority when drawing the map
-		const combinedCities = [...RegionalCities, ...stationInfoArray];
+		// tag curated entries so we can preferentially pick them in pass 1a
+		const curated = RegionalCities.map((c) => ({ ...c, _src: 'curated' }));
+		const stations = Object.values(StationInfo).map((s) => ({ ...s, _src: 'station' }));
+		const pool = [...curated, ...stations];
 
-		// Determine which cities are within the max/min latitude/longitude.
-		const regionalCities = [];
-		combinedCities.forEach((city) => {
-			if (city.lat > minMaxLatLon.minLat && city.lat < minMaxLatLon.maxLat
-				&& city.lon > minMaxLatLon.minLon && city.lon < minMaxLatLon.maxLon - 1) {
-				// default to 1 for cities loaded from RegionalCities, use value calculate above for remaining stations
-				const targetDist = city.targetDistance || 1;
-				// Only add the city as long as it isn't within set distance degree of any other city already in the array.
-				const okToAddCity = regionalCities.reduce((acc, testCity) => {
-					const distance = calcDistance(city.lon, city.lat, testCity.lon, testCity.lat);
-					return acc && distance >= targetDist;
-				}, true);
-				if (okToAddCity) regionalCities.push(city);
+		// pre-filter: bbox + user-exclusion + distance tag + pixel-xy tag + cell tag + sort by distance
+		const candidates = [];
+		for (const c of pool) {
+			if (!(c.lat > minMaxLatLon.minLat && c.lat < minMaxLatLon.maxLat
+				&& c.lon > minMaxLatLon.minLon && c.lon < minMaxLatLon.maxLon - 1)) continue;
+			const d = calcDistance(c.lon, c.lat, userLon, userLat);
+			if (d < USER_EXCLUSION) continue;
+			const xy = utils.getXYForCity(c, minMaxLatLon.maxLat, minMaxLatLon.minLon, weatherParameters.state, available.x - 60, available.y);
+			candidates.push({ ...c, _dist: d, _xy: xy });
+		}
+		candidates.sort((a, b) => a._dist - b._dist);
+
+		// cellBbox: in portrait mode, build pass-2's cell grid from the actual
+		// candidate extent so cells stay over populated area when the user is
+		// near an ocean or sparsely-populated edge. Other modes use the visible
+		// bbox unchanged.
+		let cellBbox = minMaxLatLon;
+		if (tightCellBbox && candidates.length) {
+			let candMinLat = candidates[0].lat;
+			let candMaxLat = candidates[0].lat;
+			let candMinLon = candidates[0].lon;
+			let candMaxLon = candidates[0].lon;
+			for (const c of candidates) {
+				if (c.lat < candMinLat) candMinLat = c.lat;
+				if (c.lat > candMaxLat) candMaxLat = c.lat;
+				if (c.lon < candMinLon) candMinLon = c.lon;
+				if (c.lon > candMaxLon) candMaxLon = c.lon;
 			}
+			// guard against degenerate extents (all candidates clustered) — fall
+			// back to the visible bbox so latStep/lonStep stay non-zero.
+			if (candMaxLat > candMinLat && candMaxLon > candMinLon) {
+				cellBbox = {
+					minLat: candMinLat, maxLat: candMaxLat, minLon: candMinLon, maxLon: candMaxLon,
+				};
+			}
+		}
+
+		// cell helpers in lat/lon space (built against cellBbox, not minMaxLatLon)
+		const latStep = (cellBbox.maxLat - cellBbox.minLat) / grows;
+		const lonStep = (cellBbox.maxLon - cellBbox.minLon) / gcols;
+		const cellOf = (lat, lon) => [
+			Math.max(0, Math.min(gcols - 1, Math.floor((lon - cellBbox.minLon) / lonStep))),
+			Math.max(0, Math.min(grows - 1, Math.floor((cellBbox.maxLat - lat) / latStep))),
+		];
+		const cellCenter = (cx, cy) => ({
+			lon: cellBbox.minLon + (cx + 0.5) * lonStep,
+			lat: cellBbox.maxLat - (cy + 0.5) * latStep,
 		});
+		for (const c of candidates) { c._cell = cellOf(c.lat, c.lon); }
+
+		const regionalCities = [];
+
+		// combined spacing check: degree-spacing (req) AND pixel-asymmetric separation
+		// (labels extend ~80 px right of marker, so require either-axis pixel separation
+		// in addition to the lat/lon rule).
+		const spacingOK = (c, req) => regionalCities.every((p) => {
+			if (calcDistance(c.lon, c.lat, p.lon, p.lat) < req) return false;
+			const dx = Math.abs(c._xy.x - p._xy.x);
+			const dy = Math.abs(c._xy.y - p._xy.y);
+			return dx >= PX_MIN_DX || dy >= PX_MIN_DY;
+		});
+
+		// pass 1a — curated cities first, closest-first, spacing-aware
+		for (const c of candidates) {
+			if (regionalCities.length >= curatedCap) break;
+			if (c._src !== 'curated') continue;
+			const req = base * (1 + bias * c._dist);
+			if (spacingOK(c, req)) regionalCities.push(c);
+		}
+
+		// pass 1b — stations fill remaining proximity slots
+		for (const c of candidates) {
+			if (regionalCities.length >= pass1) break;
+			if (c._src === 'curated') continue;
+			const req = base * (1 + bias * c._dist);
+			if (spacingOK(c, req)) regionalCities.push(c);
+		}
+
+		// pass 2 — gap fill: visit empty cells near the user, pick closest candidate to cell center
+		const userCell = cellOf(userLat, userLon);
+		const filled = new Set(regionalCities.map((p) => p._cell.join(',')));
+		const empty = [];
+		for (let cx = 0; cx < gcols; cx++) {
+			for (let cy = 0; cy < grows; cy++) {
+				if (filled.has(`${cx},${cy}`)) continue;
+				const cc = cellCenter(cx, cy);
+				const cellDist = calcDistance(cc.lon, cc.lat, userLon, userLat);
+				if (cellDist > maxPass2Dist) continue;
+				empty.push([cx, cy]);
+			}
+		}
+		empty.sort((a, b) =>
+			(Math.abs(a[0] - userCell[0]) + Math.abs(a[1] - userCell[1]))
+			- (Math.abs(b[0] - userCell[0]) + Math.abs(b[1] - userCell[1])));
+
+		for (const [cx, cy] of empty) {
+			if (regionalCities.length >= cap) break;
+			const cc = cellCenter(cx, cy);
+			const inCell = candidates
+				.filter((c) => !regionalCities.includes(c) && c._cell[0] === cx && c._cell[1] === cy)
+				.map((c) => ({ c, _distToCenter: calcDistance(c.lon, c.lat, cc.lon, cc.lat) }))
+				.sort((a, b) => a._distToCenter - b._distToCenter);
+			for (const { c } of inCell) {
+				// degree-spacing is relaxed by 0.7 in pass 2; the pixel rule is not relaxed
+				const req = base * (1 + bias * c._dist) * 0.7;
+				if (spacingOK(c, req)) {
+					regionalCities.push(c);
+					break;
+				}
+			}
+		}
 
 		// get a unit converter
 		const temperatureConverter = temperatureUnit();
