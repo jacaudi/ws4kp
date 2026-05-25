@@ -39,7 +39,7 @@ const scaling = () => {
 	// maxPass2Dist: pass 2 skips cells whose center is farther than this (°)
 	// gcols/grows: grid subdivision of the bbox used by pass 2
 	let base = 1.25;
-	let bias = 0.35;
+	let bias = 0.20;
 	let cap = 10;
 	let pass1 = 7;
 	let curatedCap = 3;
