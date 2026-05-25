@@ -63,6 +63,10 @@ Lat/lon spacing alone does not model the rendered marker footprint. Each marker 
 
 The pixel coordinates come from a single `getXYForCity` call tagged onto each candidate during the pre-filter (not recomputed per spacing check). The pixel rule applies in all three passes (1a, 1b, 2) and is not relaxed in pass 2 even though the degree rule is (`× 0.7`). Initial thresholds of 85/30 px proved too permissive — horizontally-aligned pairs ~100 px apart passed the OR check while their labels (which extend ~80 px right of the marker) still visually overlapped — so the values were tightened to 110/40 px based on observed worst-case deltas.
 
+### Top-edge y-floor in `getXYForCity`
+
+Independent of the selection algorithm, the marker projection in `regionalforecast-utils.mjs` clamps each marker's `y` to a minimum to keep it on-canvas. The original floor of `y = 30` placed top-edge picks beneath the title/logo chrome whenever the user's location sat far enough south that the bbox's top edge mapped near the top of the canvas. The floor was raised to `y = 80` in all three variants (CONUS, AK, HI) so top-edge markers render below the header. This is an adjacency-readability fix, not an algorithm change — the projection math, the per-mode tuning constants, and the selection passes are unchanged.
+
 ### Pre-filter
 
 1. Compute the bbox via existing `getXYFromLatLon` + `getMinMaxLatitudeLongitude` (no change to those functions).
