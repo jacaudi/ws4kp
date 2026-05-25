@@ -51,6 +51,8 @@ Two coordinated changes in this file:
 
 Define `USER_EXCLUSION = 0.25` as a module-level const.
 
+> **Note:** The `base` values in the design doc table were tuned upward during implementation after observing marker overlap in the live app (see the design doc's "Per-mode tuning constants" section for the updated values and rationale). The implementation uses the values from that table, not any numbers that may appear elsewhere in this plan.
+
 Keep the rest of `getData` (the `regionalDataAll = await safePromiseAll(...)` block and the `this.data = { ... }` assignment) unchanged.
 
 **Acceptance:**
