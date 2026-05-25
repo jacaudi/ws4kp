@@ -70,6 +70,11 @@ const scaling = () => {
 			grows = 5;
 		}
 	}
+	// tightCellBbox: when true, pass-2's cell grid is built from the actual
+	// candidate extent rather than the visible bbox — keeps cells over populated
+	// area when the user is near an ocean/sparse edge. Portrait only.
+	const tightCellBbox = !!(settings.enhanced?.value && settings.portrait?.value);
+
 	return {
 		mapOffsetXY,
 		available,
@@ -81,6 +86,7 @@ const scaling = () => {
 		maxPass2Dist,
 		gcols,
 		grows,
+		tightCellBbox,
 	};
 };
 
@@ -119,7 +125,7 @@ class RegionalForecast extends WeatherDisplay {
 
 		// get user's location in x/y
 		const {
-			available, mapOffsetXY, base, bias, cap, pass1, curatedCap, maxPass2Dist, gcols, grows,
+			available, mapOffsetXY, base, bias, cap, pass1, curatedCap, maxPass2Dist, gcols, grows, tightCellBbox,
 		} = scaling();
 		const sourceXY = utils.getXYFromLatitudeLongitude(this.weatherParameters.latitude, this.weatherParameters.longitude, mapOffsetXY.x, mapOffsetXY.y, weatherParameters.state);
 
@@ -146,16 +152,41 @@ class RegionalForecast extends WeatherDisplay {
 		}
 		candidates.sort((a, b) => a._dist - b._dist);
 
-		// cell helpers in lat/lon space
-		const latStep = (minMaxLatLon.maxLat - minMaxLatLon.minLat) / grows;
-		const lonStep = (minMaxLatLon.maxLon - minMaxLatLon.minLon) / gcols;
+		// cellBbox: in portrait mode, build pass-2's cell grid from the actual
+		// candidate extent so cells stay over populated area when the user is
+		// near an ocean or sparsely-populated edge. Other modes use the visible
+		// bbox unchanged.
+		let cellBbox = minMaxLatLon;
+		if (tightCellBbox && candidates.length) {
+			let candMinLat = candidates[0].lat;
+			let candMaxLat = candidates[0].lat;
+			let candMinLon = candidates[0].lon;
+			let candMaxLon = candidates[0].lon;
+			for (const c of candidates) {
+				if (c.lat < candMinLat) candMinLat = c.lat;
+				if (c.lat > candMaxLat) candMaxLat = c.lat;
+				if (c.lon < candMinLon) candMinLon = c.lon;
+				if (c.lon > candMaxLon) candMaxLon = c.lon;
+			}
+			// guard against degenerate extents (all candidates clustered) — fall
+			// back to the visible bbox so latStep/lonStep stay non-zero.
+			if (candMaxLat > candMinLat && candMaxLon > candMinLon) {
+				cellBbox = {
+					minLat: candMinLat, maxLat: candMaxLat, minLon: candMinLon, maxLon: candMaxLon,
+				};
+			}
+		}
+
+		// cell helpers in lat/lon space (built against cellBbox, not minMaxLatLon)
+		const latStep = (cellBbox.maxLat - cellBbox.minLat) / grows;
+		const lonStep = (cellBbox.maxLon - cellBbox.minLon) / gcols;
 		const cellOf = (lat, lon) => [
-			Math.min(gcols - 1, Math.floor((lon - minMaxLatLon.minLon) / lonStep)),
-			Math.min(grows - 1, Math.floor((minMaxLatLon.maxLat - lat) / latStep)),
+			Math.max(0, Math.min(gcols - 1, Math.floor((lon - cellBbox.minLon) / lonStep))),
+			Math.max(0, Math.min(grows - 1, Math.floor((cellBbox.maxLat - lat) / latStep))),
 		];
 		const cellCenter = (cx, cy) => ({
-			lon: minMaxLatLon.minLon + (cx + 0.5) * lonStep,
-			lat: minMaxLatLon.maxLat - (cy + 0.5) * latStep,
+			lon: cellBbox.minLon + (cx + 0.5) * lonStep,
+			lat: cellBbox.maxLat - (cy + 0.5) * latStep,
 		});
 		for (const c of candidates) { c._cell = cellOf(c.lat, c.lon); }
 
