@@ -20,7 +20,7 @@ const { getXYForCity } = await import('../server/scripts/modules/regionalforecas
 const expectedAK = (City, MaxLatitude, MinLongitude) => {
 	let x = (City.lon - MinLongitude) * 37;
 	let y = (MaxLatitude - City.lat) * 70;
-	if (y < 115) y = 115;
+	if (y < 55) y = 55;
 	if (y > 282) y = 282;
 	if (x < 40) x = 40;
 	if (x > 580) x = 580;
@@ -31,7 +31,7 @@ const expectedAK = (City, MaxLatitude, MinLongitude) => {
 const expectedHI = (City, MaxLatitude, MinLongitude) => {
 	let x = (City.lon - MinLongitude) * 57;
 	let y = (MaxLatitude - City.lat) * 70;
-	if (y < 115) y = 115;
+	if (y < 55) y = 55;
 	if (y > 282) y = 282;
 	if (x < 40) x = 40;
 	if (x > 580) x = 580;
@@ -42,7 +42,7 @@ const expectedHI = (City, MaxLatitude, MinLongitude) => {
 const expectedCONUS = (City, MaxLatitude, MinLongitude, maxX = 580, maxY = 282) => {
 	let x = (City.lon - MinLongitude) * 57;
 	let y = (MaxLatitude - City.lat) * 70;
-	if (y < 115) y = 115;
+	if (y < 55) y = 55;
 	if (y > maxY) y = maxY;
 	if (x < 40) x = 40;
 	if (x > maxX) x = maxX;
