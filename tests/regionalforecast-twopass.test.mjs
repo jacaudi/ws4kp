@@ -42,8 +42,8 @@ function selectTwoPass(mode, pool, userLat, userLon, bbox) {
 	const latStep = (minMaxLatLon.maxLat - minMaxLatLon.minLat) / grows;
 	const lonStep = (minMaxLatLon.maxLon - minMaxLatLon.minLon) / gcols;
 	const cellOf = (lat, lon) => [
-		Math.min(gcols - 1, Math.floor((lon - minMaxLatLon.minLon) / lonStep)),
-		Math.min(grows - 1, Math.floor((minMaxLatLon.maxLat - lat) / latStep)),
+		Math.max(0, Math.min(gcols - 1, Math.floor((lon - minMaxLatLon.minLon) / lonStep))),
+		Math.max(0, Math.min(grows - 1, Math.floor((minMaxLatLon.maxLat - lat) / latStep))),
 	];
 	const cellCenter = (cx, cy) => ({
 		lon: minMaxLatLon.minLon + (cx + 0.5) * lonStep,
