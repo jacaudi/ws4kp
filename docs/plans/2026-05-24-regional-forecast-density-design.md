@@ -53,6 +53,16 @@ Meanings:
 - **`maxPass2Dist`** — pass 2 will not fill empty cells whose geometric center is farther than this from the user.
 - **grid** — `gcols × grows` subdivision of the bbox used by pass 2.
 
+### Pixel-asymmetric spacing guard (shared across all modes)
+
+Lat/lon spacing alone does not model the rendered marker footprint. Each marker carries an icon plus a temperature plus a city-name label that extends roughly 80 px to the right of the marker anchor, so two markers whose centers satisfy the degree-spacing rule can still produce visually overlapping labels when their canvas rows are similar. After the four `base`/`bias` tuning passes above, a pixel-level guard was added on top of the degree-spacing check:
+
+- **`PX_MIN_DX = 85`** — minimum horizontal pixel separation.
+- **`PX_MIN_DY = 30`** — minimum vertical pixel separation.
+- **Rule:** every newly-picked candidate must satisfy `|Δx_px| ≥ PX_MIN_DX OR |Δy_px| ≥ PX_MIN_DY` against every already-picked marker, in addition to the degree-spacing requirement. Either-axis separation is sufficient; only both-axes-close pairs are rejected.
+
+The pixel coordinates come from a single `getXYForCity` call tagged onto each candidate during the pre-filter (not recomputed per spacing check). The pixel rule applies in all three passes (1a, 1b, 2) and is not relaxed in pass 2 even though the degree rule is (`× 0.7`). Thresholds are intentionally conservative to start; they can be tightened if overlap still appears.
+
 ### Pre-filter
 
 1. Compute the bbox via existing `getXYFromLatLon` + `getMinMaxLatitudeLongitude` (no change to those functions).

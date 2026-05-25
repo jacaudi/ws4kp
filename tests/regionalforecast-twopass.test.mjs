@@ -9,21 +9,32 @@ import assert from 'node:assert/strict';
 // ---------------------------------------------------------------------------
 
 const USER_EXCLUSION = 0.25;
+const PX_MIN_DX = 85;
+const PX_MIN_DY = 30;
 
 const dist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
+// synthetic linear projection that mirrors the production canvas math
+// (~57 px/° longitude, ~70 px/° latitude). Used so the test mirror can
+// exercise the same pixel-asymmetric spacing guard as the real module.
+const projectXY = (c, bbox) => ({
+	x: (c.lon - bbox.minLon) * 57,
+	y: (bbox.maxLat - c.lat) * 70,
+});
 
 function selectTwoPass(mode, pool, userLat, userLon, bbox) {
 	const { base, bias, cap, pass1, curatedCap, maxPass2Dist, gcols, grows } = mode;
 	const minMaxLatLon = bbox;
 
-	// pre-filter: bbox + user-exclusion + distance tag
+	// pre-filter: bbox + user-exclusion + distance tag + pixel-xy tag
 	const candidates = [];
 	for (const c of pool) {
 		if (!(c.lat > minMaxLatLon.minLat && c.lat < minMaxLatLon.maxLat
 			&& c.lon > minMaxLatLon.minLon && c.lon < minMaxLatLon.maxLon - 1)) continue;
 		const d = dist(c.lon, c.lat, userLon, userLat);
 		if (d < USER_EXCLUSION) continue;
-		candidates.push({ ...c, _dist: d });
+		const xy = c._xy ?? projectXY(c, bbox);
+		candidates.push({ ...c, _dist: d, _xy: xy });
 	}
 	candidates.sort((a, b) => a._dist - b._dist);
 
@@ -42,13 +53,20 @@ function selectTwoPass(mode, pool, userLat, userLon, bbox) {
 
 	const picked = [];
 
+	// combined spacing check: degree-spacing (req) AND pixel-asymmetric separation
+	const spacingOK = (c, req) => picked.every((p) => {
+		if (dist(c.lon, c.lat, p.lon, p.lat) < req) return false;
+		const dx = Math.abs(c._xy.x - p._xy.x);
+		const dy = Math.abs(c._xy.y - p._xy.y);
+		return dx >= PX_MIN_DX || dy >= PX_MIN_DY;
+	});
+
 	// pass 1a — curated
 	for (const c of candidates) {
 		if (picked.length >= curatedCap) break;
 		if (c._src !== 'curated') continue;
 		const req = base * (1 + bias * c._dist);
-		const ok = picked.every((p) => dist(c.lon, c.lat, p.lon, p.lat) >= req);
-		if (ok) picked.push(c);
+		if (spacingOK(c, req)) picked.push(c);
 	}
 
 	// pass 1b — stations
@@ -56,8 +74,7 @@ function selectTwoPass(mode, pool, userLat, userLon, bbox) {
 		if (picked.length >= pass1) break;
 		if (c._src === 'curated') continue;
 		const req = base * (1 + bias * c._dist);
-		const ok = picked.every((p) => dist(c.lon, c.lat, p.lon, p.lat) >= req);
-		if (ok) picked.push(c);
+		if (spacingOK(c, req)) picked.push(c);
 	}
 
 	// pass 2 — gap fill
@@ -85,8 +102,9 @@ function selectTwoPass(mode, pool, userLat, userLon, bbox) {
 			.map((c) => ({ c, _distToCenter: dist(c.lon, c.lat, cc.lon, cc.lat) }))
 			.sort((a, b) => a._distToCenter - b._distToCenter);
 		for (const { c } of inCell) {
+			// degree-spacing is relaxed by 0.7 in pass 2; the pixel rule is not relaxed
 			const req = base * (1 + bias * c._dist) * 0.7;
-			if (picked.every((p) => dist(c.lon, c.lat, p.lon, p.lat) >= req)) {
+			if (spacingOK(c, req)) {
 				picked.push(c);
 				break;
 			}
