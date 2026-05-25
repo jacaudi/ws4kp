@@ -9,8 +9,8 @@ import assert from 'node:assert/strict';
 // ---------------------------------------------------------------------------
 
 const USER_EXCLUSION = 0.25;
-const PX_MIN_DX = 85;
-const PX_MIN_DY = 30;
+const PX_MIN_DX = 110;
+const PX_MIN_DY = 40;
 
 const dist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 

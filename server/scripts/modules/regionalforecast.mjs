@@ -91,8 +91,8 @@ const USER_EXCLUSION = 0.25; // ° — skip candidates co-located with the user
 // enough apart in lat/lon to pass the degree rule yet still collide visually
 // when their pixel rows are similar. Require at least one of:
 //   |Δx_px| ≥ PX_MIN_DX   OR   |Δy_px| ≥ PX_MIN_DY
-const PX_MIN_DX = 85;
-const PX_MIN_DY = 30;
+const PX_MIN_DX = 110;
+const PX_MIN_DY = 40;
 
 class RegionalForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
