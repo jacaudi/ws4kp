@@ -37,11 +37,11 @@ A two-pass selection per display mode, replacing the current array-order single-
 
 | Mode | `base`° | `bias` | `cap` | `pass1` | `curatedCap` | `maxPass2Dist`° | grid |
 |---|---|---|---|---|---|---|---|
-| Standard 4:3 | 1.35 | 0.35 | 10 | 7 | 3 | 6.5 | 3×3 |
-| Widescreen Enhanced 16:9 | 1.10 | 0.35 | 14 | 10 | 4 | 9.0 | 4×3 |
-| Portrait Enhanced | 1.00 | 0.35 | 20 | 12 | 6 | 12.0 | 3×5 |
+| Standard 4:3 | 1.25 | 0.35 | 10 | 7 | 3 | 6.5 | 3×3 |
+| Widescreen Enhanced 16:9 | 1.00 | 0.35 | 14 | 10 | 4 | 9.0 | 4×3 |
+| Portrait Enhanced | 0.90 | 0.35 | 20 | 12 | 6 | 12.0 | 3×5 |
 
-The `base` values above were increased from the original design values (0.70 / 0.55 / 0.50) during implementation after observing marker overlap in the running application. Initial validation used a browser-based Leaflet preview whose marker glyphs are noticeably smaller than the icon + temperature + city-name labels rendered on the ws4kp canvas; at the canvas's pixel scale (~57 px/° longitude, ~70 px/° latitude), the original spacing left insufficient room between adjacent markers in the near-user cluster. A second visual pass after the first tuning commit revealed residual label overlap in the near-user cluster and empty space at the bbox edges in enhanced modes, prompting a further nudge of `base` (1.20/0.95/0.85 → 1.35/1.10/1.00) and an increase of `maxPass2Dist` (5.0/6.0/8.0 → 6.5/9.0/12.0°) so that pass-2 gap-fill reaches cells near the bbox perimeter. All other constants (`bias`, `cap`, `pass1`, `curatedCap`, grid) are unchanged from the original design.
+The `base` values above were increased from the original design values (0.70 / 0.55 / 0.50) during implementation after observing marker overlap in the running application. Initial validation used a browser-based Leaflet preview whose marker glyphs are noticeably smaller than the icon + temperature + city-name labels rendered on the ws4kp canvas; at the canvas's pixel scale (~57 px/° longitude, ~70 px/° latitude), the original spacing left insufficient room between adjacent markers in the near-user cluster. A second visual pass after the first tuning commit revealed residual label overlap in the near-user cluster and empty space at the bbox edges in enhanced modes, prompting a further nudge of `base` (1.20/0.95/0.85 → 1.35/1.10/1.00) and an increase of `maxPass2Dist` (5.0/6.0/8.0 → 6.5/9.0/12.0°) so that pass-2 gap-fill reaches cells near the bbox perimeter. A third pass pulled `base` back ~10% (1.35/1.10/1.00 → 1.25/1.00/0.90) after the prior bump left enhanced modes with too few picks against their per-mode caps. All other constants (`bias`, `cap`, `pass1`, `curatedCap`, grid) are unchanged from the original design.
 
 Meanings:
 
