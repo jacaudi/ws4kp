@@ -86,6 +86,14 @@ const scaling = () => {
 
 const USER_EXCLUSION = 0.25; // ° — skip candidates co-located with the user
 
+// pixel-asymmetric spacing guard (applied in addition to degree-spacing).
+// Labels render ~80 px to the right of each marker, so two markers can be far
+// enough apart in lat/lon to pass the degree rule yet still collide visually
+// when their pixel rows are similar. Require at least one of:
+//   |Δx_px| ≥ PX_MIN_DX   OR   |Δy_px| ≥ PX_MIN_DY
+const PX_MIN_DX = 85;
+const PX_MIN_DY = 30;
+
 class RegionalForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
 		super(navId, elemId, 'Regional Forecast', true);
@@ -126,14 +134,15 @@ class RegionalForecast extends WeatherDisplay {
 		const stations = Object.values(StationInfo).map((s) => ({ ...s, _src: 'station' }));
 		const pool = [...curated, ...stations];
 
-		// pre-filter: bbox + user-exclusion + distance tag + cell tag + sort by distance
+		// pre-filter: bbox + user-exclusion + distance tag + pixel-xy tag + cell tag + sort by distance
 		const candidates = [];
 		for (const c of pool) {
 			if (!(c.lat > minMaxLatLon.minLat && c.lat < minMaxLatLon.maxLat
 				&& c.lon > minMaxLatLon.minLon && c.lon < minMaxLatLon.maxLon - 1)) continue;
 			const d = calcDistance(c.lon, c.lat, userLon, userLat);
 			if (d < USER_EXCLUSION) continue;
-			candidates.push({ ...c, _dist: d });
+			const xy = utils.getXYForCity(c, minMaxLatLon.maxLat, minMaxLatLon.minLon, weatherParameters.state, available.x - 60, available.y);
+			candidates.push({ ...c, _dist: d, _xy: xy });
 		}
 		candidates.sort((a, b) => a._dist - b._dist);
 
@@ -152,13 +161,22 @@ class RegionalForecast extends WeatherDisplay {
 
 		const regionalCities = [];
 
+		// combined spacing check: degree-spacing (req) AND pixel-asymmetric separation
+		// (labels extend ~80 px right of marker, so require either-axis pixel separation
+		// in addition to the lat/lon rule).
+		const spacingOK = (c, req) => regionalCities.every((p) => {
+			if (calcDistance(c.lon, c.lat, p.lon, p.lat) < req) return false;
+			const dx = Math.abs(c._xy.x - p._xy.x);
+			const dy = Math.abs(c._xy.y - p._xy.y);
+			return dx >= PX_MIN_DX || dy >= PX_MIN_DY;
+		});
+
 		// pass 1a — curated cities first, closest-first, spacing-aware
 		for (const c of candidates) {
 			if (regionalCities.length >= curatedCap) break;
 			if (c._src !== 'curated') continue;
 			const req = base * (1 + bias * c._dist);
-			const ok = regionalCities.every((p) => calcDistance(c.lon, c.lat, p.lon, p.lat) >= req);
-			if (ok) regionalCities.push(c);
+			if (spacingOK(c, req)) regionalCities.push(c);
 		}
 
 		// pass 1b — stations fill remaining proximity slots
@@ -166,8 +184,7 @@ class RegionalForecast extends WeatherDisplay {
 			if (regionalCities.length >= pass1) break;
 			if (c._src === 'curated') continue;
 			const req = base * (1 + bias * c._dist);
-			const ok = regionalCities.every((p) => calcDistance(c.lon, c.lat, p.lon, p.lat) >= req);
-			if (ok) regionalCities.push(c);
+			if (spacingOK(c, req)) regionalCities.push(c);
 		}
 
 		// pass 2 — gap fill: visit empty cells near the user, pick closest candidate to cell center
@@ -195,8 +212,9 @@ class RegionalForecast extends WeatherDisplay {
 				.map((c) => ({ c, _distToCenter: calcDistance(c.lon, c.lat, cc.lon, cc.lat) }))
 				.sort((a, b) => a._distToCenter - b._distToCenter);
 			for (const { c } of inCell) {
+				// degree-spacing is relaxed by 0.7 in pass 2; the pixel rule is not relaxed
 				const req = base * (1 + bias * c._dist) * 0.7;
-				if (regionalCities.every((p) => calcDistance(c.lon, c.lat, p.lon, p.lat) >= req)) {
+				if (spacingOK(c, req)) {
 					regionalCities.push(c);
 					break;
 				}
