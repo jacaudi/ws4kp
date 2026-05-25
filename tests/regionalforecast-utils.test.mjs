@@ -49,19 +49,19 @@ const expectedCONUS = (City, MaxLatitude, MinLongitude, maxX = 580, maxY = 282) 
 	return { x, y };
 };
 
-// Nome, AK — coordinates chosen so x does NOT clamp to 580, exposing the *37 vs *57 difference.
+// AK fixture — coordinates chosen so x does NOT clamp to 580, exposing the *37 vs *57 difference.
 // lon - minLon ≈ 2.6 → x_ak ≈ 96, x_conus ≈ 148 (both below 580, so clamp doesn't hide the bug)
-const akCity = { lat: 64.5, lon: -165.4 }; // Nome, AK
+const akCity = { lat: 64.5, lon: -165.4 };
 const akMaxLat = 71.5;
 const akMinLon = -168.0;
 
-// Honolulu, HI — HI variant uses same *57 multiplier as CONUS, so the test verifies
+// HI fixture — HI variant uses same *57 multiplier as CONUS, so the test verifies
 // control flow (function returns rather than falling through) rather than numeric difference.
 const hiCity = { lat: 21.3, lon: -157.8 };
 const hiMaxLat = 22.5;
 const hiMinLon = -160.0;
 
-// Denver area — CONUS city
+// CONUS fixture
 const conusCity = { lat: 39.7, lon: -104.9 };
 const conusMaxLat = 50.0;
 const conusMinLon = -125.0;
@@ -74,7 +74,7 @@ test('getXYForCity returns AK variant result when state === "AK"', () => {
 
 test('AK result uses * 37 multiplier (not CONUS * 57) — bug guard', () => {
 	// AK uses x * 37; CONUS uses x * 57.
-	// With Nome coordinates (lon - minLon ≈ 2.6), x_ak ≈ 96 and x_conus ≈ 148 (neither clamped).
+	// With the AK fixture (lon - minLon ≈ 2.6), x_ak ≈ 96 and x_conus ≈ 148 (neither clamped).
 	// If getXYForCity falls through to CONUS math (the bug), it returns the *57 value instead.
 	const akResult = getXYForCity(akCity, akMaxLat, akMinLon, 'AK');
 	const conusResult = expectedCONUS(akCity, akMaxLat, akMinLon);
