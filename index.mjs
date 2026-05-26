@@ -134,6 +134,15 @@ if (!process.env?.STATIC) {
 
 	// Playlist route is available in server mode (not in static mode)
 	app.get('/playlist.json', playlist);
+
+	// /music serves user-supplied tracks from MUSIC_DIR (or ./server/music by default),
+	// with a fall-through to the bundled defaults at ./server/music so default/*.mp3
+	// still resolves when MUSIC_DIR points elsewhere
+	const musicDir = process.env.MUSIC_DIR || './server/music';
+	app.use('/music', express.static(musicDir, staticOptions));
+	if (process.env.MUSIC_DIR) {
+		app.use('/music', express.static('./server/music', staticOptions));
+	}
 }
 
 // Data endpoints - serve JSON data with long-term caching
@@ -158,7 +167,6 @@ if (process.env?.DIST === '1') {
 	// 'npm run build' and then 'DIST=1 npm start'
 	app.use('/scripts', express.static('./server/scripts', staticOptions));
 	app.use('/geoip', geoip);
-	app.use('/music', express.static('./server/music', staticOptions));
 
 	// render the EJS template in production mode (serve compressed files from dist directory)
 	app.get('/', (req, res) => { renderIndex(req, res, true); });

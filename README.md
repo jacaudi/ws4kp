@@ -281,15 +281,25 @@ WeatherStar 4000+ supports background music during forecast playback. The music 
 
 #### Express server modes (`npm start`, `DIST=1 npm start`, or `Dockerfile.server`)
 
-When running with Node.js, the server generates a `playlist.json` file by scanning the `./server/music` directory for `.mp3` files. If no files are found in `./server/music`, it falls back to scanning `./server/music/default/`. The playlist is served dynamically at the `/playlist.json` endpoint.
+When running with Node.js, the server generates a `playlist.json` file by scanning the music directory for `.mp3` files. The directory defaults to `./server/music` and can be overridden with the `MUSIC_DIR` environment variable. If no files are found in the active music directory, it falls back to scanning the bundled `./server/music/default/`. The playlist is served dynamically at the `/playlist.json` endpoint, so changes on disk are picked up on the next request — no rebuild or restart required.
 
-**Adding your own music:** Place `.mp3` files in `./server/music/`
+**Adding your own music:** Place `.mp3` files in `./server/music/` (default) or in the directory pointed to by `MUSIC_DIR`.
 
-**Docker server example:**
+**Docker server example (default mount path):**
 ```bash
 docker build -f Dockerfile.server -t ws4kp-server .
 docker run -p 8080:8080 -v /path/to/local/music:/app/server/music ws4kp-server
 ```
+
+**Docker server example (custom mount path via `MUSIC_DIR`):**
+```bash
+docker run -p 8080:8080 \
+  -e MUSIC_DIR=/music \
+  -v /path/to/local/music:/music \
+  ws4kp-server
+```
+
+Setting `MUSIC_DIR` lets you mount your music anywhere in the container — no need to know the internal `/app/server/music` path. If your `MUSIC_DIR` is empty or only contains non-`.mp3` files, the playlist falls back to the four bundled tracks at `./server/music/default/`.
 
 #### Static hosting modes (default `Dockerfile`, nginx, Apache, etc.)
 
