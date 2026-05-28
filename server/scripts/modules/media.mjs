@@ -1,5 +1,6 @@
 import { text } from './utils/fetch.mjs';
 import Setting from './utils/setting.mjs';
+import { registerHiddenSetting } from './share.mjs';
 
 let playlist;
 let currentTrack = 0;
@@ -244,6 +245,8 @@ const mediaVolume = new Setting('mediaVolume', {
 	changeAction: setVolume,
 	visible: false,
 });
+
+registerHiddenSetting('mediaVolume', mediaVolume);
 
 const initializePlayer = () => {
 	// basic sanity checks
