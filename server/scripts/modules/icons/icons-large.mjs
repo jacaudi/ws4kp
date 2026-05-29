@@ -13,7 +13,7 @@ const largeIcon = (link, _isNightTime) => {
 	} catch (error) {
 		console.warn(`largeIcon: ${error.message}`);
 		// Return a fallback icon to prevent downstream errors
-		return addPath(`No-Data-Large.gif?${conditionIcon}${isNightTime ? '-n' : ''}`);
+		return addPath(`No-Data.gif?${conditionIcon}${isNightTime ? '-n' : ''}`);
 	}
 
 	// find the icon
@@ -173,7 +173,7 @@ const largeIcon = (link, _isNightTime) => {
 		default: {
 			console.warn(`Unknown weather condition '${conditionIcon}' from ${link}; using fallback icon`);
 			// Return a reasonable fallback instead of false to prevent downstream errors
-			return addPath(`No-Data-Large.gif?${conditionIcon}${isNightTime ? '-n' : ''}`);
+			return addPath(`No-Data.gif?${conditionIcon}${isNightTime ? '-n' : ''}`);
 		}
 	}
 };
