@@ -105,6 +105,14 @@ test('parseAirQuality returns null when us_aqi is null', () => {
 	assert.equal(parseAirQuality({ current: { us_aqi: null } }), null);
 });
 
+test('parseAirQuality returns null when us_aqi is not a number', () => {
+	assert.equal(parseAirQuality({ current: { us_aqi: 'not a number' } }), null);
+});
+
+test('parseAirQuality returns null when us_aqi is NaN', () => {
+	assert.equal(parseAirQuality({ current: { us_aqi: NaN } }), null);
+});
+
 test('aqiBandCenterX maps each category to its band center', () => {
 	assert.equal(aqiBandCenterX(45), 355.5); // GOOD
 	assert.equal(aqiBandCenterX(142), 426.5); // UNHEALTHY

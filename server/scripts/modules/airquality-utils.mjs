@@ -47,7 +47,7 @@ export const dominantPollutant = (current) => {
 // Normalize an Open-Meteo response into the shape drawCanvas consumes, or null to self-disable.
 export const parseAirQuality = (raw) => {
 	const current = raw?.current;
-	if (!current || current.us_aqi == null) return null;
+	if (!current || current.us_aqi == null || !Number.isFinite(current.us_aqi)) return null;
 	const aqi = Math.round(current.us_aqi);
 	return {
 		aqi,
