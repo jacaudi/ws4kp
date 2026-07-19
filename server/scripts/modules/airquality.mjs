@@ -4,6 +4,7 @@
 import STATUS from './status.mjs';
 import { safeJson } from './utils/fetch.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
+import { registerDisplay } from './navigation.mjs';
 import { parseAirQuality, aqiBandCenterX } from './airquality-utils.mjs';
 
 // Open-Meteo request — composite us_aqi plus per-pollutant sub-indices (for dominant) and raw concentrations.
@@ -204,5 +205,5 @@ class AirQuality extends WeatherDisplay {
 
 export default AirQuality;
 
-// NOTE: registration is intentionally NOT here — the registerDisplay import and the
-// registerDisplay(new AirQuality(12, 'air-quality')) call are added in Task 6.
+// register display — navId 12 (append after radar=11); elemId 'air-quality'
+registerDisplay(new AirQuality(12, 'air-quality'));
