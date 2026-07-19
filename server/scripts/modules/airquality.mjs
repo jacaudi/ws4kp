@@ -124,7 +124,10 @@ class AirQuality extends WeatherDisplay {
 			// (safeJson retries only once) should not blank a display that was rendering
 			// fine. Keep the last-good data, rotation slot, and status in place — mirrors
 			// spc-outlook.mjs, which likewise leaves totalScreens/status untouched on a
-			// refresh failure once data has loaded successfully.
+			// refresh failure once data has loaded successfully. super.getData() set
+			// this.status = STATUS.loading at the top of this call, so restore it to
+			// loaded here or the display stays wrongly excluded from rotation.
+			this.setStatus(STATUS.loaded);
 			return;
 		}
 
