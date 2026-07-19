@@ -109,11 +109,22 @@ class AirQuality extends WeatherDisplay {
 
 		const parsed = parseAirQuality(raw);
 
-		// graceful self-disable when AQ is unavailable for this location (coverage gap / upstream failure)
 		if (!parsed) {
-			this.timing.totalScreens = 0;
-			this.calcNavTiming();
-			this.setStatus(STATUS.noData);
+			// Initial load / location change: the base class already cleared this.data (see
+			// weatherdisplay.mjs getData — "refresh doesn't delete existing data, and is reused
+			// if the silent refresh fails"), so there is no prior data to fall back on here.
+			// Self-disable as before (coverage gap / upstream failure with nothing to show).
+			if (!this.data) {
+				this.timing.totalScreens = 0;
+				this.calcNavTiming();
+				this.setStatus(STATUS.noData);
+				return;
+			}
+			// Background refresh with existing good data: a transient upstream failure
+			// (safeJson retries only once) should not blank a display that was rendering
+			// fine. Keep the last-good data, rotation slot, and status in place — mirrors
+			// spc-outlook.mjs, which likewise leaves totalScreens/status untouched on a
+			// refresh failure once data has loaded successfully.
 			return;
 		}
 
