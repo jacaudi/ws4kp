@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { aqiCategory } from '../../server/scripts/modules/airquality-utils.mjs';
+import {
+	aqiCategory, dominantPollutant, parseAirQuality, aqiBandCenterX,
+} from '../../server/scripts/modules/airquality-utils.mjs';
 
 test('AQI 0 is GOOD', () => {
 	assert.equal(aqiCategory(0).category, 'GOOD');
@@ -53,4 +55,67 @@ test('AQI 999 clamps to HAZARDOUS', () => {
 
 test('negative AQI maps to GOOD', () => {
 	assert.equal(aqiCategory(-5).category, 'GOOD');
+});
+
+test('dominantPollutant picks the highest us_aqi_* sub-index', () => {
+	const current = {
+		us_aqi_pm2_5: 63, us_aqi_pm10: 40, us_aqi_ozone: 55, us_aqi_nitrogen_dioxide: 12,
+	};
+	assert.equal(dominantPollutant(current), 'PM2.5');
+});
+
+test('dominantPollutant returns O₃ when ozone leads', () => {
+	const current = {
+		us_aqi_pm2_5: 30, us_aqi_pm10: 20, us_aqi_ozone: 88, us_aqi_nitrogen_dioxide: 12,
+	};
+	assert.equal(dominantPollutant(current), 'O₃');
+});
+
+test('dominantPollutant ignores missing/null fields', () => {
+	const current = { us_aqi_pm2_5: 10, us_aqi_ozone: null };
+	assert.equal(dominantPollutant(current), 'PM2.5');
+});
+
+test('dominantPollutant returns null when no sub-indices are numeric', () => {
+	assert.equal(dominantPollutant({ us_aqi: 42 }), null);
+	assert.equal(dominantPollutant({}), null);
+});
+
+test('parseAirQuality normalizes a full response', () => {
+	const raw = {
+		current: {
+			us_aqi: 63.4,
+			us_aqi_pm2_5: 63, us_aqi_pm10: 40, us_aqi_ozone: 55, us_aqi_nitrogen_dioxide: 12,
+			pm2_5: 17.2, pm10: 22.0, ozone: 88.0, nitrogen_dioxide: 9.4,
+		},
+	};
+	const result = parseAirQuality(raw);
+	assert.equal(result.aqi, 63); // rounded
+	assert.equal(result.category.category, 'UNHEALTHY');
+	assert.equal(result.dominant, 'PM2.5');
+	assert.equal(result.current.pm2_5, 17.2);
+});
+
+test('parseAirQuality returns null for missing current block', () => {
+	assert.equal(parseAirQuality({}), null);
+	assert.equal(parseAirQuality(null), null);
+});
+
+test('parseAirQuality returns null when us_aqi is null', () => {
+	assert.equal(parseAirQuality({ current: { us_aqi: null } }), null);
+});
+
+test('aqiBandCenterX maps each category to its band center', () => {
+	assert.equal(aqiBandCenterX(45), 355.5); // GOOD
+	assert.equal(aqiBandCenterX(142), 426.5); // UNHEALTHY
+	assert.equal(aqiBandCenterX(250), 497.5); // VERY UNHEALTHY
+	assert.equal(aqiBandCenterX(400), 568.5); // HAZARDOUS
+});
+
+test('aqiBandCenterX snaps to the band center regardless of value within the band', () => {
+	// both 10 and 45 are GOOD -> same center; the bar tip does not slide within the band
+	assert.equal(aqiBandCenterX(10), 355.5);
+	assert.equal(aqiBandCenterX(45), 355.5);
+	// above 500 clamps to HAZARDOUS center
+	assert.equal(aqiBandCenterX(999), 568.5);
 });
