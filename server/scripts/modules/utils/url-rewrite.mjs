@@ -34,6 +34,10 @@ const rewriteUrl = (_url) => {
 		url.protocol = window.location.protocol;
 		url.host = window.location.host;
 		url.pathname = `/spc${url.pathname}`;
+	} else if (url.origin === 'https://air-quality-api.open-meteo.com') {
+		url.protocol = window.location.protocol;
+		url.host = window.location.host;
+		url.pathname = `/airquality${url.pathname}`;
 	} else if (url.origin === 'https://radar.weather.gov') {
 		url.protocol = window.location.protocol;
 		url.host = window.location.host;
