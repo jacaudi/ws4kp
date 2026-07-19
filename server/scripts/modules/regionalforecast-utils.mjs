@@ -18,6 +18,7 @@ const buildForecast = (forecast, city, cityXY) => {
 		icon: forecast.icon,
 		x: cityXY.x,
 		y: cityXY.y,
+		dist: cityXY.dist,
 		time: forecast.startTime,
 	};
 };

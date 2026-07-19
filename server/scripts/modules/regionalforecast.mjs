@@ -2,7 +2,14 @@
 // type 0 = observations, 1 = first forecast, 2 = second forecast
 
 import STATUS from './status.mjs';
-import { distance as calcDistance } from './utils/calc.mjs';
+import { geoDistance } from './utils/calc.mjs';
+import {
+	filterJunkStations,
+	inVisibleWindow,
+	selectRegionalCities,
+	regionalSelectionConfig,
+	resolveLabelCollisions,
+} from './regionalforecast-select.mjs';
 import { safeJson, safePromiseAll } from './utils/fetch.mjs';
 import { temperature as temperatureUnit } from './utils/units.mjs';
 import { getSmallIcon } from './icons.mjs';
@@ -78,31 +85,21 @@ class RegionalForecast extends WeatherDisplay {
 		// get latitude and longitude limits
 		const minMaxLatLon = utils.getMinMaxLatitudeLongitude(sourceXY.x, sourceXY.y, mapOffsetXY.x, mapOffsetXY.y, this.weatherParameters.state);
 
-		// get a target distance
-		let targetDistance = 2.4;
-		if (this.weatherParameters.state === 'HI') targetDistance = 1;
+		// window-scaled selection parameters (minSpacing is the density control)
+		const { count, minSpacing } = regionalSelectionConfig(
+			!!(settings.enhanced?.value && settings.wide?.value),
+			!!(settings.enhanced?.value && settings.portrait?.value),
+		);
+		const user = { lat: this.weatherParameters.latitude, lon: this.weatherParameters.longitude };
 
-		// make station info into an array
-		const stationInfoArray = Object.values(StationInfo).map((station) => ({ ...station, targetDistance }));
-		// combine regional cities with station info for additional stations
-		// stations are intentionally after cities to allow cities priority when drawing the map
-		const combinedCities = [...RegionalCities, ...stationInfoArray];
+		// candidate pool: baked regional cities first, then stations; drop junk (priority >= 50)
+		const cities = RegionalCities.map((c) => ({ ...c, baked: true, priority: 0 }));
+		const stations = Object.values(StationInfo).map((s) => ({ ...s, baked: false }));
+		const candidates = filterJunkStations([...cities, ...stations])
+			.filter((c) => inVisibleWindow(c, minMaxLatLon));
 
-		// Determine which cities are within the max/min latitude/longitude.
-		const regionalCities = [];
-		combinedCities.forEach((city) => {
-			if (city.lat > minMaxLatLon.minLat && city.lat < minMaxLatLon.maxLat
-				&& city.lon > minMaxLatLon.minLon && city.lon < minMaxLatLon.maxLon - 1) {
-				// default to 1 for cities loaded from RegionalCities, use value calculate above for remaining stations
-				const targetDist = city.targetDistance || 1;
-				// Only add the city as long as it isn't within set distance degree of any other city already in the array.
-				const okToAddCity = regionalCities.reduce((acc, testCity) => {
-					const distance = calcDistance(city.lon, city.lat, testCity.lon, testCity.lat);
-					return acc && distance >= targetDist;
-				}, true);
-				if (okToAddCity) regionalCities.push(city);
-			}
-		});
+		// rank nearest-to-user, dedup by minSpacing, cap at count
+		const regionalCities = selectRegionalCities(user, candidates, { count, minSpacing });
 
 		// get a unit converter
 		const temperatureConverter = temperatureUnit();
@@ -129,8 +126,9 @@ class RegionalForecast extends WeatherDisplay {
 					return false;
 				}
 
-				// get XY on map for city
+				// get XY on map for city (scale wired in Task 3)
 				const cityXY = utils.getXYForCity(city, minMaxLatLon.maxLat, minMaxLatLon.minLon, this.weatherParameters.state, scale, available.x - 60, available.y);
+				cityXY.dist = geoDistance(user.lon, user.lat, city.lon, city.lat);
 
 				// wait for the regional observation if it's not done yet
 				const observation = await observationPromise;
@@ -145,6 +143,7 @@ class RegionalForecast extends WeatherDisplay {
 					icon: observation.icon,
 					x: cityXY.x,
 					y: cityXY.y,
+					dist: cityXY.dist,
 				};
 
 				// preload the icon
@@ -235,6 +234,7 @@ class RegionalForecast extends WeatherDisplay {
 			const elem = this.fillTemplate('location', fill);
 			elem.style.left = `${x}px`;
 			elem.style.top = `${y}px`;
+			elem.dataset.dist = period.dist;
 
 			return elem;
 		});
@@ -243,7 +243,41 @@ class RegionalForecast extends WeatherDisplay {
 		locationContainer.innerHTML = '';
 		locationContainer.append(...cities);
 
+		// drop labels whose real rendered box overlaps a nearer kept label
+		this.declutterLabels(locationContainer, cities);
+
 		this.finishDraw();
+	}
+
+	// eslint-disable-next-line class-methods-use-this -- pure DOM-measurement helper, no instance state needed
+	declutterLabels(container, elems) {
+		const containerRect = container.getBoundingClientRect();
+		const items = elems.map((el) => {
+			let left = Infinity;
+			let top = Infinity;
+			let right = -Infinity;
+			let bottom = -Infinity;
+			Array.from(el.children).forEach((child) => {
+				const r = child.getBoundingClientRect();
+				if (!r.width) return;
+				left = Math.min(left, r.left);
+				top = Math.min(top, r.top);
+				right = Math.max(right, r.right);
+				bottom = Math.max(bottom, r.bottom);
+			});
+			return {
+				el,
+				dist: Number(el.dataset.dist),
+				rect: {
+					left: left - containerRect.left,
+					top: top - containerRect.top,
+					right: right - containerRect.left,
+					bottom: bottom - containerRect.top,
+				},
+			};
+		});
+		const kept = new Set(resolveLabelCollisions(items, 2).map((i) => i.el));
+		elems.forEach((el) => { if (!kept.has(el)) el.remove(); });
 	}
 }
 
