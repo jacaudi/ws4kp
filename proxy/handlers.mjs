@@ -32,7 +32,7 @@ export const outlookProxy = async (req, res) => {
 export const airQualityProxy = async (req, res) => {
 	await cache.handleRequest(req, res, 'https://air-quality-api.open-meteo.com', {
 		serviceName: 'Open-Meteo Air Quality',
-		skipParams: ['u'], // unit setting doesn't fragment the cache
+		skipParams: [], // no params to skip: the display's URL never emits a 'u' param
 	});
 };
 
