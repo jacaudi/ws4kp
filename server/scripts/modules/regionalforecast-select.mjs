@@ -69,6 +69,25 @@ const regionalSelectionConfig = (wide, portrait) => {
 	return { count: 16, minSpacing: 1.0 };
 };
 
+// rectangle overlap with a small pad so a bare kiss is tolerated (only real overlaps drop)
+const rectsOverlap = (a, b, pad) => a.left < b.right - pad
+	&& a.right > b.left + pad
+	&& a.top < b.bottom - pad
+	&& a.bottom > b.top + pad;
+
+// Process nearest-to-user first; drop any later label overlapping a kept one.
+// Nearest-first guarantees the local/central cluster is never gutted.
+const resolveLabelCollisions = (items, pad = 2) => {
+	const ranked = [...items].sort((a, b) => a.dist - b.dist);
+	const kept = [];
+	for (let i = 0; i < ranked.length; i += 1) {
+		const item = ranked[i];
+		const collides = kept.some((k) => rectsOverlap(item.rect, k.rect, pad));
+		if (!collides) kept.push(item);
+	}
+	return kept;
+};
+
 export {
 	projectionPxPerDeg,
 	getXYForCity,
@@ -76,4 +95,5 @@ export {
 	inVisibleWindow,
 	selectRegionalCities,
 	regionalSelectionConfig,
+	resolveLabelCollisions,
 };
