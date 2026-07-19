@@ -6,6 +6,8 @@ import augmentObservationWithMetar from './utils/metar.mjs';
 import { debugFlag } from './utils/debug.mjs';
 import { enhanceObservationWithMapClick } from './utils/mapclick.mjs';
 
+export { getXYForCity } from './regionalforecast-select.mjs';
+
 const buildForecast = (forecast, city, cityXY) => {
 	// get a unit converter
 	const temperatureConverter = temperatureUnit('us');
@@ -209,46 +211,6 @@ const getMinMaxLatitudeLongitudeHI = (X, Y, OffsetX, OffsetY) => {
 	};
 };
 
-const getXYForCity = (City, MaxLatitude, MinLongitude, state, maxX = 580, maxY = 282) => {
-	if (state === 'AK') getXYForCityAK(City, MaxLatitude, MinLongitude);
-	if (state === 'HI') getXYForCityHI(City, MaxLatitude, MinLongitude);
-	let x = (City.lon - MinLongitude) * 57;
-	let y = (MaxLatitude - City.lat) * 70;
-
-	if (y < 30) y = 30;
-	if (y > maxY) y = maxY;
-
-	if (x < 40) x = 40;
-	if (x > maxX) x = maxX;
-
-	return { x, y };
-};
-
-const getXYForCityAK = (City, MaxLatitude, MinLongitude) => {
-	let x = (City.lon - MinLongitude) * 37;
-	let y = (MaxLatitude - City.lat) * 70;
-
-	if (y < 30) y = 30;
-	if (y > 282) y = 282;
-
-	if (x < 40) x = 40;
-	if (x > 580) x = 580;
-	return { x, y };
-};
-
-const getXYForCityHI = (City, MaxLatitude, MinLongitude) => {
-	let x = (City.lon - MinLongitude) * 57;
-	let y = (MaxLatitude - City.lat) * 70;
-
-	if (y < 30) y = 30;
-	if (y > 282) y = 282;
-
-	if (x < 40) x = 40;
-	if (x > 580) x = 580;
-
-	return { x, y };
-};
-
 // to fit on the map, remove anything after punctuation and then limit to 15 characters
 const formatCity = (city) => city.match(/[^,/;\\-]*/)[0].substr(0, 12);
 
@@ -257,6 +219,5 @@ export {
 	getRegionalObservation,
 	getXYFromLatitudeLongitude,
 	getMinMaxLatitudeLongitude,
-	getXYForCity,
 	formatCity,
 };
