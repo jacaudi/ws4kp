@@ -72,6 +72,7 @@ class RegionalForecast extends WeatherDisplay {
 
 		// get user's location in x/y
 		const { available, mapOffsetXY } = scaling();
+		const scale = available.x / (mapOffsetXY.x * 2);
 		const sourceXY = utils.getXYFromLatitudeLongitude(this.weatherParameters.latitude, this.weatherParameters.longitude, mapOffsetXY.x, mapOffsetXY.y, weatherParameters.state);
 
 		// get latitude and longitude limits
@@ -129,7 +130,7 @@ class RegionalForecast extends WeatherDisplay {
 				}
 
 				// get XY on map for city
-				const cityXY = utils.getXYForCity(city, minMaxLatLon.maxLat, minMaxLatLon.minLon, this.weatherParameters.state, available.x - 60, available.y);
+				const cityXY = utils.getXYForCity(city, minMaxLatLon.maxLat, minMaxLatLon.minLon, this.weatherParameters.state, scale, available.x - 60, available.y);
 
 				// wait for the regional observation if it's not done yet
 				const observation = await observationPromise;
