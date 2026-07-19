@@ -466,7 +466,7 @@ function extractBaseCityName(originalCityName, stationId = '') {
 			return processTextFragment(beforeDash);
 		}
 		// For highway patterns, return what's after the dash
-		return afterDash.replace(/\s+(?:${facilityTypesPattern}).*$/i, '').trim();
+		return afterDash.replace(new RegExp(`\\s+(?:${facilityTypesPattern}).*$`, 'i'), '').trim();
 	}
 
 	// Handle hyphenated county patterns (like "Aspen-Pitkin County", "Lancaster County-Facility")
