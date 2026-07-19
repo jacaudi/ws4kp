@@ -24,7 +24,13 @@ const getXYForCity = (city, maxLat, minLon, state, scale, maxX = 580, maxY = 282
 	return { x, y };
 };
 
+// Junk filter: keep baked cities always; drop stations with priority >= 50
+// (50 = weather/monitoring station, 99 = unknown/non-town). Missing priority = junk.
+const filterJunkStations = (candidates) => candidates
+	.filter((c) => c.baked || (c.priority ?? 99) < 50);
+
 export {
 	projectionPxPerDeg,
 	getXYForCity,
+	filterJunkStations,
 };
