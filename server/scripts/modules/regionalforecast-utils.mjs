@@ -40,6 +40,13 @@ const getRegionalObservation = async (point, city) => {
 			if (station.properties.stationIdentifier.length === 4) return station.properties;
 			return false;
 		});
+		// some grids have no 4-letter station; bail out gracefully instead of throwing
+		if (!station4Letter) {
+			if (debugFlag('verbose-failures')) {
+				console.warn(`No 4-letter observation station for ${city.city}`);
+			}
+			return false;
+		}
 		const station = station4Letter.id;
 		const stationId = station4Letter.properties.stationIdentifier;
 		// get the observation data using centralized safe handling
