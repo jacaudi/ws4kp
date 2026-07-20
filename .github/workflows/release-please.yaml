@@ -1,0 +1,29 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    steps:
+      # Reads Conventional Commits on main, maintains a "release PR" (CHANGELOG.md +
+      # package.json bump), and on merge creates the vX.Y.Z tag + GitHub Release.
+      # config-file / manifest-file use the defaults (release-please-config.json,
+      # .release-please-manifest.json).
+      #
+      # token: prefer RELEASE_PLEASE_TOKEN (a PAT or GitHub App token) so the tag it
+      # pushes TRIGGERS the build-docker workflow (`on: push: tags`). The default
+      # GITHUB_TOKEN cannot trigger downstream workflows (GitHub's recursion guard),
+      # so with only GITHUB_TOKEN the release still happens but the image must be
+      # built by re-pushing the tag or dispatching build-docker manually.
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
