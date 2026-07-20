@@ -6,7 +6,6 @@
 #   - image scanning: Trivy (SHA-pinned to a KNOWN-SAFE version after the March 2026
 #     trivy-action supply-chain compromise) vs. Grype / Docker Scout.
 #   - block vs. report-only.
-# See docs/designs/2026-07-20-ci-pipeline-design.md.
 name: ci-scan
 
 on:
