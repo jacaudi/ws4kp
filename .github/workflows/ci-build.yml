@@ -1,0 +1,78 @@
+# Stage c — artifact building: multi-arch image to GHCR. Reusable workflow.
+# Tag strategy (docker/metadata-action):
+#   sha    — every build (feature branches, main, tags)
+#   latest — default branch + version tags
+#   semver — version tags only (7.1.1 / 7.1 / 7)
+# Outputs the pushed image by immutable digest so stage d can pull the exact build.
+name: ci-build
+
+on:
+  workflow_call:
+    outputs:
+      image:
+        description: Pushed image reference, pinned by digest
+        value: ${{ jobs.build.outputs.image }}
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: build + push image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.ref.outputs.image }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          lfs: true # fetch the real Git LFS assets (music) so they're baked in, not pointer files
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        with:
+          images: |
+            ghcr.io/jacaudi/ws4kp
+          flavor: |
+            latest=false
+          tags: |
+            type=sha
+            type=raw,priority=1000,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          pull: true
+          push: true
+          platforms: linux/amd64,linux/arm64/v8
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Expose image reference (by digest)
+        id: ref
+        run: echo "image=ghcr.io/jacaudi/ws4kp@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"

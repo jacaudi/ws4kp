@@ -1,0 +1,53 @@
+# Stage a — code testing: lint + unit tests + Puppeteer integration (5 cities).
+# Reusable workflow; called by ci.yaml.
+name: ci-test
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: lint + unit + integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Install integration test dependencies (Puppeteer + Chromium)
+        run: npm ci --prefix tests
+
+      - name: Integration test (5 cities, server mode against live NWS)
+        run: |
+          set -euo pipefail
+          npm start > /tmp/ws4kp-server.log 2>&1 &
+          APP_PID=$!
+          echo "Waiting for the app on :8080..."
+          for i in $(seq 1 45); do
+            if curl -sf http://localhost:8080/ >/dev/null; then break; fi
+            if [ "$i" = "45" ]; then echo "app failed to start"; cat /tmp/ws4kp-server.log; exit 1; fi
+            sleep 2
+          done
+          set +e
+          node tests/index.mjs
+          STATUS=$?
+          set -e
+          kill "$APP_PID" 2>/dev/null || true
+          exit $STATUS
