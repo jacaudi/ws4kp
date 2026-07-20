@@ -1,0 +1,64 @@
+# CI/CD pipeline orchestrator. See docs/designs/2026-07-20-ci-pipeline-design.md.
+#
+# Stages are reusable workflows (job-level modules). GitHub requires reusable
+# workflows to live in .github/workflows/ ("Subdirectories of the workflows
+# directory are not supported"), so a .github/ci/ folder is not possible for them.
+#
+#   test (a) -> build (c) -> smoke (d)      scan (b) is deferred (stubbed below)
+#
+# Triggers (on: push only; no pull_request — branch-push checks surface on the PR):
+#   push to a non-default branch : test -> build -> smoke          (sha image)
+#   push to main                 : test -> build -> smoke  + release-please  (sha + latest)
+#   tag v*.*.*                    :         build -> smoke          (sha + latest + semver)
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!screen-enhance'
+      - '!screen-enhance/**'
+    tags:
+      - 'v*.*.*'
+      - 'v*.*'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # a — code testing. Skipped on tag events (a tag rebuilds the same code that
+  # already passed on main; the release only needs c + d).
+  test:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    uses: ./.github/workflows/ci-test.yml
+
+  # b — code scanning. DEFERRED (see the design doc). Left stubbed and NOT wired
+  # in until the scanning approach (CodeQL + image scanning) is decided.
+  # scan:
+  #   if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+  #   uses: ./.github/workflows/ci-scan.yml
+
+  # c — artifact building. Runs after tests pass, or directly on a tag (where
+  # test is skipped). Not on test failure.
+  build:
+    needs: [test]
+    if: ${{ !cancelled() && needs.test.result != 'failure' }}
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/ci-build.yml
+
+  # d — artifact testing (smoke). Boots the freshly built image and asserts it serves.
+  smoke:
+    needs: [build]
+    if: ${{ !cancelled() && needs.build.result == 'success' }}
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/ci-smoke.yml
+    with:
+      image: ${{ needs.build.outputs.image }}
