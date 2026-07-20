@@ -252,7 +252,7 @@ function cleanCityText(cityName) {
 }
 
 // Helper function to get airport type and priority
-function getAirportType(cityName, stationId = '') {
+function getAirportType(cityName, stationId = '', state = '') {
 	// Check exceptions first
 	if (airportPriorityExceptions[stationId]) {
 		return airportPriorityExceptions[stationId].toLowerCase();
@@ -264,8 +264,12 @@ function getAirportType(cityName, stationId = '') {
 		return significantTypeMatch[1].toLowerCase();
 	}
 
-	// Check station ID for P prefix, indicating weather/water monitoring stations
-	if (stationId.startsWith('P')) {
+	// Check station ID for P prefix, indicating lower-48 weather/water monitoring
+	// stations (Hydromet/USBR gauges in ID/OR/WA/WY). EXCLUDE Alaska and Hawaii:
+	// their airports legitimately use ICAO P-prefixed identifiers (PA*/PF*/PO*/PH*),
+	// so this heuristic would otherwise misclassify every AK/HI airport as a weather
+	// station. State is the authoritative signal — genuine P-monitors are never in AK/HI.
+	if (stationId.startsWith('P') && state !== 'AK' && state !== 'HI') {
 		return 'weather_station';
 	}
 
@@ -466,7 +470,7 @@ function extractBaseCityName(originalCityName, stationId = '') {
 			return processTextFragment(beforeDash);
 		}
 		// For highway patterns, return what's after the dash
-		return afterDash.replace(/\s+(?:${facilityTypesPattern}).*$/i, '').trim();
+		return afterDash.replace(new RegExp(`\\s+(?:${facilityTypesPattern}).*$`, 'i'), '').trim();
 	}
 
 	// Handle hyphenated county patterns (like "Aspen-Pitkin County", "Lancaster County-Facility")
@@ -919,8 +923,8 @@ function processAllStations(stationsObject) {
 		stationsByStateAndCity[groupKey].stations.push({
 			...station,
 			stationId,
-			type: getAirportType(station.city, stationId),
-			priority: getAirportPriority(getAirportType(station.city, stationId)),
+			type: getAirportType(station.city, stationId, station.state),
+			priority: getAirportPriority(getAirportType(station.city, stationId, station.state)),
 		});
 	});
 
@@ -978,8 +982,8 @@ function resolveDuplicatesByPriority(displayNames, stationsObject) {
 			stationId,
 			station,
 			cleanedName,
-			type: getAirportType(station.city, stationId),
-			priority: getAirportPriority(getAirportType(station.city, stationId)),
+			type: getAirportType(station.city, stationId, station.state),
+			priority: getAirportPriority(getAirportType(station.city, stationId, station.state)),
 		});
 	});
 
@@ -1152,7 +1156,7 @@ const postProcessor = (_options) => {
 		const processedName = processingUtils.finalCleanup(displayNameMap[station.id]); // Look up by station ID
 
 		// Get airport type and priority for this station
-		const airportType = getAirportType(originalName, station.id); // Pass station ID for enhanced detection
+		const airportType = getAirportType(originalName, station.id, station.state); // Pass station ID + state for enhanced detection
 		const priority = getAirportPriority(airportType);
 
 		const potentialIssues = [];

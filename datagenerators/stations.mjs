@@ -40,7 +40,7 @@ if (!USE_CACHE) {
 					const stationsRaw = await https(next);
 					stations = JSON.parse(stationsRaw);
 					// filter against starting letter
-					const stationsFiltered = stations.filter(stationFilter);
+					const stationsFiltered = stations.features.filter(stationFilter);
 					// add each resulting station to the output
 					stationsFiltered.forEach((station) => {
 						const id = station.properties.stationIdentifier;
@@ -88,6 +88,38 @@ Object.entries(overrides).forEach(([id, values]) => {
 		};
 	}
 });
+
+// bake grid points for every station so runtime never issues a live /points
+const stationList = Object.values(postProcessed);
+const pointChunks = chunk(stationList, 5);
+for (let i = 0; i < pointChunks.length; i += 1) {
+	const stationChunk = pointChunks[i];
+	// eslint-disable-next-line no-await-in-loop
+	const chunkResult = await Promise.all(stationChunk.map(async (station) => {
+		if (station.point) return station;
+		try {
+			// NWS /points canonicalizes coordinates to 4 decimal places and 301s
+			// otherwise; the https helper doesn't follow redirects, so round here
+			const lat = station.lat.toFixed(4);
+			const lon = station.lon.toFixed(4);
+			const data = await https(`https://api.weather.gov/points/${lat},${lon}`);
+			const point = JSON.parse(data);
+			return {
+				...station,
+				point: {
+					x: point.properties.gridX,
+					y: point.properties.gridY,
+					wfo: point.properties.gridId,
+				},
+			};
+		} catch (e) {
+			console.error(`Unable to get point for ${station.id}: ${e.message}`);
+			return station;
+		}
+	}));
+	chunkResult.forEach((station) => { postProcessed[station.id] = station; });
+	console.log(`Baked points: ${Math.min((i + 1) * 5, stationList.length)}/${stationList.length}`);
+}
 
 // write final file to disk
 writeFileSync('./datagenerators/output/stations.json', JSON.stringify(postProcessed, null, 2));
