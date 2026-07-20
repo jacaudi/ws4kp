@@ -13,17 +13,25 @@ jobs:
   release-please:
     name: Release Please
     runs-on: ubuntu-latest
+    env:
+      APP_ID: ${{ secrets.APP_ID }}
     steps:
-      # Reads Conventional Commits on main, maintains a "release PR" (CHANGELOG.md +
-      # package.json bump), and on merge creates the vX.Y.Z tag + GitHub Release.
-      # config-file / manifest-file use the defaults (release-please-config.json,
-      # .release-please-manifest.json).
+      # release-please reads Conventional Commits on main, maintains a "release PR"
+      # (CHANGELOG.md + package.json bump), and on merge creates the vX.Y.Z tag +
+      # GitHub Release. config-file / manifest-file use the defaults.
       #
-      # token: prefer RELEASE_PLEASE_TOKEN (a PAT or GitHub App token) so the tag it
-      # pushes TRIGGERS the build-docker workflow (`on: push: tags`). The default
-      # GITHUB_TOKEN cannot trigger downstream workflows (GitHub's recursion guard),
-      # so with only GITHUB_TOKEN the release still happens but the image must be
-      # built by re-pushing the tag or dispatching build-docker manually.
+      # Mint a short-lived token from the GitHub App so the tag/release release-please
+      # pushes TRIGGERS the build-docker workflow (the default GITHUB_TOKEN cannot
+      # trigger downstream workflows). If the App secrets aren't set the step is
+      # skipped and release-please falls back to GITHUB_TOKEN — releases still work,
+      # but the image must then be built by re-pushing the tag / dispatching build-docker.
+      - name: Generate a GitHub App token
+        id: app-token
+        if: ${{ env.APP_ID != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: googleapis/release-please-action@v4
         with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
