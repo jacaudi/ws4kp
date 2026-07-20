@@ -1,0 +1,51 @@
+# Stage d — artifact testing (smoke). Boots the freshly built image and asserts
+# it serves. Local endpoints only (no upstream), so it is deterministic.
+# Image vulnerability scanning is intentionally NOT here — deferred into the
+# scanning (b) discussion (see the design doc).
+name: ci-smoke
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: Image reference to smoke test (digest-pinned)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  smoke:
+    name: run image + probe endpoints
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Smoke test the image
+        run: |
+          set -euo pipefail
+          docker run -d --name ws4kp -p 8080:8080 "${{ inputs.image }}"
+          echo "Waiting for the container on :8080..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/ >/dev/null; then break; fi
+            if [ "$i" = "30" ]; then echo "container failed to serve"; docker logs ws4kp; exit 1; fi
+            sleep 2
+          done
+          echo "GET /            -> $(curl -fsS -o /dev/null -w '%{http_code}' http://localhost:8080/)"
+          echo "GET /playlist.json -> $(curl -fsS -o /dev/null -w '%{http_code}' http://localhost:8080/playlist.json)"
+
+      - name: Container logs + teardown
+        if: always()
+        run: |
+          docker logs ws4kp || true
+          docker rm -f ws4kp || true

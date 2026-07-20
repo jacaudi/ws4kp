@@ -1,0 +1,23 @@
+# Stage b — code scanning. STUB / PLACEHOLDER — deferred.
+#
+# TODO: design the scanning approach and wire this into ci.yaml (uncomment the
+# `scan` job there). Decisions to make in that discussion:
+#   - source scanning: keep/extend CodeQL (codeql-analysis.yml); add dependency-review / secret scanning?
+#   - image scanning: Trivy (SHA-pinned to a KNOWN-SAFE version after the March 2026
+#     trivy-action supply-chain compromise) vs. Grype / Docker Scout.
+#   - block vs. report-only.
+name: ci-scan
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: code scanning (placeholder)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Not yet implemented
+        run: echo "Code scanning (b) is deferred — see docs/designs/2026-07-20-ci-pipeline-design.md"
