@@ -17,6 +17,17 @@
         "app-template --version (?<currentValue>\\d+\\.\\d+\\.\\d+)",
         "app-template\\s+ref:\\s+tag: (?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ]
+    },
+    {
+      "customType": "regex",
+      "description": "Track the ws4kp image tag pinned in the docs/kubernetes.md example so it follows releases",
+      "managerFilePatterns": ["/^docs/kubernetes\\.md$/"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/jacaudi/ws4kp",
+      "versioningTemplate": "semver",
+      "matchStrings": [
+        "repository: ghcr\\.io/jacaudi/ws4kp\\s+tag: (?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ]
     }
   ]
 }
