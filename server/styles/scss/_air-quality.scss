@@ -1,0 +1,14 @@
+@use 'shared/positions'as p;
+
+#air-quality-html.weather-display {
+	// WS4000 blue fills the strip below the 399px canvas (behind the bottom scroll overlay)
+	background-color: rgb(11, 8, 48);
+
+	.aqi-canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: p.$standard-width;
+		height: 399px;
+	}
+}
