@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.1.2](https://github.com/jacaudi/ws4kp/compare/v7.1.1...v7.1.2) (2026-07-20)
+
+
+### Miscellaneous
+
+* **deps:** update dependency sass to v1.101.0 ([e29ca32](https://github.com/jacaudi/ws4kp/commit/e29ca3259574d45cb0fe94d91f9d4acb87b5c404))
+* **deps:** update dependency terser-webpack-plugin to v5.6.1 ([d10d764](https://github.com/jacaudi/ws4kp/commit/d10d764965908ab5ea60acf51d9ded64c916f590))
+
 ## [7.1.1](https://github.com/jacaudi/ws4kp/compare/v7.1.0...v7.1.1) (2026-07-20)
 
 
