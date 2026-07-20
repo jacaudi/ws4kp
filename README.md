@@ -4,13 +4,13 @@
 
 A modern, browser-based recreation of The Weather Channel's early-90s **WeatherStar 4000** local forecast — the blue-and-orange graphics, the smooth-jazz music, the endless scroll of your regional weather — driven by the live [NOAA/NWS API](https://www.weather.gov/documentation/services-web-api).
 
-This is an enhanced fork of [netbymatt/ws4kp](https://github.com/netbymatt/ws4kp) (see the original live at [weatherstar.netbymatt.com](https://weatherstar.netbymatt.com)). It adds an **Air Quality** display, a reworked **user-centered Regional Forecast**, a **server-first container deployment**, and bundled **music baked into the image**. See [What's added in this fork](#whats-added-in-this-fork).
+This is an enhanced fork of [netbymatt/ws4kp](https://github.com/netbymatt/ws4kp) ([original live here](https://weatherstar.netbymatt.com)) that adds an Air Quality display, a reworked Regional Forecast, server-first container deployment, and bundled music — see [What's added in this fork](#whats-added-in-this-fork).
 
 ---
 
 ## What it is
 
-The goal is the *feel* of the 90s: a simple, low-fuss weather app that looks and sounds like The Weather Channel did back then, using data that's available today. It is **not** a hardware-accurate emulator — for that, see the [WS4000 Simulator](http://www.taiganet.com/). Some screens differ from the original because more (or less) forecast data is available now than in the 90s.
+It chases the *feel* of the 90s — a low-fuss app that looks and sounds like The Weather Channel did then, on today's data. It is **not** a hardware-accurate emulator — for that, see the [WS4000 Simulator](http://www.taiganet.com/). Some screens differ from the original because more (or less) forecast data is available now than in the 90s.
 
 Because the data comes from NOAA, WeatherStar 4000+ works for **US locations only**. For international weather, see the [`ws4kp-international`](https://github.com/mwood77/ws4kp-international) fork by [@mwood77](https://github.com/mwood77).
 
@@ -37,8 +37,6 @@ All weather data comes from free, public services (the server proxies and caches
 | **[NOAA Storm Prediction Center](https://www.spc.noaa.gov/)** — `www.spc.noaa.gov` | The severe-weather (SPC) outlook |
 | **[Open-Meteo Air Quality API](https://open-meteo.com/en/docs/air-quality-api)** — `air-quality-api.open-meteo.com` | US AQI for the **Air Quality** display *(added in [#7](https://github.com/jacaudi/ws4kp/pull/7))* — key-free |
 
-Because NOAA's API is US-only, so is WeatherStar 4000+.
-
 ## Quick start
 
 Requires [Node.js](https://nodejs.org/) (v24+ recommended).
@@ -54,7 +52,7 @@ Then open **http://localhost:8080/** and search for a US location.
 
 ## Running it
 
-WeatherStar 4000+ runs as a **server deployment** by default: a small Node/Express server with a caching proxy in front of the weather APIs (request de-duplication + caching, so many viewers make few upstream calls).
+WeatherStar 4000+ runs as a **server deployment** by default: a small Node/Express server with a caching proxy in front of the weather APIs — it de-duplicates and caches requests, so many viewers make few upstream calls.
 
 **Run modes** — all serve at `http://localhost:8080/`:
 
@@ -92,20 +90,9 @@ services:
       - WSQS_latLonQuery=Orlando International Airport Orlando FL USA
 ```
 
-Development vs. production modes, the archived static (nginx) deployment, and the full `WSQS_` environment-variable reference live in **[docs/deployment.md](docs/deployment.md)**.
-
 ## Configuration
 
-Seed a default location and display set with `WSQS_` environment variables — handy for kiosks and dashboards. Any [permalink](#using-it) parameter works: replace each `-` with `_` and prefix it with `WSQS_`.
-
-```bash
-docker run -p 8080:8080 \
-  -e WSQS_latLonQuery="Orlando International Airport Orlando FL USA" \
-  -e WSQS_kiosk=true \
-  ghcr.io/jacaudi/ws4kp:latest
-```
-
-Variables can also come from a `.env` file. The full reference is in [docs/deployment.md](docs/deployment.md#default-parameters-via-environment-variables).
+Seed a default location and display set with `WSQS_` environment variables (handy for kiosks/dashboards): take any [permalink](#using-it) parameter, replace `-` with `_`, and prefix `WSQS_` — e.g. `-e WSQS_latLonQuery="Orlando International Airport"` and `-e WSQS_kiosk=true`. Values can also come from a `.env` file. Full reference — plus dev/prod modes and the archived static image — is in **[docs/deployment.md](docs/deployment.md)**.
 
 ## Using it
 
@@ -114,7 +101,7 @@ Variables can also come from a `.env` file. The full reference is in [docs/deplo
   ```
   http://localhost:8080/?latLonQuery=Orlando+International+Airport&units-select=metric&kiosk=true
   ```
-- **Kiosk mode:** a full-screen, controls-hidden view for dashboards and signage — toggle it on the page, or append `&kiosk=true` to a permalink. Great as an installed PWA / iOS Home-Screen app. Exit with **Ctrl-K** or by reloading.
+- **Kiosk mode:** a full-screen, controls-hidden view for dashboards/signage — toggle on the page or append `&kiosk=true`. Exit with **Ctrl-K** or reload.
 
 **Settings at a glance:**
 
@@ -166,6 +153,7 @@ In-depth guides live in [`docs/`](docs/):
 | Guide | What's inside |
 |---|---|
 | **[Deployment](docs/deployment.md)** | Server vs. static, dev/prod modes, Docker & Compose, archived nginx image, `WSQS_` environment variables |
+| **[Kubernetes](docs/kubernetes.md)** | Deploy on a cluster with the bjw-s app-template chart (Helm + Flux) |
 | **[Usage & settings](docs/usage.md)** | Permalinks, kiosk mode, iOS/Android PWA install, every setting, custom scrolling text |
 | **[Music](docs/music.md)** | Bundled tracks (Git LFS), adding/overriding music, autoplay behavior, static-mode scanning |
 | **[Development & customization](docs/development.md)** | Tech stack, build system, the `custom.js` hook, contributing |
@@ -178,8 +166,8 @@ In-depth guides live in [`docs/`](docs/):
 - **[Matt (netbymatt)](https://github.com/netbymatt)** — the maintainer of
   [ws4kp](https://github.com/netbymatt/ws4kp), which this project is forked from. Nearly all of
   WeatherStar 4000+ — the displays, the data plumbing, the look and feel — is his work and is kept
-  largely intact here; this fork only adds a few displays and a container/release setup on top.
-  Thank you for building it, keeping it open, and maintaining it!
+  largely intact here; this fork only adds a few displays and a container/release setup.
+  Thank you for building it and keeping it open!
 - **[Mike Battaglia (vbguyny)](https://github.com/vbguyny/ws4kp)** — the creator of the original
   WeatherStar 4000 web project (which Matt forked in 2020) and the code that draws the weather
   displays and the background maps. Thank you for the foundation the whole project rests on!
