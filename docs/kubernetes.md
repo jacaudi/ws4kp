@@ -1,10 +1,11 @@
 # Kubernetes (bjw-s app-template)
 
-Deploy WeatherStar 4000+ to a cluster with the [bjw-s **app-template**](https://github.com/bjw-s-labs/helm-charts) Helm chart — a thin, well-maintained wrapper for running a single container as a Deployment + Service (+ optional Ingress).
+Deploy WeatherStar 4000+ to a cluster with the [bjw-s **app-template**](https://github.com/bjw-s-labs/helm-charts) Helm chart — a thin, well-maintained wrapper for running a single container as a Deployment + Service (+ an optional Gateway API `HTTPRoute` or a legacy Ingress).
 
 The default `ghcr.io/jacaudi/ws4kp` image is the **server deployment** (Node/Express + caching proxy), which is what you want here — it listens on **port 8080** and needs no persistent storage (the music is baked into the image).
 
 - [values.yaml](#valuesyaml)
+- [Exposing it (Gateway API / Ingress)](#exposing-it)
 - [Install with Helm](#install-with-helm)
 - [Install with Flux (GitOps)](#install-with-flux-gitops)
 - [Notes](#notes)
@@ -42,8 +43,38 @@ service:
     ports:
       http:
         port: 8080
+```
 
-# Optional — expose it. Set your ingress class / host / TLS to match your cluster.
+> Default probes are TCP checks against port 8080, which suits the Express server.
+
+## Exposing it
+
+Pick one and add it to `values.yaml`. The modern **Gateway API** is preferred; **Ingress** is the legacy Kubernetes networking API. (You can also skip both and use a `LoadBalancer`/`NodePort` service, Tailscale, etc.)
+
+### Gateway API (`HTTPRoute`) — recommended
+
+app-template renders an `HTTPRoute` from a `route:` block. Point `parentRefs` at an existing Gateway + listener in your cluster:
+
+```yaml
+route:
+  app:
+    hostnames:
+      - ws4kp.example.com
+    parentRefs:
+      - name: external          # your Gateway
+        namespace: kube-system  # the Gateway's namespace
+        sectionName: https      # the listener name
+    rules:
+      - backendRefs:
+          - identifier: app
+            port: http
+```
+
+### Ingress (legacy `networking.k8s.io/v1` API)
+
+If your cluster still exposes apps through an Ingress controller:
+
+```yaml
 ingress:
   app:
     className: nginx
@@ -56,8 +87,6 @@ ingress:
               identifier: app
               port: http
 ```
-
-> The default probes are TCP checks against port 8080, which suits the Express server. Drop the `ingress:` block if you expose the service another way (LoadBalancer, Gateway API, Tailscale, etc.).
 
 ## Install with Helm
 
