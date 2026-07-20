@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.1.1](https://github.com/jacaudi/ws4kp/compare/v7.1.0...v7.1.1) (2026-07-20)
+
+
+### Bug Fixes
+
+* **proxy:** strip hop-by-hop headers so chunked upstreams don't 502 ([33e0512](https://github.com/jacaudi/ws4kp/commit/33e0512503521cf55cd4f03c9ccaaa49a71ea3bd))
+* **proxy:** strip hop-by-hop headers so chunked upstreams don't 502 ([6edd430](https://github.com/jacaudi/ws4kp/commit/6edd430dfcbc46b28687be60d198537dbe8f7ce8))
+
 ## [7.1.0](https://github.com/jacaudi/ws4kp/compare/v7.0.3...v7.1.0) (2026-07-20)
 
 
