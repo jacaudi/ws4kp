@@ -4,3 +4,4 @@
 *.html text eol=lf
 *.json text eol=lf
 *.php text eol=lf
+*.mp3 filter=lfs diff=lfs merge=lfs -text
