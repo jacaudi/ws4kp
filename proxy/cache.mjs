@@ -23,6 +23,20 @@ import https from 'https';
 // Default timeout for upstream requests (matches client-side default)
 const DEFAULT_REQUEST_TIMEOUT = 15000;
 
+// Upstream headers the proxy must never copy onto (or cache for) its own response:
+// - cache-control/expires/etag/last-modified: the proxy sets its own client-facing
+//   cache policy and tracks validators separately (see storeCachedResponse).
+// - hop-by-hop headers (RFC 7230 §6.1): they describe the upstream connection, not
+//   the payload. Forwarding `transfer-encoding` in particular onto a re-buffered body
+//   that res.send() frames with its own Content-Length yields a response carrying both
+//   framings — illegal per RFC 7230 §3.3.3, which a strict fronting proxy (e.g. Envoy)
+//   rejects with a 502 protocol error. Express recomputes Content-Length on send.
+const EXCLUDED_RESPONSE_HEADERS = new Set([
+	'cache-control', 'expires', 'etag', 'last-modified',
+	'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
+	'te', 'trailer', 'transfer-encoding', 'upgrade',
+]);
+
 class HttpCache {
 	constructor() {
 		this.cache = new Map();
@@ -51,11 +65,11 @@ class HttpCache {
 
 	// Helper method to set filtered headers and our cache policy
 	static setFilteredHeaders(res, headers) {
-		// Strip cache-related headers and pass through others
+		// Strip cache-related and hop-by-hop headers and pass through others
 		Object.entries(headers || {}).forEach(([key, value]) => {
 			const lowerKey = key.toLowerCase();
-			// Skip cache-related headers that should be controlled by our proxy
-			if (!['cache-control', 'expires', 'etag', 'last-modified'].includes(lowerKey)) {
+			// Skip headers the proxy must control or must not forward (see EXCLUDED_RESPONSE_HEADERS)
+			if (!EXCLUDED_RESPONSE_HEADERS.has(lowerKey)) {
 				res.header(lowerKey, value);
 			}
 		});
@@ -227,11 +241,12 @@ class HttpCache {
 						console.error(`🚫 ${statusCode}      | ${fullUrl}`);
 					}
 
-					// Filter out cache headers before storing - we don't need them in our cache
+					// Filter out cache and hop-by-hop headers before storing - a cache hit
+					// re-emits these, so a stored transfer-encoding would break framing too
 					const filteredHeaders = {};
 					Object.entries(getRes.headers || {}).forEach(([key, value]) => {
 						const lowerKey = key.toLowerCase();
-						if (!['cache-control', 'expires', 'etag', 'last-modified'].includes(lowerKey)) {
+						if (!EXCLUDED_RESPONSE_HEADERS.has(lowerKey)) {
 							filteredHeaders[key] = value;
 						}
 					});
