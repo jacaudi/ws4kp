@@ -5,5 +5,18 @@
   ],
   "semanticCommits": "enabled",
   "semanticCommitType": "fix",
-  "semanticCommitScope": "deps"
+  "semanticCommitScope": "deps",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track the bjw-s app-template Helm chart version pinned in docs/kubernetes.md",
+      "managerFilePatterns": ["/^docs/kubernetes\\.md$/"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/bjw-s-labs/helm/app-template",
+      "matchStrings": [
+        "app-template --version (?<currentValue>\\d+\\.\\d+\\.\\d+)",
+        "app-template\\s+ref:\\s+tag: (?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ]
+    }
+  ]
 }
