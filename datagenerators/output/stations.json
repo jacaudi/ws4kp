@@ -486,7 +486,7 @@
     "lon": -146.2901,
     "state": "AK",
     "city": "Point Thomson",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 502,
       "y": 312,
@@ -499,7 +499,7 @@
     "lon": -174.20639,
     "state": "AK",
     "city": "Atka",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 301,
       "y": 74,
@@ -512,7 +512,7 @@
     "lon": -149.08333,
     "state": "AK",
     "city": "Palmer",
-    "priority": 50,
+    "priority": 9,
     "point": {
       "x": 157,
       "y": 250,
@@ -525,7 +525,7 @@
     "lon": -143.57694,
     "state": "AK",
     "city": "Barter Is.",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 535,
       "y": 315,
@@ -538,7 +538,7 @@
     "lon": -161.83778,
     "state": "AK",
     "city": "Bethel",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 647,
       "y": 302,
@@ -551,7 +551,7 @@
     "lon": -145.73333,
     "state": "AK",
     "city": "Delta Junction",
-    "priority": 50,
+    "priority": 14,
     "point": {
       "x": 526,
       "y": 90,
@@ -564,7 +564,7 @@
     "lon": -161.15194,
     "state": "AK",
     "city": "Buckland",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 293,
       "y": 176,
@@ -577,7 +577,7 @@
     "lon": -156.76583,
     "state": "AK",
     "city": "Wiley Post",
-    "priority": 50,
+    "priority": 11,
     "point": {
       "x": 379,
       "y": 356,
@@ -590,7 +590,7 @@
     "lon": -151.51667,
     "state": "AK",
     "city": "Bettles",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 435,
       "y": 195,
@@ -603,7 +603,7 @@
     "lon": -149.51667,
     "state": "AK",
     "city": "Birchwood",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 150,
       "y": 244,
@@ -616,7 +616,7 @@
     "lon": -162.72778,
     "state": "AK",
     "city": "Cold Bay",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 585,
       "y": 101,
@@ -629,7 +629,7 @@
     "lon": -145.47778,
     "state": "AK",
     "city": "Cordova",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 224,
       "y": 212,
@@ -642,7 +642,7 @@
     "lon": -150.20391,
     "state": "AK",
     "city": "Coldfoot",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 454,
       "y": 207,
@@ -655,7 +655,7 @@
     "lon": -166.03333,
     "state": "AK",
     "city": "Cape Romanzof",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 180,
       "y": 45,
@@ -668,7 +668,7 @@
     "lon": -162.75,
     "state": "AK",
     "city": "Deering",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 270,
       "y": 185,
@@ -681,7 +681,7 @@
     "lon": -162.8992,
     "state": "AK",
     "city": "Red Dog",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 284,
       "y": 254,
@@ -694,7 +694,7 @@
     "lon": -176.64583,
     "state": "AK",
     "city": "Adak Is.",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 242,
       "y": 87,
@@ -707,7 +707,7 @@
     "lon": -158.51667,
     "state": "AK",
     "city": "Dillingham",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 697,
       "y": 227,
@@ -720,7 +720,7 @@
     "lon": -152.5,
     "state": "AK",
     "city": "Kodiak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 91,
       "y": 107,
@@ -733,7 +733,7 @@
     "lon": -166.53333,
     "state": "AK",
     "city": "Unalaska",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 491,
       "y": 73,
@@ -746,7 +746,7 @@
     "lon": -149.79389,
     "state": "AK",
     "city": "Elmendorf AFB",
-    "priority": 50,
+    "priority": 14,
     "point": {
       "x": 145,
       "y": 237,
@@ -759,7 +759,7 @@
     "lon": -141.15083,
     "state": "AK",
     "city": "Eagle",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 594,
       "y": 127,
@@ -772,7 +772,7 @@
     "lon": -162.0666699,
     "state": "AK",
     "city": "Cape Newenham",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 627,
       "y": 225,
@@ -785,7 +785,7 @@
     "lon": -147.1,
     "state": "AK",
     "city": "Eielson AFB",
-    "priority": 50,
+    "priority": 14,
     "point": {
       "x": 502,
       "y": 113,
@@ -798,7 +798,7 @@
     "lon": -136.34663,
     "state": "AK",
     "city": "Elfin Cove",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 158,
       "y": 149,
@@ -811,7 +811,7 @@
     "lon": -164.5,
     "state": "AK",
     "city": "Emmonak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 215,
       "y": 74,
@@ -824,7 +824,7 @@
     "lon": -151.245,
     "state": "AK",
     "city": "Kenai",
-    "priority": 50,
+    "priority": 9,
     "point": {
       "x": 118,
       "y": 212,
@@ -850,7 +850,7 @@
     "lon": -147.59556,
     "state": "AK",
     "city": "Ft Wainwright",
-    "priority": 50,
+    "priority": 14,
     "point": {
       "x": 494,
       "y": 119,
@@ -863,7 +863,7 @@
     "lon": -133.913,
     "state": "AK",
     "city": "Kake",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 217,
       "y": 117,
@@ -876,7 +876,7 @@
     "lon": -149.65,
     "state": "AK",
     "city": "Ft Richardson",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 147,
       "y": 238,
@@ -889,7 +889,7 @@
     "lon": -154.358,
     "state": "AK",
     "city": "Nikolai",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 384,
       "y": 55,
@@ -902,7 +902,7 @@
     "lon": -156.93333,
     "state": "AK",
     "city": "Galena",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 349,
       "y": 121,
@@ -915,7 +915,7 @@
     "lon": -149.48333,
     "state": "AK",
     "city": "Galbraith Lake",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 464,
       "y": 251,
@@ -928,7 +928,7 @@
     "lon": -157.1624,
     "state": "AK",
     "city": "Shungnak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 355,
       "y": 200,
@@ -941,7 +941,7 @@
     "lon": -145.45,
     "state": "AK",
     "city": "Gulkana",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 220,
       "y": 274,
@@ -954,7 +954,7 @@
     "lon": -163.03944,
     "state": "AK",
     "city": "Golovin",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 253,
       "y": 131,
@@ -967,7 +967,7 @@
     "lon": -171.73333,
     "state": "AK",
     "city": "Gambell",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 112,
       "y": 145,
@@ -980,7 +980,7 @@
     "lon": -134.58333,
     "state": "AK",
     "city": "Angoon",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 198,
       "y": 133,
@@ -993,7 +993,7 @@
     "lon": -135.7,
     "state": "AK",
     "city": "Gustavus",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 168,
       "y": 160,
@@ -1006,7 +1006,7 @@
     "lon": -135.3263,
     "state": "AK",
     "city": "Skagway",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 165,
       "y": 200,
@@ -1019,7 +1019,7 @@
     "lon": -159.77657,
     "state": "AK",
     "city": "Holy Cross",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 289,
       "y": 35,
@@ -1032,7 +1032,7 @@
     "lon": -156.35111,
     "state": "AK",
     "city": "Huslia",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 362,
       "y": 155,
@@ -1045,7 +1045,7 @@
     "lon": -135.5114,
     "state": "AK",
     "city": "Haines",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 164,
       "y": 191,
@@ -1058,7 +1058,7 @@
     "lon": -151.48333,
     "state": "AK",
     "city": "Homer",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 113,
       "y": 178,
@@ -1071,7 +1071,7 @@
     "lon": -159.5692,
     "state": "AK",
     "city": "Shageluk",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 296,
       "y": 53,
@@ -1084,7 +1084,7 @@
     "lon": -132.83333,
     "state": "AK",
     "city": "Hydaburg",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 258,
       "y": 59,
@@ -1097,7 +1097,7 @@
     "lon": -155.90235,
     "state": "AK",
     "city": "Igiugig",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 748,
       "y": 231,
@@ -1110,7 +1110,7 @@
     "lon": -157.38556,
     "state": "AK",
     "city": "Egegik",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 715,
       "y": 192,
@@ -1123,7 +1123,7 @@
     "lon": -160.43333,
     "state": "AK",
     "city": "Kinana",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 310,
       "y": 210,
@@ -1136,7 +1136,7 @@
     "lon": -154.9,
     "state": "AK",
     "city": "Iliamna",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 769,
       "y": 245,
@@ -1149,7 +1149,7 @@
     "lon": -153.7,
     "state": "AK",
     "city": "Utopia Creek",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 402,
       "y": 163,
@@ -1175,7 +1175,7 @@
     "lon": -168.0949,
     "state": "AK",
     "city": "Wales",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 189,
       "y": 190,
@@ -1188,7 +1188,7 @@
     "lon": -134.57001,
     "state": "AK",
     "city": "NWS Juneau",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 190,
       "y": 165,
@@ -1214,7 +1214,7 @@
     "lon": -157.2589999,
     "state": "AK",
     "city": "Koliganek",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 724,
       "y": 249,
@@ -1227,7 +1227,7 @@
     "lon": -163.41,
     "state": "AK",
     "city": "False Pass",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 568,
       "y": 90,
@@ -1240,7 +1240,7 @@
     "lon": -154.1826,
     "state": "AK",
     "city": "Akhiok",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 55,
       "y": 79,
@@ -1253,7 +1253,7 @@
     "lon": -164.03028,
     "state": "AK",
     "city": "Kipnuk",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 601,
       "y": 280,
@@ -1266,7 +1266,7 @@
     "lon": -161.15806,
     "state": "AK",
     "city": "Koyuk",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 285,
       "y": 139,
@@ -1279,7 +1279,7 @@
     "lon": -156.64917,
     "state": "AK",
     "city": "King Salmon",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 731,
       "y": 209,
@@ -1292,7 +1292,7 @@
     "lon": -151.7433299,
     "state": "AK",
     "city": "Anaktuvuk Pass",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 434,
       "y": 239,
@@ -1318,7 +1318,7 @@
     "lon": -149.58333,
     "state": "AK",
     "city": "Kuparuk",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 462,
       "y": 317,
@@ -1331,7 +1331,7 @@
     "lon": -158.73333,
     "state": "AK",
     "city": "Kaltag",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 319,
       "y": 110,
@@ -1344,7 +1344,7 @@
     "lon": -133.067,
     "state": "AK",
     "city": "Klawock",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 249,
       "y": 72,
@@ -1357,7 +1357,7 @@
     "lon": -154.3166,
     "state": "AK",
     "city": "Wilder Natwick",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 781,
       "y": 261,
@@ -1370,7 +1370,7 @@
     "lon": -160.3414,
     "state": "AK",
     "city": "Kalskag",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 679,
       "y": 324,
@@ -1383,7 +1383,7 @@
     "lon": -149.96667,
     "state": "AK",
     "city": "Lake Hood",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 142,
       "y": 235,
@@ -1395,8 +1395,8 @@
     "lat": 70.33333,
     "lon": -150.93333,
     "state": "AK",
-    "city": "Deadhorse",
-    "priority": 50,
+    "city": "Alpine",
+    "priority": 99,
     "point": {
       "x": 446,
       "y": 318,
@@ -1409,7 +1409,7 @@
     "lon": -166.1,
     "state": "AK",
     "city": "Cape Lisburne",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 251,
       "y": 295,
@@ -1422,7 +1422,7 @@
     "lon": -159.0499,
     "state": "AK",
     "city": "Manokotak",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 687,
       "y": 227,
@@ -1435,7 +1435,7 @@
     "lon": -155.61667,
     "state": "AK",
     "city": "McGrath",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 363,
       "y": 54,
@@ -1448,7 +1448,7 @@
     "lon": -146.3166,
     "state": "AK",
     "city": "Middleton Is.",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 211,
       "y": 172,
@@ -1461,7 +1461,7 @@
     "lon": -152.30056,
     "state": "AK",
     "city": "Minchumina",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 420,
       "y": 84,
@@ -1474,7 +1474,7 @@
     "lon": -162.11039,
     "state": "AK",
     "city": "St Michael",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 260,
       "y": 90,
@@ -1487,7 +1487,7 @@
     "lon": -131.57806,
     "state": "AK",
     "city": "Metlakatla",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 285,
       "y": 65,
@@ -1500,7 +1500,7 @@
     "lon": -163.6819,
     "state": "AK",
     "city": "Mountain Village",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 222,
       "y": 46,
@@ -1513,7 +1513,7 @@
     "lon": -149.85,
     "state": "AK",
     "city": "Merrill",
-    "priority": 50,
+    "priority": 12,
     "point": {
       "x": 144,
       "y": 236,
@@ -1526,7 +1526,7 @@
     "lon": -161.9785,
     "state": "AK",
     "city": "Napakiak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 644,
       "y": 299,
@@ -1552,7 +1552,7 @@
     "lon": -159.54278,
     "state": "AK",
     "city": "Aniak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 693,
       "y": 324,
@@ -1565,7 +1565,7 @@
     "lon": -149.08398,
     "state": "AK",
     "city": "Nenana",
-    "priority": 50,
+    "priority": 9,
     "point": {
       "x": 471,
       "y": 108,
@@ -1578,7 +1578,7 @@
     "lon": -158.07422,
     "state": "AK",
     "city": "Nulato",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 331,
       "y": 123,
@@ -1591,7 +1591,7 @@
     "lon": -160.18972,
     "state": "AK",
     "city": "Anvik",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 285,
       "y": 53,
@@ -1604,7 +1604,7 @@
     "lon": -157.328,
     "state": "AK",
     "city": "New Stuyahok",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 722,
       "y": 239,
@@ -1617,7 +1617,7 @@
     "lon": -135.4139999,
     "state": "AK",
     "city": "Hoonah",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 176,
       "y": 150,
@@ -1630,7 +1630,7 @@
     "lon": -165.445,
     "state": "AK",
     "city": "Nome",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 216,
       "y": 139,
@@ -1643,7 +1643,7 @@
     "lon": -165.1142999,
     "state": "AK",
     "city": "Toksook Bay",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 587,
       "y": 307,
@@ -1656,7 +1656,7 @@
     "lon": -141.92889,
     "state": "AK",
     "city": "Northway",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 592,
       "y": 59,
@@ -1669,7 +1669,7 @@
     "lon": -162.60624,
     "state": "AK",
     "city": "Ralph Wien",
-    "priority": 50,
+    "priority": 11,
     "point": {
       "x": 279,
       "y": 213,
@@ -1682,7 +1682,7 @@
     "lon": -161.16,
     "state": "AK",
     "city": "Nelson Lagoon",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 625,
       "y": 123,
@@ -1695,7 +1695,7 @@
     "lon": -169.66139,
     "state": "AK",
     "city": "St George",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 458,
       "y": 192,
@@ -1708,7 +1708,7 @@
     "lon": -132.9453,
     "state": "AK",
     "city": "Petersburg",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 238,
       "y": 117,
@@ -1721,7 +1721,7 @@
     "lon": -158.63333,
     "state": "AK",
     "city": "Port Heiden",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 683,
       "y": 149,
@@ -1734,7 +1734,7 @@
     "lon": -161.8166699,
     "state": "AK",
     "city": "Platinum",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 634,
       "y": 237,
@@ -1747,7 +1747,7 @@
     "lon": -157.572,
     "state": "AK",
     "city": "Pilot Point",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 708,
       "y": 170,
@@ -1760,7 +1760,7 @@
     "lon": -166.8,
     "state": "AK",
     "city": "Point Hope",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 236,
       "y": 279,
@@ -1773,7 +1773,7 @@
     "lon": -152.75,
     "state": "AK",
     "city": "Puntilla",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 93,
       "y": 270,
@@ -1786,7 +1786,7 @@
     "lon": -161.8454,
     "state": "AK",
     "city": "Quinhagak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 639,
       "y": 265,
@@ -1799,7 +1799,7 @@
     "lon": -151.00556,
     "state": "AK",
     "city": "Nuiqsut",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 445,
       "y": 313,
@@ -1812,7 +1812,7 @@
     "lon": -145.57917,
     "state": "AK",
     "city": "Arctic Village",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 517,
       "y": 240,
@@ -1825,7 +1825,7 @@
     "lon": -161.3194,
     "state": "AK",
     "city": "Russian Mission",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 260,
       "y": 25,
@@ -1838,7 +1838,7 @@
     "lon": -155.4697,
     "state": "AK",
     "city": "Ruby",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 372,
       "y": 119,
@@ -1851,7 +1851,7 @@
     "lon": -170.5,
     "state": "AK",
     "city": "Savoonga",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 130,
       "y": 135,
@@ -1863,8 +1863,8 @@
     "lat": 70.2,
     "lon": -148.46667,
     "state": "AK",
-    "city": "PASC",
-    "priority": 50,
+    "city": "Deadhorse",
+    "priority": 13,
     "point": {
       "x": 476,
       "y": 313,
@@ -1877,7 +1877,7 @@
     "lon": -160.51667,
     "state": "AK",
     "city": "Sand Point",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 633,
       "y": 95,
@@ -1890,7 +1890,7 @@
     "lon": -166.08333,
     "state": "AK",
     "city": "Shishmaref",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 224,
       "y": 204,
@@ -1903,7 +1903,7 @@
     "lon": -135.3647,
     "state": "AK",
     "city": "Sitka",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 187,
       "y": 112,
@@ -1916,7 +1916,7 @@
     "lon": -160,
     "state": "AK",
     "city": "Selawik",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 313,
       "y": 196,
@@ -1929,7 +1929,7 @@
     "lon": -157.16712,
     "state": "AK",
     "city": "Sleetmute",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 735,
       "y": 322,
@@ -1942,7 +1942,7 @@
     "lon": -163.3,
     "state": "AK",
     "city": "St Mary's",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 228,
       "y": 43,
@@ -1955,7 +1955,7 @@
     "lon": -170.21667,
     "state": "AK",
     "city": "St Paul Is.",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 454,
       "y": 217,
@@ -1968,7 +1968,7 @@
     "lon": -151.7,
     "state": "AK",
     "city": "Seldovia",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 109,
       "y": 171,
@@ -1981,7 +1981,7 @@
     "lon": -155.5666699,
     "state": "AK",
     "city": "Sparrevohn",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 761,
       "y": 297,
@@ -1994,7 +1994,7 @@
     "lon": -151.03333,
     "state": "AK",
     "city": "Soldotna",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 122,
       "y": 209,
@@ -2007,7 +2007,7 @@
     "lon": 174.11667,
     "state": "AK",
     "city": "Shemya",
-    "priority": 50,
+    "priority": 14,
     "point": {
       "x": 71,
       "y": 229,
@@ -2020,7 +2020,7 @@
     "lon": -152.1,
     "state": "AK",
     "city": "Tanana",
-    "priority": 50,
+    "priority": 11,
     "point": {
       "x": 425,
       "y": 131,
@@ -2033,7 +2033,7 @@
     "lon": -167.91667,
     "state": "AK",
     "city": "Tin City",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 191,
       "y": 187,
@@ -2046,7 +2046,7 @@
     "lon": -166.3393,
     "state": "AK",
     "city": "Teller",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 210,
       "y": 169,
@@ -2059,7 +2059,7 @@
     "lon": -160.4,
     "state": "AK",
     "city": "Togiac Village",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 661,
       "y": 233,
@@ -2072,7 +2072,7 @@
     "lon": -150.09361,
     "state": "AK",
     "city": "Talkeetna",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 139,
       "y": 277,
@@ -2085,7 +2085,7 @@
     "lon": -155.98333,
     "state": "AK",
     "city": "Takotna",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 357,
       "y": 53,
@@ -2098,7 +2098,7 @@
     "lon": -148.83333,
     "state": "AK",
     "city": "Portage",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 162,
       "y": 220,
@@ -2111,7 +2111,7 @@
     "lon": -157.4357,
     "state": "AK",
     "city": "Atqasuk",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 368,
       "y": 328,
@@ -2124,7 +2124,7 @@
     "lon": -160.8,
     "state": "AK",
     "city": "Unalakleet",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 283,
       "y": 100,
@@ -2137,7 +2137,7 @@
     "lon": -165.6009,
     "state": "AK",
     "city": "Chevak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 185,
       "y": 34,
@@ -2150,7 +2150,7 @@
     "lon": -162.266,
     "state": "AK",
     "city": "King Cove",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 594,
       "y": 95,
@@ -2163,7 +2163,7 @@
     "lon": -146.26667,
     "state": "AK",
     "city": "Valdez",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 208,
       "y": 235,
@@ -2176,7 +2176,7 @@
     "lon": -164.55,
     "state": "AK",
     "city": "Kivalina",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 260,
       "y": 249,
@@ -2189,7 +2189,7 @@
     "lon": -149.45,
     "state": "AK",
     "city": "Seward",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 151,
       "y": 195,
@@ -2202,7 +2202,7 @@
     "lon": -132.36667,
     "state": "AK",
     "city": "Wrangell",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 253,
       "y": 109,
@@ -2215,7 +2215,7 @@
     "lon": -163.4127,
     "state": "AK",
     "city": "White Mtn",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 249,
       "y": 138,
@@ -2228,7 +2228,7 @@
     "lon": -162.98333,
     "state": "AK",
     "city": "Noatak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 279,
       "y": 238,
@@ -2241,7 +2241,7 @@
     "lon": -149.54056,
     "state": "AK",
     "city": "Wasilla",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 149,
       "y": 249,
@@ -2254,7 +2254,7 @@
     "lon": -139.66667,
     "state": "AK",
     "city": "Yakutat",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 84,
       "y": 184,
@@ -2267,7 +2267,7 @@
     "lon": -147.16667,
     "state": "AK",
     "city": "Eureka",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 190,
       "y": 264,
@@ -2280,7 +2280,7 @@
     "lon": -147.99473,
     "state": "AK",
     "city": "Chenega Bay",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 178,
       "y": 194,
@@ -2293,7 +2293,7 @@
     "lon": -158.5294,
     "state": "AK",
     "city": "Clarks Point",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 696,
       "y": 219,
@@ -2306,7 +2306,7 @@
     "lon": -162.2705,
     "state": "AK",
     "city": "Elim",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 266,
       "y": 131,
@@ -2319,7 +2319,7 @@
     "lon": -163.5326399,
     "state": "AK",
     "city": "Kotlik",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 233,
       "y": 79,
@@ -2332,7 +2332,7 @@
     "lon": -166.4657,
     "state": "AK",
     "city": "Brevig Mission",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 209,
       "y": 172,
@@ -2345,7 +2345,7 @@
     "lon": -161.4437,
     "state": "AK",
     "city": "Kwethluk",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 654,
       "y": 301,
@@ -2358,7 +2358,7 @@
     "lon": -161.0223,
     "state": "AK",
     "city": "Noorvik",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 300,
       "y": 206,
@@ -2371,7 +2371,7 @@
     "lon": -161.224,
     "state": "AK",
     "city": "Shaktoolik",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 280,
       "y": 119,
@@ -2384,7 +2384,7 @@
     "lon": -142.95368,
     "state": "AK",
     "city": "Tok Junction",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 573,
       "y": 70,
@@ -2397,7 +2397,7 @@
     "lon": -157.0026,
     "state": "AK",
     "city": "South Naknek Nr 2",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 725,
       "y": 210,
@@ -2410,7 +2410,7 @@
     "lon": -145.26667,
     "state": "AK",
     "city": "Ft Yukon",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 525,
       "y": 184,
@@ -2423,7 +2423,7 @@
     "lon": -161.4933299,
     "state": "AK",
     "city": "Akiachak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 655,
       "y": 306,
@@ -2436,7 +2436,7 @@
     "lon": -165.24628,
     "state": "AK",
     "city": "Tununak",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 585,
       "y": 309,
@@ -2449,7 +2449,7 @@
     "lon": -162.4406,
     "state": "AK",
     "city": "Nunapitchuk",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 638,
       "y": 309,
@@ -2462,7 +2462,7 @@
     "lon": -163,
     "state": "AK",
     "city": "Point Lay",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 296,
       "y": 314,
@@ -7249,7 +7249,7 @@
     "lon": -159.78639,
     "state": "HI",
     "city": "Kekaha",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 74,
       "y": 177,
@@ -7261,8 +7261,8 @@
     "lat": 21.48333,
     "lon": -158.03333,
     "state": "HI",
-    "city": "Oahu",
-    "priority": 50,
+    "city": "Wheeler AFB",
+    "priority": 14,
     "point": {
       "x": 147,
       "y": 153,
@@ -7275,7 +7275,7 @@
     "lon": -156.01444,
     "state": "HI",
     "city": "Hana",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 231,
       "y": 122,
@@ -7287,8 +7287,8 @@
     "lat": 21.30833,
     "lon": -158.06806,
     "state": "HI",
-    "city": "Kalaeloa",
-    "priority": 50,
+    "city": "Oahu",
+    "priority": 13,
     "point": {
       "x": 145,
       "y": 145,
@@ -7301,7 +7301,7 @@
     "lon": -156.05056,
     "state": "HI",
     "city": "Kailua",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 230,
       "y": 75,
@@ -7314,7 +7314,7 @@
     "lon": -159.3411099,
     "state": "HI",
     "city": "Lihue",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 92,
       "y": 175,
@@ -7327,7 +7327,7 @@
     "lon": -157.1,
     "state": "HI",
     "city": "Kaunakakai",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 186,
       "y": 138,
@@ -7340,7 +7340,7 @@
     "lon": -155.66817,
     "state": "HI",
     "city": "Kamuela",
-    "priority": 50,
+    "priority": 99,
     "point": {
       "x": 246,
       "y": 86,
@@ -7353,7 +7353,7 @@
     "lon": -157.76556,
     "state": "HI",
     "city": "Kaneohe",
-    "priority": 50,
+    "priority": 14,
     "point": {
       "x": 158,
       "y": 151,
@@ -7379,7 +7379,7 @@
     "lon": -156.95139,
     "state": "HI",
     "city": "Lanai City",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 192,
       "y": 121,
@@ -7392,7 +7392,7 @@
     "lon": -156.43694,
     "state": "HI",
     "city": "Kahului",
-    "priority": 50,
+    "priority": 13,
     "point": {
       "x": 214,
       "y": 126,
@@ -7405,7 +7405,7 @@
     "lon": -155.55359,
     "state": "HI",
     "city": "Hawaii",
-    "priority": 50,
+    "priority": 14,
     "point": {
       "x": 251,
       "y": 76,
