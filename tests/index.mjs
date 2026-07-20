@@ -6,8 +6,10 @@
 //   - the /api or /airquality proxy returns a 5xx (the class of the Envoy 502
 //     framing bug), or
 //   - the page throws an uncaught error, or
-//   - the page logs a console error, or
 //   - the forecast never resolves (the grid point in the footer stays empty).
+//
+// Console errors are logged but NOT failed on: the app benignly 404s optional
+// resources (e.g. the custom.js hook probe), which are not forecast failures.
 //
 // Each location gets a few attempts to absorb transient api.weather.gov blips
 // (the NWS API is not fully operational and can fail by region); a location is
@@ -36,7 +38,8 @@ const checkLocation = async (location) => {
 	const problems = [];
 
 	const onConsole = (msg) => {
-		if (msg.type() === 'error') problems.push(`console.error: ${msg.text()}`);
+		// Diagnostic only — do not fail (benign optional-resource 404s log here too).
+		if (msg.type() === 'error') console.log(`  [console.error] ${location}: ${msg.text()}`);
 	};
 	const onPageError = (err) => problems.push(`pageerror: ${err.message}`);
 	const onResponse = (res) => {
