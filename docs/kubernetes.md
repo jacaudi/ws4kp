@@ -20,7 +20,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/jacaudi/ws4kp
-          tag: v7.1.1 # x-release-please-version — pin a release; auto-bumped on each release
+          tag: v7.1.2 # x-release-please-version — pin a release; auto-bumped on each release
         env:
           # Seed a default location / displays with WSQS_ vars (any permalink
           # parameter: replace '-' with '_' and prefix WSQS_). Optional.
@@ -130,7 +130,7 @@ spec:
           app:
             image:
               repository: ghcr.io/jacaudi/ws4kp
-              tag: v7.1.1 # x-release-please-version
+              tag: v7.1.2 # x-release-please-version
     service:
       app:
         controller: ws4kp
@@ -141,7 +141,7 @@ spec:
 
 ## Notes
 
-- **Image tags:** pin a release (`v7.1.1`) for reproducible rollouts. The registry also publishes `:latest` (from `main`) and `:sha-<short>` for every build; all images are multi-arch (amd64 + arm64), so they run on ARM nodes too. <!-- x-release-please-version -->
+- **Image tags:** pin a release (`v7.1.2`) for reproducible rollouts. The registry also publishes `:latest` (from `main`) and `:sha-<short>` for every build; all images are multi-arch (amd64 + arm64), so they run on ARM nodes too. <!-- x-release-please-version -->
 - **Replicas / caching:** the server's request de-dup + cache is **in-process (per-pod)**. One replica gives the best cache hit rate. Running more replicas still works, but each pod caches independently (more upstream calls); there's no shared cache to configure. For a single household/kiosk, keep `replicas: 1`.
 - **No storage needed:** music ships baked into the image. To override it, mount your own tracks over `/app/server/music` (e.g. an app-template `persistentVolumeClaim` or `configMap` volume) — see [music.md](music.md).
 - **Config:** everything is driven by `WSQS_` environment variables (above) — see [deployment.md](deployment.md#default-parameters-via-environment-variables) for the full list. No secrets or API keys are required (all data sources are key-free).
