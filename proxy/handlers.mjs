@@ -28,6 +28,14 @@ export const outlookProxy = async (req, res) => {
 	});
 };
 
+// Open-Meteo Air Quality proxy (host-pinned; JSON only)
+export const airQualityProxy = async (req, res) => {
+	await cache.handleRequest(req, res, 'https://air-quality-api.open-meteo.com', {
+		serviceName: 'Open-Meteo Air Quality',
+		skipParams: [], // no params to skip: the display's URL never emits a 'u' param
+	});
+};
+
 // Iowa State Mesonet proxy with configurable host
 export const mesonetProxy = async (req, res) => {
 	// Determine if this is a binary file (images)

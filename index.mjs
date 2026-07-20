@@ -3,7 +3,7 @@ import express from 'express';
 import fs from 'fs';
 import { readFile } from 'fs/promises';
 import {
-	weatherProxy, radarProxy, outlookProxy, mesonetProxy, forecastProxy,
+	weatherProxy, radarProxy, outlookProxy, mesonetProxy, forecastProxy, airQualityProxy,
 } from './proxy/handlers.mjs';
 import playlist from './src/playlist.mjs';
 import OVERRIDES from './src/overrides.mjs';
@@ -129,6 +129,7 @@ if (!process.env?.STATIC) {
 	// specific proxies for other services
 	app.use('/radar/', radarProxy);
 	app.use('/spc/', outlookProxy);
+	app.use('/airquality/', airQualityProxy);
 	app.use('/mesonet/', mesonetProxy);
 	app.use('/forecast/', forecastProxy);
 
