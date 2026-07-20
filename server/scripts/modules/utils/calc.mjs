@@ -11,11 +11,20 @@ const directionToNSEW = (Direction) => {
 
 const distance = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
+// equirectangular approximation — km-proportional, cheap, no per-pair haversine trig
+const geoDistance = (lon1, lat1, lon2, lat2) => {
+	const midLat = ((lat1 + lat2) / 2) * (Math.PI / 180);
+	const dx = (lon2 - lon1) * Math.cos(midLat);
+	const dy = lat2 - lat1;
+	return Math.sqrt((dx * dx) + (dy * dy));
+};
+
 // wrap a number to 0-m
 const wrap = (x, m) => ((x % m) + m) % m;
 
 export {
 	directionToNSEW,
 	distance,
+	geoDistance,
 	wrap,
 };
