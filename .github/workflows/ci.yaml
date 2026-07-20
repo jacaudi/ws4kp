@@ -1,4 +1,4 @@
-# CI/CD pipeline orchestrator. See docs/designs/2026-07-20-ci-pipeline-design.md.
+# CI/CD pipeline orchestrator.
 #
 # Stages are reusable workflows (job-level modules). GitHub requires reusable
 # workflows to live in .github/workflows/ ("Subdirectories of the workflows
