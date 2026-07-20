@@ -15,3 +15,9 @@ dist/*
 
 #environment variables
 .env
+
+#macOS
+.DS_Store
+
+#agent/session scratch (superpowers SDD ledgers, briefs, reports)
+.superpowers/

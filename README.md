@@ -55,21 +55,20 @@ If you would like to display weather information for international locations (ou
 
 ## Deployment Modes
 
-WeatherStar 4000+ supports two deployment modes:
+WeatherStar 4000+ runs as a **server deployment** by default. A legacy **static deployment** is kept for reference under [`.archive/static/`](.archive/static/).
 
-### Server Deployment (Recommended)
+### Server Deployment (default)
 
-* Includes Node.js server with caching proxy for better performance (especially when running on a local server for multiple clients)
+* Node.js server with a caching proxy for better performance (especially on a local server serving multiple clients)
 * Server-side request deduplication and caching
 * Weather API observability and logging
-* Used by: `npm start`, `DIST=1 npm start`, and `Dockerfile.server`
+* Used by: `npm start`, `DIST=1 npm start`, and the default `Dockerfile`
 
-### Static Deployment
+### Static Deployment (legacy, archived)
 
-* Pure client-side deployment using nginx to serve static files
-* All API requests are made directly from each browser to the weather services
-* Browser-based caching
-* Used by: static file hosting and default `Dockerfile`
+* Pure client-side deployment using nginx to serve static files; every browser calls the weather services directly (no shared caching)
+* Archived under [`.archive/static/`](.archive/static/) — see that folder's README to build/run it
+* You can still host the built `dist/` on any static web server without it (see [Serving a static app](#serving-a-static-app))
 
 ## Other methods to run Ws4kp
 
@@ -113,26 +112,27 @@ For all modes, access WeatherStar by going to: http://localhost:8080/
 
 ### Docker Deployments
 
-To run via Docker using a "static deployment" where everything happens in the browser (no server component, like STATIC=1):
+The default `Dockerfile` builds the **server deployment** — a caching proxy for multi-client performance and enhanced observability (like `npm run build; DIST=1 npm start`):
 
 ```bash
-docker run -p 8080:8080 ghcr.io/netbymatt/ws4kp
+docker build -t ws4kp .
+docker run -p 8080:8080 ws4kp
 ```
 
-To run via Docker using a "server deployment" with a caching proxy server for multi-client performance and enhanced observability (like `npm run build; DIST=1 npm start`):
+The legacy **static deployment** (nginx serving pre-built files, everything in the browser, like `STATIC=1`) is archived under [`.archive/static/`](.archive/static/):
 
 ```bash
-docker build -f Dockerfile.server -t ws4kp-server .
-docker run -p 8080:8080 ws4kp-server
+docker build -f .archive/static/Dockerfile -t ws4kp-static .
+docker run -p 8080:8080 ws4kp-static
 ```
 
-To run via Docker Compose (shown here in static deployment mode):
+To run via Docker Compose (server deployment, building the default image):
 
 ```yaml
 ---
 services:
   ws4kp:
-    image: ghcr.io/netbymatt/ws4kp
+    build: .
     container_name: ws4kp
     environment:
       # Each argument in the permalink URL can become an environment variable on the Docker host by adding WSQS_
@@ -159,11 +159,12 @@ npm run build
 
 The resulting files in `/dist` can be uploaded to any web server; no server-side scripting is required.
 
-**Docker static deployment:**
-The default Docker image uses nginx to serve pre-built static files:
+**Docker static deployment (archived):**
+The static nginx image is kept under [`.archive/static/`](.archive/static/):
 
 ```bash
-docker run -p 8080:8080 ghcr.io/netbymatt/ws4kp
+docker build -f .archive/static/Dockerfile -t ws4kp-static .
+docker run -p 8080:8080 ws4kp-static
 ```
 
 **Node.js in static mode:**
@@ -279,7 +280,7 @@ If you're looking for the original music that played during forecasts [TWCClassi
 
 WeatherStar 4000+ supports background music during forecast playback. The music behavior depends on how you deploy the application:
 
-#### Express server modes (`npm start`, `DIST=1 npm start`, or `Dockerfile.server`)
+#### Express server modes (`npm start`, `DIST=1 npm start`, or the default `Dockerfile`)
 
 When running with Node.js, the server generates a `playlist.json` file by scanning the `./server/music` directory for `.mp3` files. If no files are found in `./server/music`, it falls back to scanning `./server/music/default/`. The playlist is served dynamically at the `/playlist.json` endpoint.
 
@@ -287,15 +288,15 @@ When running with Node.js, the server generates a `playlist.json` file by scanni
 
 **Docker server example:**
 ```bash
-docker build -f Dockerfile.server -t ws4kp-server .
-docker run -p 8080:8080 -v /path/to/local/music:/app/server/music ws4kp-server
+docker build -t ws4kp .
+docker run -p 8080:8080 -v /path/to/local/music:/app/server/music ws4kp
 ```
 
-#### Static hosting modes (default `Dockerfile`, nginx, Apache, etc.)
+#### Static hosting modes (archived nginx image, manual `npm run build`, Apache, etc.)
 
 When hosting static files, there are two scenarios:
 
-**Static Docker deployment:** The build process creates a `playlist.json` file with default tracks, but the Docker image _intentionally_ removes it to force browser-based directory scanning. The browser attempts to fetch `playlist.json`, receives a 404 response with the `X-Weatherstar` header, which causes it to  fallback to scanning the `music/` directory.
+**Static Docker deployment** (archived under [`.archive/static/`](.archive/static/))**:** The build process creates a `playlist.json` file with default tracks, but the image _intentionally_ removes it to force browser-based directory scanning. The browser attempts to fetch `playlist.json`, receives a 404 response with the `X-Weatherstar` header, which causes it to  fallback to scanning the `music/` directory.
 
 **Manual static hosting:** If you build and upload the files yourself (`npm run build`), `playlist.json` will contain the default tracks unless you customize `./server/music/` before building.
 

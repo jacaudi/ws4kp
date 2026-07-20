@@ -12,4 +12,4 @@ Please do not report issues with api.weather.gov being down. It's a new service 
 Please include:
 * Web browser and OS
 * Headend Information text block from the very bottom of the web page
-* How you're running Weatherstar (Node, Dockerfile, Dockerfile.server, etc.)
+* How you're running Weatherstar (Node, Docker server image, static, etc.)
