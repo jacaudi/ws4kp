@@ -1,5 +1,25 @@
 # Changelog
 
+## [7.1.3](https://github.com/jacaudi/ws4kp/compare/v7.1.2...v7.1.3) (2026-07-21)
+
+
+### Bug Fixes
+
+* **build:** bundle airquality.mjs so Air Quality appears in dist builds ([6616688](https://github.com/jacaudi/ws4kp/commit/6616688fbc57c1d79890d189896d6b8be930fc6f))
+* **build:** bundle airquality.mjs so Air Quality appears in dist builds ([6c52e8f](https://github.com/jacaudi/ws4kp/commit/6c52e8f175d77c90ffdc12b860b47a9bd17e4766))
+
+
+### Miscellaneous
+
+* **deps:** update actions/checkout action to v7 ([b6bfdb4](https://github.com/jacaudi/ws4kp/commit/b6bfdb40c58732d579086e07a43acd33c637c3de))
+* **deps:** update actions/checkout action to v7 ([62f5600](https://github.com/jacaudi/ws4kp/commit/62f56009b40c08f170e56f7063c055ba79c82b44))
+* **deps:** update actions/setup-node action to v7 ([22d18c9](https://github.com/jacaudi/ws4kp/commit/22d18c90c86ad421764ff5924b872baa900dffb7))
+* **deps:** update actions/setup-node action to v7 ([1140f29](https://github.com/jacaudi/ws4kp/commit/1140f2915de0fe5d5a8a7e67b8e54597ad0b0f9b))
+* **deps:** update dependency sass to v1.101.3 ([035e79e](https://github.com/jacaudi/ws4kp/commit/035e79e999f3dddb56e2647c88201671923416dd))
+* **deps:** update dependency sass to v1.101.3 ([f07ea1f](https://github.com/jacaudi/ws4kp/commit/f07ea1f59a34e8278d65a367de5247cff59b357a))
+* **deps:** update dependency webpack to v5.108.4 ([7966d36](https://github.com/jacaudi/ws4kp/commit/7966d36a46c10c4019946f3590a29d3f15aacfa3))
+* **deps:** update dependency webpack to v5.108.4 ([08c8d4f](https://github.com/jacaudi/ws4kp/commit/08c8d4fbcab38ad0182bce62336b954a14af70a8))
+
 ## [7.1.2](https://github.com/jacaudi/ws4kp/compare/v7.1.1...v7.1.2) (2026-07-20)
 
 
