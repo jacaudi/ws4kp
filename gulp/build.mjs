@@ -48,6 +48,7 @@ const webpackOptions = {
 				'./server/scripts/modules/currentweather.mjs',
 				'./server/scripts/modules/almanac.mjs',
 				'./server/scripts/modules/spc-outlook.mjs',
+				'./server/scripts/modules/airquality.mjs',
 				'./server/scripts/modules/extendedforecast.mjs',
 				'./server/scripts/modules/hourly.mjs',
 				'./server/scripts/modules/hourly-graph.mjs',
