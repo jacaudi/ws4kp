@@ -31,10 +31,16 @@ const DEFAULT_REQUEST_TIMEOUT = 15000;
 //   that res.send() frames with its own Content-Length yields a response carrying both
 //   framings — illegal per RFC 7230 §3.3.3, which a strict fronting proxy (e.g. Envoy)
 //   rejects with a 502 protocol error. Express recomputes Content-Length on send.
+// - set-cookie: upstream cookies belong to the upstream origin, not to us. NWS sends
+//   a Dynatrace analytics cookie scoped to Domain=.weather.gov; relayed from our own
+//   host the browser rejects it for domain mismatch and logs an error per request.
+//   It is also cached (this same set filters what gets stored), so one upstream
+//   cookie would be re-emitted to every client on each cache hit.
 const EXCLUDED_RESPONSE_HEADERS = new Set([
 	'cache-control', 'expires', 'etag', 'last-modified',
 	'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
 	'te', 'trailer', 'transfer-encoding', 'upgrade',
+	'set-cookie',
 ]);
 
 class HttpCache {
