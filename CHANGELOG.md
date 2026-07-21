@@ -1,5 +1,27 @@
 # Changelog
 
+## [7.1.4](https://github.com/jacaudi/ws4kp/compare/v7.1.3...v7.1.4) (2026-07-21)
+
+
+### Bug Fixes
+
+* **almanac:** adapt to suncalc v2 and re-vendor the UMD build ([1bacd9a](https://github.com/jacaudi/ws4kp/commit/1bacd9acc94bd9ef5fad777777d9645c4f906585))
+* **css:** regenerate stale ws.min.css and repoint the build:css script ([c6741ab](https://github.com/jacaudi/ws4kp/commit/c6741ab1933feff62338202cb5022c9d4caa43dc))
+* **css:** regenerate stale ws.min.css and repoint the build:css script ([f01f3dc](https://github.com/jacaudi/ws4kp/commit/f01f3dc16699c79962e24e245f7901e51963735c)), closes [#35](https://github.com/jacaudi/ws4kp/issues/35)
+* **proxy:** stop relaying upstream set-cookie headers ([be68a71](https://github.com/jacaudi/ws4kp/commit/be68a71f4f8ee4cf37ebc6b3f52f93e43983c88d)), closes [#35](https://github.com/jacaudi/ws4kp/issues/35)
+
+
+### Miscellaneous
+
+* **deps:** update dependency eslint to v10 ([02cee4c](https://github.com/jacaudi/ws4kp/commit/02cee4c7266cae9389d828876e5af0a302e5a481))
+* **deps:** update dependency eslint to v10 ([525c9fa](https://github.com/jacaudi/ws4kp/commit/525c9fa034c417cffb0971065541516c33b0b991))
+* **deps:** update dependency suncalc to v2 ([abaf3dd](https://github.com/jacaudi/ws4kp/commit/abaf3dd384126b3b7970e2dcfcee12a19251c3fb))
+* **deps:** update dependency suncalc to v2 ([944f191](https://github.com/jacaudi/ws4kp/commit/944f1910f42a40403888a0241260252a69d884d1))
+* drop dead utils/cache.mjs and the unused ajv devDependency ([6ff015a](https://github.com/jacaudi/ws4kp/commit/6ff015a9c5b0f02b0c02b02507497d61fcce255a))
+* drop dead utils/cache.mjs and the unused ajv devDependency ([fd7f798](https://github.com/jacaudi/ws4kp/commit/fd7f7989cacffbee811c4e209acfa7e475e83fde)), closes [#35](https://github.com/jacaudi/ws4kp/issues/35)
+* **renovate:** wait 3 days before raising npm updates ([9c2885f](https://github.com/jacaudi/ws4kp/commit/9c2885fd6876c2ca5f70898bd2ab0e996192f375))
+* **renovate:** wait 3 days before raising npm updates ([6306db7](https://github.com/jacaudi/ws4kp/commit/6306db7e5593e8e69b09b7957eea8e599e59af62)), closes [#35](https://github.com/jacaudi/ws4kp/issues/35)
+
 ## [7.1.3](https://github.com/jacaudi/ws4kp/compare/v7.1.2...v7.1.3) (2026-07-21)
 
 
