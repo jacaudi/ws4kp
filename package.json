@@ -10,7 +10,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"test:unit": "node --test \"tests/unit/*.test.mjs\"",
 		"build:travelcities": "node datagenerators/travelcities.mjs",
-		"build:css": "sass --style=compressed ./server/styles/scss/main.scss ./server/styles/main.css",
+		"build:css": "sass --style=compressed ./server/styles/scss/ws.scss ./server/styles/ws.min.css",
 		"build": "gulp buildDist",
 		"lint": "eslint ./server/scripts/**/*.mjs ./proxy/**/*.mjs ./src/**/*.mjs *.mjs",
 		"lint:fix": "eslint --fix ./server/scripts/**/*.mjs ./proxy/**/*.mjs ./src/**/*.mjs *.mjs",
