@@ -39,5 +39,10 @@ COPY datagenerators/output ./datagenerators/output
 
 EXPOSE 8080
 
+# NODE_ENV=production is read by Express, not by this project's own code
+# (nothing here branches on it). It enables the view cache, so the EJS
+# templates are compiled once instead of re-read on every request, and it
+# stops finalhandler from putting err.stack into 5xx response bodies.
+ENV NODE_ENV=production
 ENV DIST=1
 CMD ["npm", "start"]
