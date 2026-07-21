@@ -42,6 +42,24 @@ test('setFilteredHeaders strips hop-by-hop headers so a re-buffered (Content-Len
 	}
 });
 
+test('setFilteredHeaders strips upstream set-cookie so a third party cannot set cookies through the proxy', () => {
+	// NWS replies carry a Dynatrace analytics cookie scoped to Domain=.weather.gov.
+	// Forwarded from our own host the browser rejects it for domain mismatch, which
+	// is pure console noise today -- but the same EXCLUDED_RESPONSE_HEADERS set also
+	// filters what gets stored, so an un-stripped set-cookie is cached and re-emitted
+	// to every client on each cache hit. A proxy has no business relaying a third
+	// party's cookies either way.
+	const res = makeRes();
+	setFilteredHeaders(res, {
+		'content-type': 'application/json',
+		'set-cookie': ['dtCookie1up6hiss=v_4_srv_1_sn_6C79019D_perc_100000; Path=/; Domain=.weather.gov'],
+	});
+
+	assert.equal(res.headers['set-cookie'], undefined, 'upstream set-cookie must not be forwarded');
+	// the rest of the response must still come through
+	assert.equal(res.headers['content-type'], 'application/json');
+});
+
 test('setFilteredHeaders passes through ordinary entity headers', () => {
 	const res = makeRes();
 	setFilteredHeaders(res, { 'content-type': 'application/geo+json', vary: 'Accept' });
