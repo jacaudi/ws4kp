@@ -8,7 +8,8 @@ const vendorFiles = [
 	'./node_modules/luxon/build/es6/luxon.mjs',
 	'./node_modules/luxon/build/es6/luxon.mjs.map',
 	'./node_modules/@zakj/no-sleep/dist/no-sleep.js',
-	'./node_modules/suncalc/suncalc.js',
+	// suncalc v2 dropped suncalc.js; .cjs is its UMD build, the one a <script> tag needs
+	'./node_modules/suncalc/suncalc.cjs',
 	'./node_modules/swiped-events/src/swiped-events.js',
 ];
 
@@ -23,6 +24,8 @@ const copy = () => src(vendorFiles)
 		path.dirname = path.dirname.toLowerCase();
 		path.basename = path.basename.toLowerCase();
 		path.extname = path.extname.toLowerCase();
+		// keep suncalc at .js; a .cjs extension is served with a non-JavaScript MIME type
+		if (path.basename === 'suncalc') path.extname = '.js';
 	}))
 	.pipe(dest('./server/scripts/vendor/auto'));
 

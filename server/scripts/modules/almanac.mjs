@@ -49,8 +49,10 @@ class Almanac extends WeatherDisplay {
 
 	calcSunMoonData(weatherParameters) {
 		const dayOffsets = [0, 1, 2, 3, 4, 5, 6];
-		const sun = dayOffsets.map((days) => SunCalc.getTimes(DateTime.local().plus({ days }).toJSDate(), weatherParameters.latitude, weatherParameters.longitude));
-		const moonTransit = dayOffsets.map((days) => SunCalc.getMoonTimes(DateTime.local().plus({ days }).toJSDate(), weatherParameters.latitude, weatherParameters.longitude));
+		// suncalc v2 reads the date as a UTC instant, so anchor each day to local midnight
+		const localDay = (days) => DateTime.local().plus({ days }).startOf('day');
+		const sun = dayOffsets.map((days) => SunCalc.getTimes(localDay(days).toJSDate(), weatherParameters.latitude, weatherParameters.longitude));
+		const moonTransit = dayOffsets.map((days) => moonTimesForLocalDay(localDay(days), weatherParameters.latitude, weatherParameters.longitude));
 
 		// brute force the moon phases by scanning the next 30 days
 		const moon = [];
@@ -221,6 +223,19 @@ const imageName = (type) => {
 		default:
 			return 'images/icons/moon-phases/First-Quarter.gif';
 	}
+};
+
+// suncalc v2 scans a UTC day, which straddles two local days, so union the neighbouring scans and keep the events inside this local day
+const moonTimesForLocalDay = (day, latitude, longitude) => {
+	const start = day.toJSDate();
+	const end = day.plus({ days: 1 }).toJSDate();
+	const scans = [-1, 0, 1].map((offset) => SunCalc.getMoonTimes(day.plus({ days: offset }).toJSDate(), latitude, longitude));
+	const earliestInDay = (key) => scans
+		.map((scan) => scan[key])
+		.filter((time) => time && time >= start && time < end)
+		.sort((a, b) => a - b)[0] ?? null;
+
+	return { rise: earliestInDay('rise'), set: earliestInDay('set') };
 };
 
 const formatTimeForColumn = (time) => {
