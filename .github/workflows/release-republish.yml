@@ -1,0 +1,47 @@
+# Rebuild and republish the image for an existing release tag.
+#
+# The normal path publishes a release image exactly once, from ci.yaml's
+# release-image job. There is no way to ask for it again, so when an image is
+# published wrong there is nothing to re-run — v7.2.0 was built from the wrong
+# commit and could only be corrected by hand. This is that missing operation.
+#
+# It rebuilds from the tag and republishes the same semver tags. Nothing here
+# touches git tags or GitHub Releases; only the container image is affected.
+name: release-republish
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to rebuild and republish (e.g. v7.2.0)
+        required: true
+        type: string
+
+concurrency:
+  group: release-republish-${{ inputs.tag }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # ci-build refuses to publish when the checked-out package.json disagrees with
+  # the tag, so a typo'd or non-release tag fails there rather than shipping.
+  image:
+    name: republish ${{ inputs.tag }}
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/ci-build.yml
+    with:
+      version: ${{ inputs.tag }}
+      ref: ${{ inputs.tag }}
+
+  smoke:
+    needs: [image]
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/ci-smoke.yml
+    with:
+      image: ${{ needs.image.outputs.image }}
