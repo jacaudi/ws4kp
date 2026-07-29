@@ -25,3 +25,4 @@ dist/*
 #agent scratch — .claude/skills and .claude/agents ARE tracked, the rest is per-session
 .claude/worktrees/
 .playwright-mcp/
+.regional-shots/
