@@ -1,5 +1,25 @@
 # Changelog
 
+## [7.1.5](https://github.com/jacaudi/ws4kp/compare/v7.1.4...v7.1.5) (2026-07-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency ejs to v6 ([6dfbf8d](https://github.com/jacaudi/ws4kp/commit/6dfbf8df2af34abf9e61f3a7a8cebea822e7bd5a))
+
+
+### Miscellaneous
+
+* **deps:** update dependency sass to v1.101.7 ([55b0008](https://github.com/jacaudi/ws4kp/commit/55b000894e7b3f0bcca7f16af5fe7fc4a255d28d))
+* **deps:** update dependency webpack to v5.109.0 ([bbb67f8](https://github.com/jacaudi/ws4kp/commit/bbb67f8b85748e43bd5c8a457bd238bef1ff36bf))
+* **deps:** update docker/build-push-action action to v7 ([84a293d](https://github.com/jacaudi/ws4kp/commit/84a293d32c8bbb0d5bcc1a83d84269c551d37b2b))
+* **deps:** update docker/login-action action to v4 ([1ff2816](https://github.com/jacaudi/ws4kp/commit/1ff28169541fe45be1aa7f613ff8a779cb22f405))
+* **deps:** update docker/metadata-action action to v6 ([e190830](https://github.com/jacaudi/ws4kp/commit/e1908301cec49a28dfc709d85f541dafb084b75a))
+* **deps:** update docker/setup-buildx-action action to v4 ([fc2a3e1](https://github.com/jacaudi/ws4kp/commit/fc2a3e16307639ed1343b39e7c1ac86590f0ba5e))
+* **deps:** update docker/setup-qemu-action action to v4 ([2883286](https://github.com/jacaudi/ws4kp/commit/2883286eca8e1d7c7fb69faeda88253c91a967d8))
+* **deps:** update github/codeql-action action to v4 ([3e40501](https://github.com/jacaudi/ws4kp/commit/3e40501f3f099ed4c87dd21b3fb84f0ae4cc9e62))
+* **deps:** update googleapis/release-please-action action to v5 ([ae5e0de](https://github.com/jacaudi/ws4kp/commit/ae5e0deb164aa4f06159c7aa0a43cc367b63d954))
+
 ## [7.1.4](https://github.com/jacaudi/ws4kp/compare/v7.1.3...v7.1.4) (2026-07-21)
 
 
