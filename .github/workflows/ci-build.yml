@@ -1,13 +1,26 @@
 # Stage c — artifact building: multi-arch image to GHCR. Reusable workflow.
 # Tag strategy (docker/metadata-action):
-#   sha    — every build (feature branches, main, tags)
-#   latest — default branch + version tags
-#   semver — version tags only (v7.1.1 / v7.1 / v7)
+#   sha    — every build (feature branches, main, releases)
+#   latest — default branch + releases
+#   semver — releases only (v7.1.1 / v7.1 / v7), driven by the `version` input
 # Outputs the pushed image by immutable digest so stage d can pull the exact build.
+#
+# `version` is how a release build gets its semver tags. release-please cuts the
+# tag itself, so the release build is triggered by a push to main (not by the tag
+# push) and github.ref is refs/heads/main — there is no semver ref to derive from.
+# Passing the release tag explicitly is metadata-action's documented mechanism for
+# that case. Left empty, every semver line falls back to the git ref, which is the
+# pre-existing behaviour for ordinary branch and main builds.
 name: ci-build
 
 on:
   workflow_call:
+    inputs:
+      version:
+        description: Release tag to derive semver image tags from (e.g. v7.1.5). Empty for non-release builds.
+        required: false
+        default: ''
+        type: string
     outputs:
       image:
         description: Pushed image reference, pinned by digest
@@ -43,9 +56,9 @@ jobs:
           tags: |
             type=sha
             type=raw,priority=1000,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
-            type=semver,pattern=v{{version}}
-            type=semver,pattern=v{{major}}.{{minor}}
-            type=semver,pattern=v{{major}}
+            type=semver,pattern=v{{version}},value=${{ inputs.version }}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ inputs.version }}
+            type=semver,pattern=v{{major}},value=${{ inputs.version }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
