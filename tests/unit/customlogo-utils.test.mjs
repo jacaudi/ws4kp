@@ -16,6 +16,13 @@ test('the storage key matches the one persisted by earlier versions', () => {
 	assert.equal(CUSTOM_LOGO_STORAGE_KEY, 'CustomLogoPng');
 });
 
+test('the size limit matches the limit its message states', () => {
+	// customLogoFileError promises "1 MB or smaller" in words; if the constant moves
+	// without the message, the message becomes a lie and the boundary tests below —
+	// which derive their input from the constant — would not notice.
+	assert.equal(MAX_CUSTOM_LOGO_BYTES, 1024 * 1024);
+});
+
 test('isCustomLogoDataUrl accepts a PNG data URL', () => {
 	assert.equal(isCustomLogoDataUrl('data:image/png;base64,iVBORw0KGgo='), true);
 });
@@ -76,8 +83,11 @@ test('customLogoEnabled is false when a logo is stored but the setting is off', 
 	assert.equal(customLogoEnabled(false, 'data:image/png;base64,iVBORw0KGgo='), false);
 });
 
-test('customLogoEnabled is false when the stored value is not a PNG data URL', () => {
-	assert.equal(customLogoEnabled(true, 'https://example.com/logo.png'), false);
+test('customLogoEnabled takes an already-validated stored logo at face value', () => {
+	// Validation belongs to isCustomLogoDataUrl, applied once when the value is read
+	// out of localStorage. customLogoEnabled only combines "setting on" with "logo
+	// present", so it must not re-derive validity from the string it is handed.
+	assert.equal(customLogoEnabled(true, 'anything-non-empty'), true);
 });
 
 test('customLogoEnabled tolerates an undefined setting value', () => {

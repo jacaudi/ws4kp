@@ -10,6 +10,9 @@ const settings = { speed: { value: 1.0 } };
 // Track settings that need DOM changes after early initialization
 const deferredDomSettings = new Set();
 const defaultLogoSrc = 'images/logos/logo-corner.svg';
+// Matches the alt text baked into the header partials, so a fallback cannot disagree
+// with the markup it replaces.
+const defaultLogoAlt = 'WeatherStar 4000+';
 
 // don't show checkboxes for these settings
 const hiddenSettings = [
@@ -201,21 +204,32 @@ const applyCustomLogo = () => {
 	const hasStoredLogo = Boolean(storedLogo);
 	const enabled = customLogoEnabled(settings.customLogoImage?.value, storedLogo);
 	const container = document.getElementById('container');
-	if (!container) {
-		if (settings.customLogoImage?.value) {
-			deferredDomSettings.add('customLogoImage');
-		}
-		return;
-	}
+	// The only moment #container is absent is the Setting constructor's startup call,
+	// and at that point settings.customLogoImage is still being assigned, so there is
+	// nothing to apply. The unconditional applyCustomLogo() at the end of
+	// DOMContentLoaded does the real work; no deferral is needed here.
+	if (!container) return;
 
 	container.classList.toggle('custom-logo-image-enabled', enabled);
 	document.querySelectorAll('.logo-corner').forEach((logo) => {
-		const src = enabled ? getStoredCustomLogo() : defaultLogoSrc;
-		logo.src = src;
-		logo.alt = enabled ? 'Custom logo' : 'Weather Star 4000+';
+		// A stored value can satisfy isCustomLogoDataUrl and still fail to decode if it
+		// was truncated or hand-edited. Without this, every header shows a broken image
+		// and the only escape is the Clear button. Assigned rather than added so repeated
+		// applyCustomLogo() calls cannot stack handlers.
+		logo.onerror = () => {
+			if (logo.getAttribute('src') === defaultLogoSrc) return;
+			logo.src = defaultLogoSrc;
+			logo.alt = defaultLogoAlt;
+			setCustomLogoStatus('Stored PNG could not be displayed; using the default logo.', true);
+		};
+		logo.src = enabled ? storedLogo : defaultLogoSrc;
+		logo.alt = enabled ? 'Custom logo' : defaultLogoAlt;
 	});
 
-	toggleCustomLogoControls(settings.customLogoImage?.value ?? false);
+	// Keep the controls — and so the Clear button — reachable whenever a PNG is still
+	// stored. Hiding them on the setting alone orphans the stored data with no UI to
+	// delete it.
+	toggleCustomLogoControls(Boolean(settings.customLogoImage?.value) || hasStoredLogo);
 	if (settings.customLogoImage?.value && !hasStoredLogo) {
 		setCustomLogoStatus('Upload a PNG to replace the default logo.');
 	} else if (enabled) {
@@ -253,8 +267,11 @@ const createCustomLogoUploadControl = () => {
 	const wrapper = document.createElement('div');
 	wrapper.id = 'settings-customLogoImage-upload';
 
-	const title = document.createElement('span');
+	// A real <label for> rather than a bare span: every other setting in this panel is a
+	// label wrapping its input, so without this the file input has no accessible name.
+	const title = document.createElement('label');
 	title.textContent = 'Logo PNG ';
+	title.htmlFor = 'settings-customLogoImage-file';
 
 	const fileInput = document.createElement('input');
 	fileInput.type = 'file';
@@ -271,6 +288,8 @@ const createCustomLogoUploadControl = () => {
 
 	const status = document.createElement('span');
 	status.id = 'settings-customLogoImage-status';
+	// Upload errors are written here; without a live region they are never announced.
+	status.setAttribute('aria-live', 'polite');
 
 	fileInput.addEventListener('change', () => {
 		const [file] = fileInput.files ?? [];

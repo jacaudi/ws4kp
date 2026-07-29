@@ -459,10 +459,13 @@ body {
 	#settings-customLogoImage-upload {
 		cursor: default;
 
-		input[type="file"] {
-			margin-right: 6px;
+		// The panel's generic `#settings label` rule is display:block, which would drop
+		// the file input onto its own line. Keep this label inline with its input.
+		label {
+			display: inline;
 		}
 
+		input[type="file"],
 		input[type="button"] {
 			margin-right: 6px;
 		}
