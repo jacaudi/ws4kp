@@ -1,0 +1,65 @@
+# Stage e — release cutting. Reusable workflow.
+#
+# release-please reads Conventional Commits on main, maintains a "release PR"
+# (CHANGELOG.md + package.json bump), and on merge creates the vX.Y.Z tag +
+# GitHub Release.
+#
+# Exposes release_created / tag_name / version so the orchestrator can build the
+# release image off the OUTPUT rather than off the tag push. GITHUB_TOKEN cannot
+# trigger downstream workflows, so a tag-push-triggered build only fires when the
+# tag is pushed by the GitHub App token — without the App secrets that build was
+# silently skipped and a release shipped with no image behind it.
+#
+# Requires `secrets: inherit` from the caller (APP_ID / APP_PRIVATE_KEY).
+name: ci-release
+
+on:
+  workflow_call:
+    outputs:
+      release_created:
+        description: '"true" when release-please cut a release on this run'
+        value: ${{ jobs.release.outputs.release_created }}
+      tag_name:
+        description: Tag release-please created (e.g. v7.1.5); empty when none
+        value: ${{ jobs.release.outputs.tag_name }}
+      version:
+        description: Version release-please released (e.g. 7.1.5); empty when none
+        value: ${{ jobs.release.outputs.version }}
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: release-please
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      APP_ID: ${{ secrets.APP_ID }}
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+      tag_name: ${{ steps.rp.outputs.tag_name }}
+      version: ${{ steps.rp.outputs.version }}
+    steps:
+      # The App token is for attribution — it makes the release PR and the release
+      # come from the App rather than github-actions[bot]. It is no longer
+      # load-bearing for the image build (see the header). If the App secrets
+      # aren't set this step is skipped and release-please falls back to
+      # GITHUB_TOKEN.
+      - name: Generate a GitHub App token
+        id: app-token
+        if: ${{ env.APP_ID != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Run release-please
+        id: rp
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
