@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.1](https://github.com/jacaudi/ws4kp/compare/v7.2.0...v7.2.1) (2026-07-29)
+
+
+### Bug Fixes
+
+* **ci:** build the release image from the tagged commit, not the triggering one ([300eea1](https://github.com/jacaudi/ws4kp/commit/300eea11fa7e1c5016a8c5d0e0b12685feb68a5c))
+
 ## [7.2.0](https://github.com/jacaudi/ws4kp/compare/v7.1.5...v7.2.0) (2026-07-29)
 
 
