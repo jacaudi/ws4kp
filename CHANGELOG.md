@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.2](https://github.com/jacaudi/ws4kp/compare/v7.2.1...v7.2.2) (2026-07-29)
+
+
+### Bug Fixes
+
+* **regional:** space labels by their real pixel box and let stations yield to cities ([#65](https://github.com/jacaudi/ws4kp/issues/65)) ([bef34db](https://github.com/jacaudi/ws4kp/commit/bef34dbcc8a98b1e4ae4d13ebfb856926df5b0ae))
+
 ## [7.2.1](https://github.com/jacaudi/ws4kp/compare/v7.2.0...v7.2.1) (2026-07-29)
 
 
