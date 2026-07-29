@@ -15,6 +15,14 @@
 # Version tags do NOT trigger anything. release-please cuts the tag, and the
 # release image is built from its `release_created` output — not from the tag
 # push, which only fires when a GitHub App token pushed it.
+#
+# KNOWN GAP — fork PRs get no CI at all: their commits push to the fork, so nothing
+# triggers here, and branch protection now requires checks they cannot produce.
+# Adding `pull_request` would make it worse, not better (fork events get a read-only
+# token, so the GHCR push fails every time), and `pull_request_target` would run
+# untrusted code with our credentials. The real fix is splitting build from push and
+# handing smoke a tarball instead of a digest; not worth it at zero forks. Until one
+# appears, push the contributor's branch here and the normal chain runs.
 name: CI
 
 on:
