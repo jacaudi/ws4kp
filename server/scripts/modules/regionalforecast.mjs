@@ -6,6 +6,8 @@ import { geoDistance } from './utils/calc.mjs';
 import {
 	filterJunkStations,
 	inVisibleWindow,
+	getXYForCity,
+	isMeasured,
 	selectRegionalCities,
 	regionalSelectionConfig,
 	resolveLabelCollisions,
@@ -106,8 +108,20 @@ class RegionalForecast extends WeatherDisplay {
 		const stations = Object.values(StationInfo).map((s) => ({
 			...s, lat: Number(s.lat), lon: Number(s.lon), baked: false,
 		}));
+		// Project each candidate BEFORE selecting, and drop the ones that land off the
+		// drawable area. inVisibleWindow is a coarse lat/lon prefilter; the pixel test
+		// is the authoritative one, because the window scale can push an in-window city
+		// past maxX/maxY. Doing this first means an off-map city is replaced by the next
+		// nearest candidate instead of just vanishing from the count, and — since the
+		// fetch loop below runs over the selected list — we no longer spend a forecast
+		// and an observation request on a city that could never be drawn.
 		const candidates = filterJunkStations([...cities, ...stations])
-			.filter((c) => inVisibleWindow(c, minMaxLatLon));
+			.filter((c) => inVisibleWindow(c, minMaxLatLon))
+			.map((c) => ({
+				...c,
+				xy: getXYForCity(c, minMaxLatLon.maxLat, minMaxLatLon.minLon, this.weatherParameters.state, scale, available.x - 60, available.y),
+			}))
+			.filter((c) => c.xy);
 
 		// rank nearest-to-user, dedup by minSpacing, cap at count
 		const regionalCities = selectRegionalCities(user, candidates, { count, minSpacing });
@@ -137,9 +151,8 @@ class RegionalForecast extends WeatherDisplay {
 					return false;
 				}
 
-				// get XY on map for city (scale wired in Task 3)
-				const cityXY = utils.getXYForCity(city, minMaxLatLon.maxLat, minMaxLatLon.minLon, this.weatherParameters.state, scale, available.x - 60, available.y);
-				cityXY.dist = geoDistance(user.lon, user.lat, city.lon, city.lat);
+				// projected during candidate selection above, so it is known drawable here
+				const cityXY = { ...city.xy, dist: geoDistance(user.lon, user.lat, city.lon, city.lat) };
 
 				// wait for the regional observation if it's not done yet
 				const observation = await observationPromise;
@@ -260,10 +273,30 @@ class RegionalForecast extends WeatherDisplay {
 		this.finishDraw();
 	}
 
-	// eslint-disable-next-line class-methods-use-this -- pure DOM-measurement helper, no instance state needed
-	declutterLabels(container, elems) {
+	// Anything painted over the map that a label must not sit on top of. Measured
+	// from the DOM rather than hard-coded, so enhanced/wide/portrait layouts — which
+	// move the header and resize the map — are handled without a second set of
+	// constants to keep in sync.
+	chromeObstacles(container) {
 		const containerRect = container.getBoundingClientRect();
-		const items = elems.map((el) => {
+		const toLocal = (r) => ({
+			left: r.left - containerRect.left,
+			top: r.top - containerRect.top,
+			right: r.right - containerRect.left,
+			bottom: r.bottom - containerRect.top,
+		});
+		const selectors = ['.header', '.logo', '.title', '.date-time', '.scroll', '.hazard-lines'];
+		return selectors
+			.flatMap((sel) => Array.from(this.elem.querySelectorAll(sel)))
+			.map((el) => el.getBoundingClientRect())
+			.filter((r) => r.width > 0 && r.height > 0)
+			.map(toLocal);
+	}
+
+	// eslint-disable-next-line class-methods-use-this -- pure DOM-measurement helper, no instance state needed
+	measureLabels(container, elems) {
+		const containerRect = container.getBoundingClientRect();
+		return elems.map((el) => {
 			let left = Infinity;
 			let top = Infinity;
 			let right = -Infinity;
@@ -287,8 +320,42 @@ class RegionalForecast extends WeatherDisplay {
 				},
 			};
 		});
-		const kept = new Set(resolveLabelCollisions(items, 2).map((i) => i.el));
-		elems.forEach((el) => { if (!kept.has(el)) el.remove(); });
+	}
+
+	// Decluttering is a MEASUREMENT, so it cannot run in the same tick as the append
+	// that created these elements — at that point the children have no layout, every
+	// box comes back degenerate, and resolveLabelCollisions quietly keeps everything.
+	// That is what let overlapping labels ship. Wait for a frame, and if the boxes
+	// still are not real (the display can be laid out lazily when hidden), try again
+	// for a few frames rather than decluttering against garbage.
+	declutterLabels(container, elems, attempt = 0) {
+		const MAX_ATTEMPTS = 10;
+		requestAnimationFrame(() => {
+			// elements may have been replaced by a newer draw while we waited
+			if (!elems.length || !elems[0].isConnected) return;
+
+			const items = this.measureLabels(container, elems);
+			if (!items.every((i) => isMeasured(i.rect))) {
+				if (attempt < MAX_ATTEMPTS) this.declutterLabels(container, elems, attempt + 1);
+				return;
+			}
+
+			const main = this.elem.querySelector('.main');
+			const containerRect = container.getBoundingClientRect();
+			const bounds = main
+				? {
+					left: main.getBoundingClientRect().left - containerRect.left,
+					top: main.getBoundingClientRect().top - containerRect.top,
+					right: main.getBoundingClientRect().right - containerRect.left,
+					bottom: main.getBoundingClientRect().bottom - containerRect.top,
+				}
+				: undefined;
+
+			const kept = new Set(
+				resolveLabelCollisions(items, 2, this.chromeObstacles(container), bounds).map((i) => i.el),
+			);
+			elems.forEach((el) => { if (!kept.has(el)) el.remove(); });
+		});
 	}
 }
 

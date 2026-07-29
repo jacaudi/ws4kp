@@ -26,13 +26,30 @@ test('getXYForCity: AK marker px/deg = 25/56 x scale (state affects x, no fallth
 	assert.ok(Math.abs(r.y - (3 * 56 * SCALE)) < 1e-6);
 });
 
-test('getXYForCity: widescreen maxX now clamps AK too (bug 2 fully fixed)', () => {
-	const r = getXYForCity({ lon: -60, lat: 62 }, 65, -175, 'AK', SCALE, 794, 282);
-	assert.ok(r.x <= 794);
-	assert.ok(r.x >= 40);
+// getXYForCity used to clamp out-of-range coordinates to the map border. That
+// pinned off-map cities to the edge and drew them at coordinates that were simply
+// wrong. It now returns undefined and the caller drops the candidate, matching
+// upstream's behaviour (netbymatt/ws4kp@2e87d17).
+
+test('getXYForCity: widescreen maxX rejects AK rather than clamping', () => {
+	assert.equal(getXYForCity({ lon: -60, lat: 62 }, 65, -175, 'AK', SCALE, 794, 282), undefined);
 });
 
-test('getXYForCity: clamps y into [30, maxY]', () => {
-	const r = getXYForCity({ lon: -100, lat: 20 }, 65, -110, 'CONUS', SCALE, 580, 282);
-	assert.ok(r.y >= 30 && r.y <= 282);
+test('getXYForCity: rejects a city past maxY', () => {
+	assert.equal(getXYForCity({ lon: -100, lat: 20 }, 65, -110, 'CONUS', SCALE, 580, 282), undefined);
+});
+
+test('getXYForCity: rejects each edge independently', () => {
+	// above the top edge (y < 30)
+	assert.equal(getXYForCity({ lon: -100, lat: 64.9 }, 65, -110, 'CONUS', SCALE, 5000, 5000), undefined);
+	// left of the left edge (x < 40)
+	assert.equal(getXYForCity({ lon: -109.9 }, 65, -110, 'CONUS', SCALE, 5000, 5000), undefined);
+	// past the right edge (x > maxX)
+	assert.equal(getXYForCity({ lon: -100, lat: 60 }, 65, -110, 'CONUS', SCALE, 100, 5000), undefined);
+});
+
+test('getXYForCity: still returns coordinates for an in-range city', () => {
+	const r = getXYForCity({ lon: -100, lat: 60 }, 65, -110, 'CONUS', SCALE, 5000, 5000);
+	assert.ok(r && Number.isFinite(r.x) && Number.isFinite(r.y));
+	assert.ok(r.y >= 30 && r.x >= 40);
 });
