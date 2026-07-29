@@ -12,16 +12,18 @@ const projectionPxPerDeg = (state) => (state === 'AK'
 // Markers live in .location-container (a sibling of .map, NOT scaled by the CSS
 // transform), so their on-screen px/deg = basemap px/deg * scale. This single-sources
 // the marker projection against the map transform and removes the 57/70 drift.
+// Returns undefined when the city falls outside the drawable area. It used to
+// clamp instead (y = 30, x = maxX, ...), which pinned off-map cities to the
+// border and drew them at coordinates that were simply wrong — a label sitting on
+// the edge claiming to be a place that is not there. Callers must treat undefined
+// as "not drawable" and drop the candidate.
 const getXYForCity = (city, maxLat, minLon, state, scale, maxX = 580, maxY = 282) => {
 	const px = projectionPxPerDeg(state);
-	let x = (city.lon - minLon) * px.lon * scale;
-	let y = (maxLat - city.lat) * px.lat * scale;
+	const x = (city.lon - minLon) * px.lon * scale;
+	const y = (maxLat - city.lat) * px.lat * scale;
 
-	if (y < 30) y = 30;
-	if (y > maxY) y = maxY;
-
-	if (x < 40) x = 40;
-	if (x > maxX) x = maxX;
+	if (y < 30 || y > maxY) return undefined;
+	if (x < 40 || x > maxX) return undefined;
 
 	return { x, y };
 };
@@ -75,10 +77,32 @@ const rectsOverlap = (a, b, pad) => a.left < b.right - pad
 	&& a.top < b.bottom - pad
 	&& a.bottom > b.top + pad;
 
+// A measured rect is only usable if every edge is finite. declutterLabels builds
+// its rect by unioning child boxes and skipping zero-width children, so a label
+// measured before layout yields {left: Infinity, right: -Infinity, ...}. Every
+// rectsOverlap test against that is false (Infinity < -Infinity - pad), which
+// silently disables collision detection instead of failing loudly.
+const isMeasured = (r) => !!r
+	&& Number.isFinite(r.left) && Number.isFinite(r.top)
+	&& Number.isFinite(r.right) && Number.isFinite(r.bottom);
+
 // Process nearest-to-user first; drop any later label overlapping a kept one.
 // Nearest-first guarantees the local/central cluster is never gutted.
-const resolveLabelCollisions = (items, pad = 2) => {
-	const ranked = [...items].sort((a, b) => a.dist - b.dist);
+//
+// `obstacles` are reserved rects the labels must stay clear of (header, logo,
+// title, date-time, scroll — anything drawn over the map). `bounds`, when given,
+// is the drawable area; a label not fully inside it is dropped rather than left
+// hanging over the edge.
+const resolveLabelCollisions = (items, pad = 2, obstacles = [], bounds = undefined) => {
+	const insideBounds = (r) => !bounds
+		|| (r.left >= bounds.left && r.top >= bounds.top
+			&& r.right <= bounds.right && r.bottom <= bounds.bottom);
+	const clearOfObstacles = (r) => !obstacles.some((o) => isMeasured(o) && rectsOverlap(r, o, pad));
+
+	const ranked = [...items]
+		.filter((i) => isMeasured(i.rect) && insideBounds(i.rect) && clearOfObstacles(i.rect))
+		.sort((a, b) => a.dist - b.dist);
+
 	const kept = [];
 	for (let i = 0; i < ranked.length; i += 1) {
 		const item = ranked[i];
@@ -93,6 +117,7 @@ export {
 	getXYForCity,
 	filterJunkStations,
 	inVisibleWindow,
+	isMeasured,
 	selectRegionalCities,
 	regionalSelectionConfig,
 	resolveLabelCollisions,
