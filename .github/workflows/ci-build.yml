@@ -112,6 +112,20 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          # Full SLSA provenance, so an image can be traced back to the repo, commit
+          # and workflow run that produced it — the evidence that was missing when
+          # v7.2.0 shipped built from the wrong commit.
+          #
+          # This is not a new manifest shape: BuildKit has attached provenance by
+          # default (mode=min) since buildx 0.11, and the published index already
+          # carries one attestation manifest per architecture (platform
+          # unknown/unknown). mode=max enriches that existing attestation rather than
+          # adding index entries. Safe here because the build passes no build-args and
+          # no build secrets — mode=max would otherwise embed them.
+          #
+          # sbom is deliberately NOT enabled yet; an SBOM is only worth generating once
+          # something consumes it, which is the deferred scanning decision.
+          provenance: mode=max
 
       - name: Expose image reference (by digest)
         id: ref

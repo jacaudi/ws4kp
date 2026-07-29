@@ -35,22 +35,32 @@ const browser = await puppeteer.launch({
 // Load one location on a fresh page; return an array of problem strings (empty = pass).
 const checkLocation = async (location) => {
 	const page = await browser.newPage();
-	const problems = [];
+	// Problems are split by WHO is at fault, because the two deserve different
+	// outcomes: a regression here must block the pipeline, while api.weather.gov
+	// having a bad afternoon must not.
+	const appProblems = [];
+	const upstreamProblems = [];
 
 	const onConsole = (msg) => {
 		// Diagnostic only — do not fail (benign optional-resource 404s log here too).
 		if (msg.type() === 'error') console.log(`  [console.error] ${location}: ${msg.text()}`);
 	};
-	const onPageError = (err) => problems.push(`pageerror: ${err.message}`);
+	const onPageError = (err) => appProblems.push(`pageerror: ${err.message}`);
 	const onResponse = (res) => {
 		const url = res.url();
-		if ((url.includes('/api/') || url.includes('/airquality/')) && res.status() >= 500) {
-			problems.push(`HTTP ${res.status()} ${url}`);
+		// 5xx is upstream failing; 429 is upstream rate-limiting us, which a burst of
+		// regional city lookups reliably provokes. Neither says anything about our code.
+		if ((url.includes('/api/') || url.includes('/airquality/'))
+			&& (res.status() >= 500 || res.status() === 429)) {
+			upstreamProblems.push(`HTTP ${res.status()} ${url}`);
 		}
 	};
 	page.on('console', onConsole);
 	page.on('pageerror', onPageError);
 	page.on('response', onResponse);
+
+	// Declared out here so it survives the try/finally and can be reported below.
+	let resolved = false;
 
 	try {
 		await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
@@ -61,20 +71,29 @@ const checkLocation = async (location) => {
 		await page.click('#btnGetLatLng');
 
 		// The footer grid point populates once /points + /gridpoints resolve — our "loaded" signal.
-		let resolved = false;
+		//
+		// Only an app-level problem aborts the wait. A transient upstream 5xx used to
+		// end it immediately, which was wrong: utils/fetch.mjs retries, so the location
+		// frequently recovers. If it resolves, it passed — whatever upstream did on the
+		// way there.
 		const deadline = Date.now() + SETTLE_MS;
-		while (Date.now() < deadline && problems.length === 0) {
+		while (Date.now() < deadline && appProblems.length === 0) {
 			// eslint-disable-next-line no-await-in-loop
 			const grid = await page.$eval('#spanGridPoint', (el) => el.textContent.trim()).catch(() => '');
 			if (grid) { resolved = true; break; }
 			// eslint-disable-next-line no-await-in-loop
 			await delay(POLL_MS);
 		}
-		if (!resolved && problems.length === 0) {
-			problems.push('forecast did not load (grid point never populated) within timeout');
+		if (!resolved && appProblems.length === 0) {
+			// Attribute the timeout. Having seen upstream 5xx/429 for this location, the
+			// far likelier explanation is that upstream never answered — not that we
+			// broke. With a clean upstream, a timeout is ours and must block.
+			const timedOut = 'forecast did not load (grid point never populated) within timeout';
+			if (upstreamProblems.length > 0) upstreamProblems.push(timedOut);
+			else appProblems.push(timedOut);
 		}
 	} catch (err) {
-		problems.push(`exception: ${err.message}`);
+		appProblems.push(`exception: ${err.message}`);
 	} finally {
 		page.off('console', onConsole);
 		page.off('pageerror', onPageError);
@@ -82,36 +101,57 @@ const checkLocation = async (location) => {
 		await page.close();
 	}
 
-	return problems;
+	return { appProblems, upstreamProblems, resolved };
 };
 
-let failed = 0;
+let appFailed = 0;
+let upstreamFailed = 0;
 for (let i = 0; i < LOCATIONS.length; i += 1) {
 	const location = LOCATIONS[i];
-	let problems = [];
+	let result = { appProblems: [], upstreamProblems: [], resolved: false };
 	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
 		// eslint-disable-next-line no-await-in-loop
-		problems = await checkLocation(location);
-		if (problems.length === 0) {
-			console.log(`PASS  ${location}`);
+		result = await checkLocation(location);
+		if (result.resolved && result.appProblems.length === 0) {
+			const noise = result.upstreamProblems.length
+				? ` (recovered from ${result.upstreamProblems.length} upstream error(s))`
+				: '';
+			console.log(`PASS  ${location}${noise}`);
 			break;
 		}
-		console.log(`  attempt ${attempt}/${MAX_ATTEMPTS} failed for ${location}: ${problems.join('; ')}`);
+		const all = [...result.appProblems, ...result.upstreamProblems];
+		console.log(`  attempt ${attempt}/${MAX_ATTEMPTS} failed for ${location}: ${all.join('; ')}`);
 		if (attempt < MAX_ATTEMPTS) {
 			// eslint-disable-next-line no-await-in-loop
 			await delay(RETRY_BACKOFF_MS);
 		}
 	}
-	if (problems.length > 0) {
-		console.error(`FAIL  ${location}: ${problems.join('; ')}`);
-		failed += 1;
+	if (result.appProblems.length > 0) {
+		console.error(`FAIL  ${location}: ${result.appProblems.join('; ')}`);
+		appFailed += 1;
+	} else if (!result.resolved) {
+		console.error(`UPSTREAM  ${location}: ${result.upstreamProblems.join('; ')}`);
+		upstreamFailed += 1;
 	}
 }
 
 await browser.close();
 
-if (failed > 0) {
-	console.error(`\n${failed}/${LOCATIONS.length} location(s) failed the integration check`);
+// Exit codes are the contract with CI (see .github/workflows/ci-test.yml):
+//   0  everything loaded
+//   1  at least one APP failure — a real regression, must block
+//   75 upstream-only failure (EX_TEMPFAIL). Nothing here is broken; NOAA is. The
+//      pipeline reports it and moves on, so a third party's rate limiter cannot
+//      turn every build red. STRICT_INTEGRATION=1 (the nightly run) makes it fail
+//      instead, so sustained upstream breakage still gets surfaced.
+const EX_TEMPFAIL = 75;
+if (appFailed > 0) {
+	console.error(`\n${appFailed}/${LOCATIONS.length} location(s) failed the integration check`);
 	process.exit(1);
+}
+if (upstreamFailed > 0) {
+	const strict = process.env.STRICT_INTEGRATION === '1';
+	console.error(`\n${upstreamFailed}/${LOCATIONS.length} location(s) did not load because upstream was failing`);
+	process.exit(strict ? 1 : EX_TEMPFAIL);
 }
 console.log(`\nAll ${LOCATIONS.length} locations loaded cleanly`);

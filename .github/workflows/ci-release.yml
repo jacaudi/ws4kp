@@ -10,11 +10,20 @@
 # tag is pushed by the GitHub App token — without the App secrets that build was
 # silently skipped and a release shipped with no image behind it.
 #
-# Requires `secrets: inherit` from the caller (APP_ID / APP_PRIVATE_KEY).
+# The caller passes APP_ID / APP_PRIVATE_KEY explicitly. Both are optional: unset,
+# the App-token step is skipped and release-please falls back to GITHUB_TOKEN, which
+# still cuts the release — only the attribution changes.
 name: ci-release
 
 on:
   workflow_call:
+    secrets:
+      APP_ID:
+        description: GitHub App id, for attributing the release PR to the App
+        required: false
+      APP_PRIVATE_KEY:
+        description: Private key for the above App
+        required: false
     outputs:
       release_created:
         description: '"true" when release-please cut a release on this run'
@@ -51,14 +60,14 @@ jobs:
       - name: Generate a GitHub App token
         id: app-token
         if: ${{ env.APP_ID != '' }}
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Run release-please
         id: rp
-        uses: googleapis/release-please-action@v5
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
