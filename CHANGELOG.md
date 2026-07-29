@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.2.0](https://github.com/jacaudi/ws4kp/compare/v7.1.5...v7.2.0) (2026-07-29)
+
+
+### Features
+
+* pull in upstream 7.1.3 fixes and the expanded regional city list ([f9078ed](https://github.com/jacaudi/ws4kp/commit/f9078ed4694bbcfa6e0f100d158b90574dd7c53e))
+
+
+### Bug Fixes
+
+* **regional:** drop off-map cities and make label decluttering actually run ([d1abcc1](https://github.com/jacaudi/ws4kp/commit/d1abcc15e72012b11ff554d4f3ebd5ca7da53408))
+
 ## [7.1.5](https://github.com/jacaudi/ws4kp/compare/v7.1.4...v7.1.5) (2026-07-29)
 
 
