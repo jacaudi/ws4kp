@@ -1,15 +1,20 @@
-# CI/CD pipeline orchestrator.
+# CI/CD pipeline orchestrator — the single entry point. Every stage is a reusable
+# workflow (a job-level module). GitHub requires reusable workflows to live in
+# .github/workflows/ ("Subdirectories of the workflows directory are not
+# supported"), so a .github/ci/ folder is not possible for them.
 #
-# Stages are reusable workflows (job-level modules). GitHub requires reusable
-# workflows to live in .github/workflows/ ("Subdirectories of the workflows
-# directory are not supported"), so a .github/ci/ folder is not possible for them.
+#   test (a) -> build (c) -> smoke (d) -> release (e) -> release image -> release smoke
+#                                            ^ main only    ^ only if a release was cut
 #
-#   test (a) -> build (c) -> smoke (d)      scan (b) is deferred (stubbed below)
+#   scan (b) is deferred (stubbed below)
 #
 # Triggers (on: push only; no pull_request — branch-push checks surface on the PR):
-#   push to a non-default branch : test -> build -> smoke          (sha image)
-#   push to main                 : test -> build -> smoke  + release-please  (sha + latest)
-#   tag v*.*.*                    :         build -> smoke          (sha + latest + semver)
+#   push to a non-default branch : test -> build -> smoke                    (sha)
+#   push to main                 : the full chain above           (sha + latest [+ semver])
+#
+# Version tags do NOT trigger anything. release-please cuts the tag, and the
+# release image is built from its `release_created` output — not from the tag
+# push, which only fires when a GitHub App token pushed it.
 name: CI
 
 on:
@@ -18,32 +23,28 @@ on:
       - '**'
       - '!screen-enhance'
       - '!screen-enhance/**'
-    tags:
-      - 'v*.*.*'
-      - 'v*.*'
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Superseded feature-branch runs are noise; cancel them. NEVER cancel on main —
+  # a run cancelled between "release-please cut the tag" and "release image built"
+  # leaves a published release with nothing in the registry behind it.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: read
 
 jobs:
-  # a — code testing. Skipped on tag events (a tag rebuilds the same code that
-  # already passed on main; the release only needs c + d).
+  # a — code testing.
   test:
-    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     uses: ./.github/workflows/ci-test.yml
 
   # b — code scanning. DEFERRED (see the design doc). Left stubbed and NOT wired
   # in until the scanning approach (CodeQL + image scanning) is decided.
   # scan:
-  #   if: ${{ !startsWith(github.ref, 'refs/tags/') }}
   #   uses: ./.github/workflows/ci-scan.yml
 
-  # c — artifact building. Runs after tests pass, or directly on a tag (where
-  # test is skipped). Not on test failure.
+  # c — artifact building. Runs after tests pass, not on test failure.
   build:
     needs: [test]
     if: ${{ !cancelled() && needs.test.result != 'failure' }}
@@ -62,3 +63,40 @@ jobs:
     uses: ./.github/workflows/ci-smoke.yml
     with:
       image: ${{ needs.build.outputs.image }}
+
+  # e — release cutting. Main only, and only once the image for this commit has
+  # been built and proven to boot, so a release is never cut on a commit whose
+  # artifact is broken.
+  release:
+    needs: [smoke]
+    if: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: write
+      pull-requests: write
+    secrets: inherit
+    uses: ./.github/workflows/ci-release.yml
+
+  # Re-run stage c with the release tag so the image picks up its semver tags
+  # (v7.1.5 / v7.1 / v7). Same commit, so this is a cache-warm rebuild rather
+  # than a fresh one.
+  release-image:
+    needs: [release]
+    if: ${{ needs.release.outputs.release_created == 'true' }}
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/ci-build.yml
+    with:
+      version: ${{ needs.release.outputs.tag_name }}
+
+  # Re-run stage d against the released image. A release image that doesn't boot
+  # should surface here, not in someone's deployment.
+  release-smoke:
+    needs: [release-image]
+    if: ${{ !cancelled() && needs.release-image.result == 'success' }}
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/ci-smoke.yml
+    with:
+      image: ${{ needs.release-image.outputs.image }}
