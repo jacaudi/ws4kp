@@ -21,3 +21,7 @@ dist/*
 
 #agent/session scratch (superpowers SDD ledgers, briefs, reports)
 .superpowers/
+
+#agent scratch — .claude/skills and .claude/agents ARE tracked, the rest is per-session
+.claude/worktrees/
+.playwright-mcp/
