@@ -156,7 +156,7 @@ In-depth guides live in [`docs/`](docs/):
 | **[Kubernetes](docs/kubernetes.md)** | Deploy on a cluster with the bjw-s app-template chart (Helm + Flux) |
 | **[Usage & settings](docs/usage.md)** | Permalinks, kiosk mode, iOS/Android PWA install, every setting, custom scrolling text |
 | **[Music](docs/music.md)** | Bundled tracks (Git LFS), adding/overriding music, autoplay behavior, static-mode scanning |
-| **[Development & customization](docs/development.md)** | Tech stack, build system, the `custom.js` hook, contributing |
+| **[Development & customization](docs/development.md)** | Tech stack, build system, the `custom.js` / `custom.mjs` hook, releases & CI |
 | **[FAQ & community](docs/faq.md)** | Outside-the-USA, the full-moon icon, phone apps, reporting issues, related & community projects |
 
 ---
