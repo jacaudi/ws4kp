@@ -4,6 +4,7 @@
 import STATUS from './status.mjs';
 import { geoDistance } from './utils/calc.mjs';
 import {
+	LABEL_PAD,
 	filterJunkStations,
 	inVisibleWindow,
 	getXYForCity,
@@ -87,8 +88,8 @@ class RegionalForecast extends WeatherDisplay {
 		// get latitude and longitude limits
 		const minMaxLatLon = utils.getMinMaxLatitudeLongitude(sourceXY.x, sourceXY.y, mapOffsetXY.x, mapOffsetXY.y, this.weatherParameters.state);
 
-		// window-scaled selection parameters (minSpacing is the density control)
-		const { count, minSpacing } = regionalSelectionConfig(
+		// window-scaled cap; spacing is handled in pixels against the real label box
+		const { count } = regionalSelectionConfig(
 			!!(settings.enhanced?.value && settings.wide?.value),
 			!!(settings.enhanced?.value && settings.portrait?.value),
 		);
@@ -99,9 +100,10 @@ class RegionalForecast extends WeatherDisplay {
 		// Coerce lat/lon at this boundary. regionalcities.json ships them as STRINGS
 		// while stations.json uses numbers, and the two are merged into one pool below.
 		// geoDistance takes a midpoint via (lat1 + lat2), so a string operand
-		// concatenates instead of adding and the distance comes back NaN. Every
-		// `NaN >= minSpacing` spacing test is then false, which silently rejects all
-		// but the first candidate rather than throwing.
+		// concatenates instead of adding and the cosine derived from that midpoint is
+		// garbage. Selection ranks on that distance, so uncoerced coordinates silently
+		// reorder the map — a nearby place losing its slot to a remoter one — with
+		// nothing thrown and no NaN to notice.
 		const cities = RegionalCities.map((c) => ({
 			...c, lat: Number(c.lat), lon: Number(c.lon), baked: true, priority: 0,
 		}));
@@ -123,8 +125,8 @@ class RegionalForecast extends WeatherDisplay {
 			}))
 			.filter((c) => c.xy);
 
-		// rank nearest-to-user, dedup by minSpacing, cap at count
-		const regionalCities = selectRegionalCities(user, candidates, { count, minSpacing });
+		// rank nearest-to-user (stations de-emphasised), space by label box, cap at count
+		const regionalCities = selectRegionalCities(user, candidates, { count });
 
 		// get a unit converter
 		const temperatureConverter = temperatureUnit();
@@ -352,7 +354,7 @@ class RegionalForecast extends WeatherDisplay {
 				: undefined;
 
 			const kept = new Set(
-				resolveLabelCollisions(items, 2, this.chromeObstacles(container), bounds).map((i) => i.el),
+				resolveLabelCollisions(items, LABEL_PAD, this.chromeObstacles(container), bounds).map((i) => i.el),
 			);
 			elems.forEach((el) => { if (!kept.has(el)) el.remove(); });
 		});
