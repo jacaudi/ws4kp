@@ -77,8 +77,12 @@ jobs:
     uses: ./.github/workflows/ci-release.yml
 
   # Re-run stage c with the release tag so the image picks up its semver tags
-  # (v7.1.5 / v7.1 / v7). Same commit, so this is a cache-warm rebuild rather
-  # than a fresh one.
+  # (v7.1.5 / v7.1 / v7).
+  #
+  # `ref` pins the checkout to the tag rather than to this run's commit. Those are
+  # not always the same: merging a release PR while an earlier main run is still in
+  # its release job makes that older run cut the tag and then build its own,
+  # staler checkout. v7.2.0 shipped that way, built from the docs commit.
   release-image:
     needs: [release]
     if: ${{ needs.release.outputs.release_created == 'true' }}
@@ -88,6 +92,7 @@ jobs:
     uses: ./.github/workflows/ci-build.yml
     with:
       version: ${{ needs.release.outputs.tag_name }}
+      ref: ${{ needs.release.outputs.tag_name }}
 
   # Re-run stage d against the released image. A release image that doesn't boot
   # should surface here, not in someone's deployment.

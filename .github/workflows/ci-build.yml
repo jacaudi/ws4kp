@@ -11,6 +11,14 @@
 # Passing the release tag explicitly is metadata-action's documented mechanism for
 # that case. Left empty, every semver line falls back to the git ref, which is the
 # pre-existing behaviour for ordinary branch and main builds.
+#
+# `ref` exists because `version` alone is not enough. The checkout would otherwise
+# take the TRIGGERING run's sha, which is not necessarily the commit release-please
+# tagged. If a release PR is merged while an earlier main run is still in its
+# release job, that run cuts the tag on the new commit and then builds its own,
+# older checkout — publishing a vX.Y.Z image whose package.json says something else.
+# That happened to v7.2.0, which was built from the docs commit. A release build
+# must pin the checkout to the tag it is stamping.
 name: ci-build
 
 on:
@@ -18,6 +26,11 @@ on:
     inputs:
       version:
         description: Release tag to derive semver image tags from (e.g. v7.1.5). Empty for non-release builds.
+        required: false
+        default: ''
+        type: string
+      ref:
+        description: Git ref to build. Empty builds the triggering commit; a release build must pass its tag.
         required: false
         default: ''
         type: string
@@ -43,7 +56,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # empty ref = the triggering commit, which is actions/checkout's default
+          ref: ${{ inputs.ref }}
           lfs: true # fetch the real Git LFS assets (music) so they're baked in, not pointer files
+
+      - name: Verify the checkout matches the release being stamped
+        if: ${{ inputs.version != '' }}
+        run: |
+          set -euo pipefail
+          want="${{ inputs.version }}"
+          have="v$(node -p "require('./package.json').version")"
+          echo "tag being stamped: ${want}"
+          echo "package.json says: ${have}"
+          # A release image whose package.json disagrees with its tag is the bug this
+          # guard exists for — the app serves that version string to users.
+          [ "${want}" = "${have}" ] || { echo "::error::refusing to publish ${want} from a checkout that reports ${have}"; exit 1; }
 
       - name: Docker meta
         id: meta
