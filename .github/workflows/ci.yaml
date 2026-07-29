@@ -44,10 +44,12 @@ jobs:
   # scan:
   #   uses: ./.github/workflows/ci-scan.yml
 
-  # c — artifact building. Runs after tests pass, not on test failure.
+  # c — artifact building. Requires tests to have actually passed — `!= 'failure'`
+  # would also let a SKIPPED test stage through, which is not the intent and reads
+  # differently from every other gate here.
   build:
     needs: [test]
-    if: ${{ !cancelled() && needs.test.result != 'failure' }}
+    if: ${{ !cancelled() && needs.test.result == 'success' }}
     permissions:
       contents: read
       packages: write
@@ -73,7 +75,12 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    secrets: inherit
+    # Pass only what the stage needs. `secrets: inherit` would hand the whole
+    # repository secret store to the one job that already holds contents:write and
+    # pull-requests:write.
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
     uses: ./.github/workflows/ci-release.yml
 
   # Re-run stage c with the release tag so the image picks up its semver tags
