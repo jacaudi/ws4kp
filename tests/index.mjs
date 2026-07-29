@@ -3,27 +3,68 @@
 // Open-Meteo) and fail the build if any location is broken.
 //
 // A location FAILS if, while it loads:
-//   - the /api or /airquality proxy returns a 5xx (the class of the Envoy 502
-//     framing bug), or
 //   - the page throws an uncaught error, or
-//   - the forecast never resolves (the grid point in the footer stays empty).
+//   - the forecast never resolves (the grid point in the footer stays empty), or
+//   - fewer displays register than there are modules calling registerDisplay(), or
+//   - the rotation never reaches at least two real display screens.
+//
+// Those last two are what mean anything to a viewer. The grid point only proves the
+// /points round-trip worked; a build where every display was broken, or where one was
+// missing from the bundle entirely, would still populate it and pass.
+//
+// A 5xx from the proxies is NOT a failure by itself. utils/fetch.mjs retries, so a
+// location that recovers has passed; the 5xx is recorded only as evidence for
+// attributing a genuine failure to upstream rather than to us.
 //
 // Console errors are logged but NOT failed on: the app benignly 404s optional
 // resources (e.g. the custom.js hook probe), which are not forecast failures.
 //
-// Each location gets a few attempts to absorb transient api.weather.gov blips
-// (the NWS API is not fully operational and can fail by region); a location is
-// only reported failed after every attempt fails. Exit non-zero on any failure.
+// Each location gets a few attempts to absorb transient api.weather.gov blips (the
+// NWS API is not fully operational and can fail by region); a location is only
+// reported failed after every attempt fails. See the exit-code contract at the
+// bottom — our failures block, upstream's do not.
 
 import puppeteer from 'puppeteer';
 import { setTimeout as delay } from 'node:timers/promises';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 
 const BASE_URL = process.env.WS4KP_TEST_URL || 'http://localhost:8080';
 const SETTLE_MS = 20_000; // max time to wait for a location to resolve
 const POLL_MS = 500;
 const MAX_ATTEMPTS = 3; // per-location retries for transient NWS failures
 const RETRY_BACKOFF_MS = 3_000;
+const DISPLAY_SETTLE_MS = 45_000; // max wait for the rotation to reach real displays
+
+const MIN_DISPLAYS_DRAWN = 2; // distinct real displays the rotation must reach
+
+// How many displays SHOULD register: every module that calls registerDisplay() at
+// module scope. Derived from source rather than hardcoded, so adding a display does
+// not silently lower the bar this test holds the browser to.
+const modulesDir = new URL('../server/scripts/modules/', import.meta.url);
+const EXPECTED_DISPLAY_COUNT = (await readdir(modulesDir))
+	.filter((f) => f.endsWith('.mjs'))
+	.filter((f) => /registerDisplay\(/.test(readFileSync(new URL(f, modulesDir), 'utf8')))
+	.length;
+
+// What the browser actually did, read live.
+//
+// `registered` counts rows on the progress screen — one per display that called
+// registerDisplay(), fixed at boot, so it is a reliable registration signal.
+//
+// `drawn` is the display currently on screen. Do NOT be tempted to read per-display
+// STATUS off those progress rows instead: progress.drawCanvas early-returns while the
+// screen is hidden and is not redrawn once loading finishes, so those rows freeze
+// mid-load and report ~3 of 13 loaded on a perfectly healthy build. The rotation is
+// the live signal; the status classes are a stale snapshot.
+const readAppState = (page) => page.evaluate(() => {
+	const shown = [...document.querySelectorAll('.weather-display.show')]
+		.filter((el) => el.id !== 'progress-html' && el.querySelector('.main'));
+	return {
+		registered: document.querySelectorAll('.progress .container .item:not(.template)').length,
+		drawn: shown.map((el) => el.id).filter(Boolean),
+	};
+}).catch(() => ({ registered: 0, drawn: [] }));
 
 const LOCATIONS = JSON.parse(await readFile(new URL('./locations.json', import.meta.url), 'utf8'));
 
@@ -32,14 +73,23 @@ const browser = await puppeteer.launch({
 	args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
 
-// Load one location on a fresh page; return an array of problem strings (empty = pass).
+// Load one location on a fresh page and report what happened.
+//
+// Three buckets, because "who is at fault" and "did it actually work" are separate
+// questions and conflating them is what made this test either flaky or toothless:
+//
+//   appProblems      the location did not work and we are to blame  -> block (exit 1)
+//   upstreamFailures the location did not work and upstream is down -> report (exit 75)
+//   upstreamNoise    upstream misbehaved but the location worked    -> informational
+//
+// The noise bucket is what lets a transient 5xx stay a non-event: utils/fetch.mjs
+// retries, so a location that recovers has passed. It doubles as the evidence used to
+// attribute a genuine failure to upstream rather than to us.
 const checkLocation = async (location) => {
 	const page = await browser.newPage();
-	// Problems are split by WHO is at fault, because the two deserve different
-	// outcomes: a regression here must block the pipeline, while api.weather.gov
-	// having a bad afternoon must not.
 	const appProblems = [];
-	const upstreamProblems = [];
+	const upstreamFailures = [];
+	const upstreamNoise = [];
 
 	const onConsole = (msg) => {
 		// Diagnostic only — do not fail (benign optional-resource 404s log here too).
@@ -52,15 +102,16 @@ const checkLocation = async (location) => {
 		// regional city lookups reliably provokes. Neither says anything about our code.
 		if ((url.includes('/api/') || url.includes('/airquality/'))
 			&& (res.status() >= 500 || res.status() === 429)) {
-			upstreamProblems.push(`HTTP ${res.status()} ${url}`);
+			upstreamNoise.push(`HTTP ${res.status()} ${url}`);
 		}
 	};
 	page.on('console', onConsole);
 	page.on('pageerror', onPageError);
 	page.on('response', onResponse);
 
-	// Declared out here so it survives the try/finally and can be reported below.
+	// Declared out here so they survive the try/finally and can be reported below.
 	let resolved = false;
+	let displayReport = null;
 
 	try {
 		await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
@@ -84,12 +135,43 @@ const checkLocation = async (location) => {
 			// eslint-disable-next-line no-await-in-loop
 			await delay(POLL_MS);
 		}
+		if (resolved) {
+			// The grid point only proves the /points round-trip worked — a build where
+			// every display was broken, or a display was missing from the bundle, would
+			// still populate it. So check the two things a viewer would actually notice:
+			// that every display registered, and that the rotation reaches real screens.
+			const seen = new Set();
+			let registered = 0;
+			const settleBy = Date.now() + DISPLAY_SETTLE_MS;
+			while (Date.now() < settleBy) {
+				// eslint-disable-next-line no-await-in-loop
+				const state = await readAppState(page);
+				registered = Math.max(registered, state.registered);
+				state.drawn.forEach((id) => seen.add(id));
+				if (seen.size >= MIN_DISPLAYS_DRAWN && registered >= EXPECTED_DISPLAY_COUNT) break;
+				// eslint-disable-next-line no-await-in-loop
+				await delay(POLL_MS);
+			}
+			displayReport = { registered, drawn: [...seen] };
+
+			// Registration is client-side and has nothing to do with upstream, so a
+			// shortfall is always ours: a module that threw on import, or never loaded.
+			if (registered < EXPECTED_DISPLAY_COUNT) {
+				appProblems.push(`only ${registered} of ${EXPECTED_DISPLAY_COUNT} displays registered — a display module failed to load`);
+			}
+			if (seen.size < MIN_DISPLAYS_DRAWN) {
+				// Needing data to draw, this one can legitimately be upstream's fault.
+				const tooFew = `only ${seen.size} display(s) drew a screen (expected at least ${MIN_DISPLAYS_DRAWN})`;
+				if (upstreamNoise.length > 0) upstreamFailures.push(tooFew);
+				else appProblems.push(tooFew);
+			}
+		}
 		if (!resolved && appProblems.length === 0) {
 			// Attribute the timeout. Having seen upstream 5xx/429 for this location, the
 			// far likelier explanation is that upstream never answered — not that we
 			// broke. With a clean upstream, a timeout is ours and must block.
 			const timedOut = 'forecast did not load (grid point never populated) within timeout';
-			if (upstreamProblems.length > 0) upstreamProblems.push(timedOut);
+			if (upstreamNoise.length > 0) upstreamFailures.push(timedOut);
 			else appProblems.push(timedOut);
 		}
 	} catch (err) {
@@ -101,25 +183,32 @@ const checkLocation = async (location) => {
 		await page.close();
 	}
 
-	return { appProblems, upstreamProblems, resolved };
+	return {
+		appProblems, upstreamFailures, upstreamNoise, resolved, displayReport,
+	};
 };
 
 let appFailed = 0;
 let upstreamFailed = 0;
 for (let i = 0; i < LOCATIONS.length; i += 1) {
 	const location = LOCATIONS[i];
-	let result = { appProblems: [], upstreamProblems: [], resolved: false };
+	let result = {
+		appProblems: [], upstreamFailures: [], upstreamNoise: [], resolved: false, displayReport: null,
+	};
 	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
 		// eslint-disable-next-line no-await-in-loop
 		result = await checkLocation(location);
-		if (result.resolved && result.appProblems.length === 0) {
-			const noise = result.upstreamProblems.length
-				? ` (recovered from ${result.upstreamProblems.length} upstream error(s))`
+		// Noise alone is not a reason to retry — the location worked despite it.
+		if (result.resolved && result.appProblems.length === 0 && result.upstreamFailures.length === 0) {
+			const r = result.displayReport;
+			const detail = r ? ` — ${r.registered} displays registered, ${r.drawn.length} drew` : '';
+			const noise = result.upstreamNoise.length
+				? ` (recovered from ${result.upstreamNoise.length} upstream error(s))`
 				: '';
-			console.log(`PASS  ${location}${noise}`);
+			console.log(`PASS  ${location}${detail}${noise}`);
 			break;
 		}
-		const all = [...result.appProblems, ...result.upstreamProblems];
+		const all = [...result.appProblems, ...result.upstreamFailures];
 		console.log(`  attempt ${attempt}/${MAX_ATTEMPTS} failed for ${location}: ${all.join('; ')}`);
 		if (attempt < MAX_ATTEMPTS) {
 			// eslint-disable-next-line no-await-in-loop
@@ -129,8 +218,8 @@ for (let i = 0; i < LOCATIONS.length; i += 1) {
 	if (result.appProblems.length > 0) {
 		console.error(`FAIL  ${location}: ${result.appProblems.join('; ')}`);
 		appFailed += 1;
-	} else if (!result.resolved) {
-		console.error(`UPSTREAM  ${location}: ${result.upstreamProblems.join('; ')}`);
+	} else if (result.upstreamFailures.length > 0) {
+		console.error(`UPSTREAM  ${location}: ${result.upstreamFailures.join('; ')}`);
 		upstreamFailed += 1;
 	}
 }
