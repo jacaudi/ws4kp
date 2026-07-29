@@ -1,12 +1,14 @@
 import Setting from './utils/setting.mjs';
 import { registerHiddenSetting } from './share.mjs';
+import {
+	CUSTOM_LOGO_STORAGE_KEY, customLogoEnabled, customLogoFileError, isCustomLogoDataUrl,
+} from './customlogo-utils.mjs';
 
 // Initialize settings immediately so other modules can access them
 const settings = { speed: { value: 1.0 } };
 
 // Track settings that need DOM changes after early initialization
 const deferredDomSettings = new Set();
-const CUSTOM_LOGO_STORAGE_KEY = 'CustomLogoPng';
 const defaultLogoSrc = 'images/logos/logo-corner.svg';
 
 // don't show checkboxes for these settings
@@ -172,7 +174,7 @@ const scanLineModeChange = (_value) => {
 const getStoredCustomLogo = () => {
 	try {
 		const storedLogo = localStorage?.getItem(CUSTOM_LOGO_STORAGE_KEY);
-		return storedLogo && storedLogo.startsWith('data:image/png') ? storedLogo : null;
+		return isCustomLogoDataUrl(storedLogo) ? storedLogo : null;
 	} catch (error) {
 		console.warn(`Failed to read custom logo from localStorage: ${error}`);
 		return null;
@@ -195,8 +197,9 @@ const toggleCustomLogoControls = (enabled) => {
 };
 
 const applyCustomLogo = () => {
-	const hasStoredLogo = Boolean(getStoredCustomLogo());
-	const enabled = Boolean(settings.customLogoImage?.value) && hasStoredLogo;
+	const storedLogo = getStoredCustomLogo();
+	const hasStoredLogo = Boolean(storedLogo);
+	const enabled = customLogoEnabled(settings.customLogoImage?.value, storedLogo);
 	const container = document.getElementById('container');
 	if (!container) {
 		if (settings.customLogoImage?.value) {
@@ -274,14 +277,10 @@ const createCustomLogoUploadControl = () => {
 		if (!file) {
 			return;
 		}
-		if (file.type !== 'image/png') {
+		const fileError = customLogoFileError(file);
+		if (fileError) {
 			fileInput.value = '';
-			setCustomLogoStatus('Only PNG files are supported.', true);
-			return;
-		}
-		if (file.size > 1024 * 1024) {
-			fileInput.value = '';
-			setCustomLogoStatus('PNG must be 1 MB or smaller.', true);
+			setCustomLogoStatus(fileError, true);
 			return;
 		}
 
