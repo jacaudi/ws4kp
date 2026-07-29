@@ -44,6 +44,7 @@
 		"gulp-terser": "^2.0.0",
 		"luxon": "^3.0.0",
 		"metar-taf-parser": "^9.0.0",
+		"p-limit": "^7.3.1",
 		"sass": "^1.54.0",
 		"suncalc": "^2.0.0",
 		"swiped-events": "^1.1.4",
