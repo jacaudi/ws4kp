@@ -1,0 +1,32 @@
+# Nightly integration check against live upstream.
+#
+# The per-commit run in ci.yaml deliberately does NOT fail when api.weather.gov is
+# unavailable — otherwise a third party's outage blocks every merge. That leniency
+# has a cost: a genuine break in our NWS integration could sit unnoticed behind a
+# string of "upstream was failing" warnings.
+#
+# This run closes that gap. Same test, same stage, but STRICT_INTEGRATION=1, so an
+# upstream failure fails the job. A red nightly means either NOAA is having a long
+# outage or our integration is actually broken — both worth knowing, neither worth
+# blocking a merge over.
+name: ci-nightly
+
+on:
+  schedule:
+    # 09:12 UTC — an odd minute, because the top of the hour is when GitHub's
+    # scheduler is most congested and delays scheduled runs.
+    - cron: '12 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-nightly
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    uses: ./.github/workflows/ci-test.yml
+    with:
+      strict-integration: true

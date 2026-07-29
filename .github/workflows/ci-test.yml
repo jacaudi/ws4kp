@@ -4,6 +4,15 @@ name: ci-test
 
 on:
   workflow_call:
+    inputs:
+      strict-integration:
+        description: >-
+          Fail the job when the integration test cannot reach upstream. False (the
+          default) reports it as a warning instead, so NOAA outages do not block
+          merges; the nightly run sets it true so sustained breakage still surfaces.
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -34,7 +43,13 @@ jobs:
       - name: Install integration test dependencies (Puppeteer + Chromium)
         run: npm ci --prefix tests
 
+      # tests/index.mjs distinguishes our failures from upstream's and signals which
+      # by exit code: 0 clean, 1 a real regression, 75 upstream-only. Without that
+      # split an api.weather.gov outage failed this job, and because every later
+      # stage needs it, a third party's availability gated the whole pipeline.
       - name: Integration test (5 cities, server mode against live NWS)
+        env:
+          STRICT_INTEGRATION: ${{ inputs.strict-integration && '1' || '0' }}
         run: |
           set -euo pipefail
           npm start > /tmp/ws4kp-server.log 2>&1 &
@@ -50,4 +65,9 @@ jobs:
           STATUS=$?
           set -e
           kill "$APP_PID" 2>/dev/null || true
+          if [ "$STATUS" = "75" ]; then
+            echo "::warning title=Integration test skipped::Upstream (api.weather.gov / Open-Meteo) was failing, so the integration test could not run to completion. This is NOT a regression in this change. The nightly run re-checks with STRICT_INTEGRATION=1."
+            echo "⚠️ Integration test inconclusive — upstream was failing. Not treated as a regression." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           exit $STATUS
