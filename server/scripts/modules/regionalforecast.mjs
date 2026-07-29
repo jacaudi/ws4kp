@@ -93,8 +93,19 @@ class RegionalForecast extends WeatherDisplay {
 		const user = { lat: this.weatherParameters.latitude, lon: this.weatherParameters.longitude };
 
 		// candidate pool: baked regional cities first, then stations; drop junk (priority >= 50)
-		const cities = RegionalCities.map((c) => ({ ...c, baked: true, priority: 0 }));
-		const stations = Object.values(StationInfo).map((s) => ({ ...s, baked: false }));
+		//
+		// Coerce lat/lon at this boundary. regionalcities.json ships them as STRINGS
+		// while stations.json uses numbers, and the two are merged into one pool below.
+		// geoDistance takes a midpoint via (lat1 + lat2), so a string operand
+		// concatenates instead of adding and the distance comes back NaN. Every
+		// `NaN >= minSpacing` spacing test is then false, which silently rejects all
+		// but the first candidate rather than throwing.
+		const cities = RegionalCities.map((c) => ({
+			...c, lat: Number(c.lat), lon: Number(c.lon), baked: true, priority: 0,
+		}));
+		const stations = Object.values(StationInfo).map((s) => ({
+			...s, lat: Number(s.lat), lon: Number(s.lon), baked: false,
+		}));
 		const candidates = filterJunkStations([...cities, ...stations])
 			.filter((c) => inVisibleWindow(c, minMaxLatLon));
 
@@ -287,10 +298,21 @@ const getAndFormatPoint = async (lat, lon) => {
 		if (!point) {
 			return null;
 		}
+		const { gridX, gridY, gridId } = point.properties ?? {};
+		// api.weather.gov returns 200 with gridId/gridX/gridY all null for offshore
+		// marine stations (forecastOffice NH2), which have no land grid. Returning the
+		// object anyway is truthy, so the caller's `if (!point)` check passes and the
+		// request becomes gridpoints/null/null,null/forecast, which 404s. Treat a
+		// missing grid the same as a missing point so the city is skipped.
+		if (gridX === null || gridX === undefined
+			|| gridY === null || gridY === undefined
+			|| gridId === null || gridId === undefined) {
+			return null;
+		}
 		return {
-			x: point.properties.gridX,
-			y: point.properties.gridY,
-			wfo: point.properties.gridId,
+			x: gridX,
+			y: gridY,
+			wfo: gridId,
 		};
 	} catch (error) {
 		throw new Error(`Unexpected error getting point for ${lat},${lon}: ${error.message}`);
