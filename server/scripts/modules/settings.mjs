@@ -1,11 +1,18 @@
 import Setting from './utils/setting.mjs';
 import { registerHiddenSetting } from './share.mjs';
+import {
+	CUSTOM_LOGO_STORAGE_KEY, customLogoEnabled, customLogoFileError, isCustomLogoDataUrl,
+} from './customlogo-utils.mjs';
 
 // Initialize settings immediately so other modules can access them
 const settings = { speed: { value: 1.0 } };
 
 // Track settings that need DOM changes after early initialization
 const deferredDomSettings = new Set();
+const defaultLogoSrc = 'images/logos/logo-corner.svg';
+// Matches the alt text baked into the header partials, so a fallback cannot disagree
+// with the markup it replaces.
+const defaultLogoAlt = 'WeatherStar 4000+';
 
 // don't show checkboxes for these settings
 const hiddenSettings = [
@@ -167,6 +174,156 @@ const scanLineModeChange = (_value) => {
 	}
 };
 
+const getStoredCustomLogo = () => {
+	try {
+		const storedLogo = localStorage?.getItem(CUSTOM_LOGO_STORAGE_KEY);
+		return isCustomLogoDataUrl(storedLogo) ? storedLogo : null;
+	} catch (error) {
+		console.warn(`Failed to read custom logo from localStorage: ${error}`);
+		return null;
+	}
+};
+
+const setCustomLogoStatus = (message, isError = false) => {
+	const status = document.getElementById('settings-customLogoImage-status');
+	if (!status) return;
+	status.textContent = message;
+	status.classList.toggle('failed', isError);
+	status.classList.toggle('loading', !isError && message !== '');
+};
+
+const toggleCustomLogoControls = (enabled) => {
+	const uploadControls = document.getElementById('settings-customLogoImage-upload');
+	if (uploadControls) {
+		uploadControls.style.display = enabled ? 'block' : 'none';
+	}
+};
+
+const applyCustomLogo = () => {
+	const storedLogo = getStoredCustomLogo();
+	const hasStoredLogo = Boolean(storedLogo);
+	const enabled = customLogoEnabled(settings.customLogoImage?.value, storedLogo);
+	const container = document.getElementById('container');
+	// The only moment #container is absent is the Setting constructor's startup call,
+	// and at that point settings.customLogoImage is still being assigned, so there is
+	// nothing to apply. The unconditional applyCustomLogo() at the end of
+	// DOMContentLoaded does the real work; no deferral is needed here.
+	if (!container) return;
+
+	container.classList.toggle('custom-logo-image-enabled', enabled);
+	document.querySelectorAll('.logo-corner').forEach((logo) => {
+		// A stored value can satisfy isCustomLogoDataUrl and still fail to decode if it
+		// was truncated or hand-edited. Without this, every header shows a broken image
+		// and the only escape is the Clear button. Assigned rather than added so repeated
+		// applyCustomLogo() calls cannot stack handlers.
+		logo.onerror = () => {
+			if (logo.getAttribute('src') === defaultLogoSrc) return;
+			logo.src = defaultLogoSrc;
+			logo.alt = defaultLogoAlt;
+			setCustomLogoStatus('Stored PNG could not be displayed; using the default logo.', true);
+		};
+		logo.src = enabled ? storedLogo : defaultLogoSrc;
+		logo.alt = enabled ? 'Custom logo' : defaultLogoAlt;
+	});
+
+	// Keep the controls — and so the Clear button — reachable whenever a PNG is still
+	// stored. Hiding them on the setting alone orphans the stored data with no UI to
+	// delete it.
+	toggleCustomLogoControls(Boolean(settings.customLogoImage?.value) || hasStoredLogo);
+	if (settings.customLogoImage?.value && !hasStoredLogo) {
+		setCustomLogoStatus('Upload a PNG to replace the default logo.');
+	} else if (enabled) {
+		setCustomLogoStatus('Custom PNG logo loaded.');
+	} else {
+		setCustomLogoStatus('');
+	}
+};
+
+const saveCustomLogo = (dataUrl) => {
+	try {
+		localStorage?.setItem(CUSTOM_LOGO_STORAGE_KEY, dataUrl);
+		return true;
+	} catch (error) {
+		console.warn(`Failed to store custom logo: ${error}`);
+		setCustomLogoStatus('PNG is too large to store locally.', true);
+		return false;
+	}
+};
+
+const clearCustomLogo = () => {
+	localStorage?.removeItem(CUSTOM_LOGO_STORAGE_KEY);
+	const input = document.getElementById('settings-customLogoImage-file');
+	if (input) {
+		input.value = '';
+	}
+	settings.customLogoImage.value = false;
+};
+
+const customLogoImageChange = () => {
+	applyCustomLogo();
+};
+
+const createCustomLogoUploadControl = () => {
+	const wrapper = document.createElement('div');
+	wrapper.id = 'settings-customLogoImage-upload';
+
+	// A real <label for> rather than a bare span: every other setting in this panel is a
+	// label wrapping its input, so without this the file input has no accessible name.
+	const title = document.createElement('label');
+	title.textContent = 'Logo PNG ';
+	title.htmlFor = 'settings-customLogoImage-file';
+
+	const fileInput = document.createElement('input');
+	fileInput.type = 'file';
+	fileInput.accept = 'image/png';
+	fileInput.id = 'settings-customLogoImage-file';
+	fileInput.name = 'settings-customLogoImage-file';
+
+	const clearButton = document.createElement('input');
+	clearButton.type = 'button';
+	clearButton.value = 'Clear';
+	clearButton.id = 'settings-customLogoImage-clear';
+	clearButton.name = 'settings-customLogoImage-clear';
+	clearButton.addEventListener('click', clearCustomLogo);
+
+	const status = document.createElement('span');
+	status.id = 'settings-customLogoImage-status';
+	// Upload errors are written here; without a live region they are never announced.
+	status.setAttribute('aria-live', 'polite');
+
+	fileInput.addEventListener('change', () => {
+		const [file] = fileInput.files ?? [];
+		if (!file) {
+			return;
+		}
+		const fileError = customLogoFileError(file);
+		if (fileError) {
+			fileInput.value = '';
+			setCustomLogoStatus(fileError, true);
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.addEventListener('load', () => {
+			const dataUrl = typeof reader.result === 'string' ? reader.result : null;
+			if (!dataUrl) {
+				setCustomLogoStatus('Failed to read PNG file.', true);
+				return;
+			}
+			if (saveCustomLogo(dataUrl)) {
+				settings.customLogoImage.value = true;
+			}
+		});
+		reader.addEventListener('error', () => {
+			setCustomLogoStatus('Failed to read PNG file.', true);
+		});
+		reader.readAsDataURL(file);
+	});
+
+	wrapper.append(title, fileInput, clearButton, status);
+	return wrapper;
+};
+
 // Simple global helper to change scanline mode when remote debugging or in kiosk mode
 window.changeScanlineMode = (mode) => {
 	if (typeof settings === 'undefined' || !settings.scanLineMode) {
@@ -287,6 +444,12 @@ const init = () => {
 			['si', 'Metric'],
 		],
 	});
+	settings.customLogoImage = new Setting('customLogoImage', {
+		name: 'Custom Logo PNG',
+		defaultValue: false,
+		changeAction: customLogoImageChange,
+		sticky: true,
+	});
 	settings.refreshTime = new Setting('refreshTime', {
 		type: 'select',
 		defaultValue: 600_000,
@@ -334,6 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const settingsSection = document.querySelector('#settings');
 	settingsSection.innerHTML = '';
 	settingsSection.append(...settingHtml);
+	settingsSection.append(createCustomLogoUploadControl());
 
 	// update visibility on some settings
 	const modeSelect = document.getElementById('settings-scanLineMode-label');
@@ -343,6 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	} else if (modeSelect) {
 		modeSelect.style.display = 'none';
 	}
+	applyCustomLogo();
 });
 
 export default settings;

@@ -455,6 +455,25 @@ body {
 			}
 		}
 	}
+
+	#settings-customLogoImage-upload {
+		cursor: default;
+
+		// The panel's generic `#settings label` rule is display:block, which would drop
+		// the file input onto its own line. Keep this label inline with its input.
+		label {
+			display: inline;
+		}
+
+		input[type="file"],
+		input[type="button"] {
+			margin-right: 6px;
+		}
+
+		#settings-customLogoImage-status {
+			display: inline-block;
+		}
+	}
 }
 
 #divTwcBottom img {

@@ -44,6 +44,8 @@ See [deployment.md](deployment.md) for every run mode and the Docker builds.
 
 `server/scripts/custom.mjs` is also loaded, as an ES module (`type="module"`), so you can use `import`. Both are checked independently and either or both may be present. Anything matching `server/scripts/custom*.*` is git-ignored, so additional files like `custom-config.json` stay local too.
 
+> **Logo hook vs. the Custom Logo PNG setting.** The sample script's example — reassigning `src` on `.logo img` — targets the same images as the **Custom Logo PNG** setting. `custom.js` is injected after the page's `DOMContentLoaded` work, so on first load your script wins. But the setting re-applies on every change, so ticking, unticking, or clearing it will overwrite your logo until the next reload. Use one mechanism or the other, not both.
+
 In Docker, mount your file in:
 
 - **Server deployment:** `/app/server/scripts/custom.js` (or `custom.mjs`)

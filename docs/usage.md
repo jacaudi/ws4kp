@@ -67,6 +67,7 @@ Kiosk mode is a full-screen-like view without the play/volume toolbar, scaled to
 | **Scan Lines** | Retro CRT scan-line effect. |
 | **Scan Lines Style** | Override the automatic scan-line scale factor. |
 | **Units** | Switch US ↔ metric. (Some NWS text products contain embedded units that are not converted.) |
+| **Custom Logo PNG** | Replace the corner logo with your own PNG (1 MB or smaller). The image is stored in this browser's local storage only — it is never uploaded. Untick to go back to the default logo without discarding the stored PNG; use **Clear** to delete it. |
 | **Volume** | Audio level when music is enabled. |
 
 ## Custom scrolling text
