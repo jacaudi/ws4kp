@@ -92,7 +92,7 @@ ingress:
 
 ```bash
 helm install ws4kp \
-  oci://ghcr.io/bjw-s-labs/helm/app-template --version 5.0.1 \
+  oci://ghcr.io/bjw-s-labs/helm/app-template --version 5.1.0 \
   -n ws4kp --create-namespace \
   -f values.yaml
 ```
@@ -110,7 +110,7 @@ spec:
   interval: 1h
   url: oci://ghcr.io/bjw-s-labs/helm/app-template
   ref:
-    tag: 5.0.1
+    tag: 5.1.0
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
