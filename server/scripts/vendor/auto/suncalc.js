@@ -5,7 +5,7 @@
 	//#region index.js
 	const { PI, sin, cos, tan, asin, atan2: atan, acos, sqrt, abs, round } = Math;
 	const rad = PI / 180;
-	const dayMs = 1e3 * 60 * 60 * 24;
+	const dayMs = 864e5;
 	const J1970 = 2440588;
 	const J2000 = 2451545;
 	const earthRadius = 6378.14;
@@ -159,7 +159,7 @@
 		const lw = rad * -lng;
 		const phi = rad * lat;
 		const dh = observerAngle(height);
-		const dt = solarTransit(round(round(toDays(date)) - J0 - lw / (2 * PI)) + J0 + lw / (2 * PI), lw);
+		const dt = solarTransit(round(toDays(date) - J0 - lw / (2 * PI)) + J0 + lw / (2 * PI), lw);
 		const dec = sunCoords(toDaysTT(dt)).dec;
 		const result = {
 			solarNoon: fromJulian(dt + J2000),
@@ -186,9 +186,10 @@
 		const lm = rad * (218.3165 + 481267.8813 * t);
 		const dpsi = (-17.2 * sin(om) - 1.32 * sin(2 * ls) - .23 * sin(2 * lm) + .21 * sin(2 * om)) / 3600;
 		const deps = (9.2 * cos(om) + .57 * cos(2 * ls) + .1 * cos(2 * lm) - .09 * cos(2 * om)) / 3600;
+		const eps0 = 23.439291 - t * (.0130042 + t * (16e-8 - t * 504e-9));
 		return {
 			dpsi,
-			eps: rad * (23.439291 - t * (.0130042 + t * (16e-8 - t * 504e-9)) + deps)
+			eps: rad * (eps0 + deps)
 		};
 	}
 	const moonLon = new Int32Array([
@@ -963,9 +964,10 @@
 				if (abs(x2) <= 1) roots++;
 				if (x1 < -1) x1 = x2;
 			}
-			if (roots === 1) if (h0 < 0) rise = i + x1;
-			else set = i + x1;
-			else if (roots === 2) {
+			if (roots === 1) {
+				if (h0 < 0) rise = i + x1;
+				else set = i + x1;
+			} else if (roots === 2) {
 				rise = i + (ye < 0 ? x2 : x1);
 				set = i + (ye < 0 ? x1 : x2);
 			}
