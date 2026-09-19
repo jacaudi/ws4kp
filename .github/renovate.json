@@ -8,11 +8,22 @@
   "semanticCommits": "enabled",
   "semanticCommitType": "fix",
   "semanticCommitScope": "deps",
+  "postUpgradeTasks": {
+    "commands": [
+      "npx gulp updateVendor"
+    ],
+    "fileFilters": [
+      "server/scripts/vendor/auto/**"
+    ],
+    "executionMode": "branch"
+  },
   "customManagers": [
     {
       "customType": "regex",
       "description": "Track the bjw-s app-template Helm chart version pinned in docs/kubernetes.md",
-      "managerFilePatterns": ["/^docs/kubernetes\\.md$/"],
+      "managerFilePatterns": [
+        "/^docs/kubernetes\\.md$/"
+      ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "ghcr.io/bjw-s-labs/helm/app-template",
       "matchStrings": [
