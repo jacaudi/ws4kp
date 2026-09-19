@@ -10,6 +10,10 @@ import AutoComplete from './modules/autocomplete.mjs';
 import { loadAllData } from './modules/utils/data-loader.mjs';
 import { debugFlag } from './modules/utils/debug.mjs';
 import { parseQueryString } from './modules/utils/setting.mjs';
+import { Settings } from './vendor/auto/luxon.mjs';
+
+// set luxon's default locale to en-US as the forecast text and other hard coded assets are only available in Englixh
+Settings.defaultLocale = 'en-US';
 
 document.addEventListener('DOMContentLoaded', () => {
 	init();

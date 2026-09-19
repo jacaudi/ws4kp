@@ -1,0 +1,9 @@
+{
+  "$comment": "Last netbymatt/ws4kp release this fork reached content parity with. Read by .claude/skills/upstream-review (Step 1) and updated by it (Step 7). There is NO git merge-base with upstream -- the LFS history rewrite severed it -- so this file is the only durable baseline. Store upstream identifiers only, never a fork commit SHA: fork history has been rewritten before and those SHAs die with it (the CHANGELOG entry for the 7.1.3 adoption links f9078ed, now unreachable).",
+  "upstream": "netbymatt/ws4kp",
+  "tag": "v7.1.6",
+  "sha": "c32fe1d5e6f93ea2af38da38ac5f21fc92b05412",
+  "adopted": "2026-09-18",
+  "pr": 84,
+  "skipped": []
+}

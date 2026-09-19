@@ -30,13 +30,18 @@ operating rules specific to running as an agent.
 file-by-file, so `git rev-list --count main..upstream/main` never decreases and is
 meaningless. If you cite it at all, say what it does not mean.
 
+**There is no merge-base.** `git merge-base main upstream/main` exits 1 — the LFS history
+rewrite severed shared history. Read the baseline from `.upstream-sync.json` instead; see
+SKILL.md Step 1 for the exact commands. If you let `$B` go empty, every range below
+silently becomes upstream's entire history.
+
 **Partition before you read diffs.** `comm -12` / `comm -13` on the two changed-file
-lists against the merge-base. Most upstream changes touch files this fork never
+lists against the recorded baseline. Most upstream changes touch files this fork never
 modified and need no judgement. Do this first; it collapses the problem.
 
 **Verify claims against the working tree.** Before calling something "a fix we need",
 confirm the fork's copy is actually missing it — compare the function against the
-merge-base. Before calling something "a conflict", confirm the upstream change is not
+recorded baseline. Before calling something "a conflict", confirm the upstream change is not
 retuning code this fork deleted. Both mistakes have happened.
 
 **Hunt data-format hazards.** For any data file upstream changed, check the *types* of
@@ -62,7 +67,12 @@ A structured report, ordered by what the caller must decide:
 4. **Genuine decisions** — contested items where a deliberate fork feature meets an
    upstream change. Give a recommendation and the trade-off. Do not pick silently.
 5. **Hazards** — data/contract changes that would break fork code, with the evidence.
-6. **Suggested packaging** — which items are low-risk versus which need browser
+6. **Test coverage** — for every fix in (1) and (2), whether upstream shipped tests with
+   it (`git show --stat <sha>`, look under `tests/`). Upstream has no unit suite, so the
+   answer is almost always no; say so per fix rather than omitting it. Flag anything that
+   would land untested, and never propose `git checkout` over `tests/` — `tests/unit/` is
+   entirely fork-owned and `tests/index.mjs` is 11× upstream's.
+7. **Suggested packaging** — which items are low-risk versus which need browser
    verification, so the caller can split PRs by risk.
 
 Be concrete: file paths, function names, upstream SHAs, measured numbers. "Improves

@@ -1,0 +1,8 @@
+{
+	"recommendations": [
+		"digitalbrainstem.javascript-ejs-support",
+		"dbaeumer.vscode-eslint",
+		"streetsidesoftware.code-spell-checker",
+		"j69.ejs-beautify"
+	]
+}
