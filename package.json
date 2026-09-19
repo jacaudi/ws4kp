@@ -54,7 +54,7 @@
 		"fancy-log": "^2.0.0"
 	},
 	"dependencies": {
-		"dotenv": "^17.0.1",
+		"dotenv": "^18.0.0",
 		"ejs": "^6.0.0",
 		"express": "^5.1.0"
 	}
