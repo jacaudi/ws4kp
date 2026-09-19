@@ -8,15 +8,28 @@
   "semanticCommits": "enabled",
   "semanticCommitType": "fix",
   "semanticCommitScope": "deps",
-  "postUpgradeTasks": {
-    "commands": [
-      "npx gulp updateVendor"
-    ],
-    "fileFilters": [
-      "server/scripts/vendor/auto/**"
-    ],
-    "executionMode": "branch"
-  },
+  "packageRules": [
+    {
+      "description": "Vendored packages are copied into server/scripts/vendor/auto/ and served to the browser, so the lockfile bump alone leaves the shipped bundle stale. npm ci first: Renovate resolves lockfiles with --package-lock-only, so node_modules does not exist and updateVendor has nothing to copy from.",
+      "matchPackageNames": [
+        "luxon",
+        "@zakj/no-sleep",
+        "suncalc",
+        "swiped-events",
+        "metar-taf-parser"
+      ],
+      "postUpgradeTasks": {
+        "commands": [
+          "npm ci --ignore-scripts",
+          "npx gulp updateVendor"
+        ],
+        "fileFilters": [
+          "server/scripts/vendor/auto/**"
+        ],
+        "executionMode": "branch"
+      }
+    }
+  ],
   "customManagers": [
     {
       "customType": "regex",
