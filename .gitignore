@@ -26,3 +26,4 @@ dist/*
 .claude/worktrees/
 .playwright-mcp/
 .regional-shots/
+docs/prompts/
