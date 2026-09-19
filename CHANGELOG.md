@@ -1,5 +1,27 @@
 # Changelog
 
+## [7.4.0](https://github.com/jacaudi/ws4kp/compare/v7.3.0...v7.4.0) (2026-09-19)
+
+
+### Features
+
+* adopt upstream v7.1.6, add scroll regression tests, tidy the root ([#84](https://github.com/jacaudi/ws4kp/issues/84)) ([7dc2e48](https://github.com/jacaudi/ws4kp/commit/7dc2e489a4f01f49067efae6cb629bc3816866a5))
+
+
+### Miscellaneous
+
+* **deps:** update dependency @eslint/eslintrc to v3.3.7 ([38bc18f](https://github.com/jacaudi/ws4kp/commit/38bc18faab6dc9e420f1c0e091bcb8b878ddd86c))
+* **deps:** update dependency eslint to v10.10.0 ([2cfce7b](https://github.com/jacaudi/ws4kp/commit/2cfce7bd26d40eb0abd1bfc9eb0caeff68bc53d3))
+* **deps:** update dependency p-limit to v7.3.2 ([8d144ad](https://github.com/jacaudi/ws4kp/commit/8d144ad43ab2c51e910e9f8a5343cd8a4d915777))
+* **deps:** update dependency sass to v1.104.1 ([fe42c60](https://github.com/jacaudi/ws4kp/commit/fe42c60bb30ed3890a8a4bdf20459d2957949a1e))
+* **deps:** update dependency suncalc to v2.0.2 ([9c5d331](https://github.com/jacaudi/ws4kp/commit/9c5d33191e4e686cfeeb69a2e3e4a103329c4d03))
+* **deps:** update dependency webpack to v5.111.0 ([ae1fc7e](https://github.com/jacaudi/ws4kp/commit/ae1fc7e94b080ab9662dfde2e2880726c299d989))
+* **deps:** update docker/build-push-action action to v7.4.0 ([0df8d7a](https://github.com/jacaudi/ws4kp/commit/0df8d7adb26e2f92ff59d929d903cd1e4137c436))
+* **deps:** update docker/login-action action to v4.6.0 ([cf62555](https://github.com/jacaudi/ws4kp/commit/cf62555c1dd609d30349ec1e5777f8a0034e6b16))
+* **deps:** update docker/setup-buildx-action action to v4.4.1 ([e2a30da](https://github.com/jacaudi/ws4kp/commit/e2a30da215ae746a0d7fb612cf0d8e0b4756631c))
+* **deps:** update docker/setup-qemu-action action to v4.4.0 ([7b82467](https://github.com/jacaudi/ws4kp/commit/7b82467cdaa821630ae4b34a705ae06e4e216edb))
+* **deps:** update ghcr.io/bjw-s-labs/helm/app-template docker tag to v5.2.1 ([225e4fc](https://github.com/jacaudi/ws4kp/commit/225e4fcd8b6cd7dcfdd75c0e6fb53dc267707e2b))
+
 ## [7.3.0](https://github.com/jacaudi/ws4kp/compare/v7.2.2...v7.3.0) (2026-07-30)
 
 
