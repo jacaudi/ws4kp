@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.3.0](https://github.com/jacaudi/ws4kp/compare/v7.2.2...v7.3.0) (2026-07-30)
+
+
+### Features
+
+* **logo:** SVG corner logo + user-customizable PNG logo ([#70](https://github.com/jacaudi/ws4kp/issues/70)) ([20b28d9](https://github.com/jacaudi/ws4kp/commit/20b28d91d430b33e76ca175ea5e400368bd98d0a))
+
+
+### Bug Fixes
+
+* **vendor:** stop updateVendor drifting from the lockfile ([#71](https://github.com/jacaudi/ws4kp/issues/71)) ([2f347a7](https://github.com/jacaudi/ws4kp/commit/2f347a748f553a9ef457a50a505fe9a8ee7d974b)), closes [#42](https://github.com/jacaudi/ws4kp/issues/42)
+
 ## [7.2.2](https://github.com/jacaudi/ws4kp/compare/v7.2.1...v7.2.2) (2026-07-29)
 
 
