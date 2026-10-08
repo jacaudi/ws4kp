@@ -3,7 +3,7 @@
 })(this, function(exports) {
 	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 	//#region index.js
-	const { PI, sin, cos, tan, asin, atan2: atan, acos, sqrt, abs, round } = Math;
+	const { PI, sin, cos, tan, asin, atan2: atan, acos, sqrt, abs, round, floor } = Math;
 	const rad = PI / 180;
 	const dayMs = 864e5;
 	const J1970 = 2440588;
@@ -73,7 +73,8 @@
 		const e = rad * (23.439291 - t * (.0130042 + t * (16e-8 - t * 504e-9))) + rad * .00256 * cos(Om);
 		return {
 			ra: atan(cos(e) * sin(L), cos(L)),
-			dec: asin(sin(e) * sin(L))
+			dec: asin(sin(e) * sin(L)),
+			lon: L
 		};
 	}
 	function getPosition(date, lat, lng) {
@@ -155,11 +156,20 @@
 		}
 		return d;
 	}
-	function getTimes(date, lat, lng, height = 0) {
+	function civilMidnight(date, utcOffset) {
+		const offMs = utcOffset * 6e4;
+		return floor((date.valueOf() + offMs) / dayMs) * dayMs - offMs;
+	}
+	function solarDayTransit(date, lw, utcOffset) {
+		const anchor = utcOffset === void 0 ? date.valueOf() : civilMidnight(date, utcOffset) + dayMs / 2;
+		const lon = J0 + lw / (2 * PI);
+		return solarTransit(round(toDays(anchor) - lon) + lon, lw);
+	}
+	function getTimes(date, lat, lng, height = 0, utcOffset) {
 		const lw = rad * -lng;
 		const phi = rad * lat;
 		const dh = observerAngle(height);
-		const dt = solarTransit(round(toDays(date) - J0 - lw / (2 * PI)) + J0 + lw / (2 * PI), lw);
+		const dt = solarDayTransit(date, lw, utcOffset);
 		const dec = sunCoords(toDaysTT(dt)).dec;
 		const result = {
 			solarNoon: fromJulian(dt + J2000),
@@ -891,7 +901,8 @@
 		return {
 			ra: atan(sin(l) * cos(eps) - tan(b) * sin(eps), cos(l)),
 			dec: asin(sin(b) * cos(eps) + cos(b) * sin(eps) * sin(l)),
-			dist: 385000.56 + sr / 1e3
+			dist: 385000.56 + sr / 1e3,
+			lon: l
 		};
 	}
 	function getMoonPosition(date, lat, lng) {
@@ -918,10 +929,11 @@
 		const phi = acos(sin(s.dec) * sin(m.dec) + cos(s.dec) * cos(m.dec) * cos(s.ra - m.ra));
 		const inc = atan(sdist * sin(phi), m.dist - sdist * cos(phi));
 		const angle = atan(cos(s.dec) * sin(s.ra - m.ra), sin(s.dec) * cos(m.dec) - cos(s.dec) * sin(m.dec) * cos(s.ra - m.ra));
-		const waxing = angle < 0;
+		const phase = ((m.lon - s.lon) / (2 * PI) % 1 + 1) % 1;
+		const waxing = phase < .5;
 		return {
 			fraction: (1 + cos(inc)) / 2,
-			phase: .5 + .5 * inc * (waxing ? -1 : 1) / PI,
+			phase,
 			angle: angle / rad,
 			waxing
 		};
@@ -941,9 +953,19 @@
 		}
 		return tMs;
 	}
-	function getMoonTimes(date, lat, lng) {
-		const t = new Date(date);
-		t.setUTCHours(0, 0, 0, 0);
+	function moonHourAngle(t, lw) {
+		const d = toDays(t);
+		return siderealTime(d, lw) - moonCoords(toDaysTT(d)).ra;
+	}
+	function moonTransit(t0, lw, H0) {
+		const rate = 2 * PI * .96614 / dayMs;
+		const a = H0 - moonHourAngle(t0, lw);
+		let t = t0 + (a - 2 * PI * floor(a / (2 * PI))) / rate;
+		for (let i = 0; i < 2; i++) t -= wrapPi(moonHourAngle(t, lw) - H0) / rate;
+		return t < t0 + dayMs ? t : void 0;
+	}
+	function getMoonTimes(date, lat, lng, utcOffset) {
+		const t = utcOffset === void 0 ? fromJulian(solarDayTransit(date, rad * -lng) + J2000 - .5) : new Date(civilMidnight(date, utcOffset));
 		let h0 = moonHeight(t, lat, lng);
 		let rise, set, hMax = h0;
 		for (let i = 1; i <= 24; i += 2) {
@@ -977,6 +999,11 @@
 		const result = {};
 		if (rise !== void 0) result.rise = new Date(refineMoonCross(hoursLater(t, rise).valueOf(), lat, lng));
 		if (set !== void 0) result.set = new Date(refineMoonCross(hoursLater(t, set).valueOf(), lat, lng));
+		const lw = rad * -lng;
+		const transit = moonTransit(t.valueOf(), lw, 0);
+		const lowerTransit = moonTransit(t.valueOf(), lw, PI);
+		if (transit !== void 0) result.transit = new Date(transit);
+		if (lowerTransit !== void 0) result.lowerTransit = new Date(lowerTransit);
 		if (rise === void 0 && set === void 0) {
 			result.alwaysUp = hMax > 0;
 			result.alwaysDown = hMax <= 0;
