@@ -5,14 +5,14 @@ import {
 	STATION_RANK_PENALTY,
 	selectRegionalCities,
 	regionalSelectionConfig,
-	inVisibleWindow,
 } from '../../server/scripts/modules/regionalforecast-select.mjs';
 
 const user = { lat: 40, lon: -100 };
 
-// Selection spaces labels in PIXELS, so every candidate carries the projected xy
-// that regionalforecast.mjs attaches before calling. Defaults put each candidate
-// far enough apart that spacing never interferes with a ranking assertion.
+// Selection spaces labels in PIXELS, so every candidate carries the projected xy and label
+// width that placeCandidates attaches before selection. Every test label is W wide; defaults put
+// each candidate far enough apart that spacing never interferes with a ranking assertion.
+const W = 95;
 let seq = 0;
 const cand = (props) => {
 	seq += 1;
@@ -22,7 +22,8 @@ const cand = (props) => {
 		lon: -100,
 		baked: false,
 		priority: 13,
-		xy: { x: seq * LABEL_BOX.w * 3, y: seq * LABEL_BOX.h * 3 },
+		labelWidth: W,
+		xy: { x: seq * W * 3, y: seq * LABEL_BOX.h * 3 },
 		...props,
 	};
 };
@@ -41,7 +42,7 @@ test('selectRegionalCities drops a candidate whose label box overlaps a kept one
 	const cands = [
 		cand({ id: 'a', lat: 40.1, lon: -100, xy: { x: 300, y: 150 } }),
 		cand({ id: 'b', lat: 40.15, lon: -100, xy: { x: 310, y: 155 } }),
-		cand({ id: 'c', lat: 40.2, lon: -100, xy: { x: 300 + LABEL_BOX.w * 2, y: 150 } }),
+		cand({ id: 'c', lat: 40.2, lon: -100, xy: { x: 300 + W * 2, y: 150 } }),
 	];
 	const ids = selectRegionalCities(user, cands, { count: 10 }).map((c) => c.id);
 	assert.deepEqual(ids, ['a', 'c']);
@@ -135,15 +136,6 @@ test('selectRegionalCities skips candidates with a missing or non-finite xy', ()
 	];
 	const ids = selectRegionalCities(user, cands, { count: 10 }).map((c) => c.id);
 	assert.deepEqual(ids, ['ok']);
-});
-
-test('inVisibleWindow honors the right-edge maxLon-1 fudge', () => {
-	const mm = {
-		minLat: 38, maxLat: 42, minLon: -105, maxLon: -95,
-	};
-	assert.equal(inVisibleWindow({ lat: 40, lon: -100 }, mm), true);
-	assert.equal(inVisibleWindow({ lat: 40, lon: -95.5 }, mm), false); // inside maxLon-1 band
-	assert.equal(inVisibleWindow({ lat: 50, lon: -100 }, mm), false);
 });
 
 test('regionalSelectionConfig scales the count cap up for larger windows', () => {
