@@ -1,6 +1,7 @@
 import { text } from './utils/fetch.mjs';
 import Setting from './utils/setting.mjs';
 import { registerHiddenSetting } from './share.mjs';
+import setHeadend from './headend.mjs';
 
 let playlist;
 let currentTrack = 0;
@@ -8,6 +9,8 @@ let player;
 let sliderTimeout = null;
 let volumeSlider = null;
 let volumeSliderInput = null;
+// music was left on but the browser blocked playback until the page is interacted with
+let waitingForInteraction = false;
 
 const mediaPlaying = new Setting('mediaPlaying', {
 	name: 'Media Playing',
@@ -17,8 +20,15 @@ const mediaPlaying = new Setting('mediaPlaying', {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-	// add the event handler to the page
-	document.getElementById('ToggleMedia').addEventListener('click', handleClick);
+	// #ToggleMedia is a pure play/stop toggle, independent of the volume popup
+	document.getElementById('ToggleMedia').addEventListener('click', toggleMediaPlayback);
+
+	// #ToggleMediaVolume opens/closes the volume popup, independent of playback.
+	// it responds to click (so it works on touch/kiosk, which has no hover) and to hovering
+	// the whole control cluster (a convenience for a mouse, not a requirement for anyone else)
+	const volumeToggle = document.getElementById('ToggleMediaVolume');
+	volumeToggle.addEventListener('click', toggleVolumeSlider);
+
 	// get the slider elements
 	volumeSlider = document.querySelector('#ToggleMediaContainer .volume-slider');
 	volumeSliderInput = volumeSlider.querySelector('input');
@@ -27,9 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	// called on any interaction via 'input' (vs change) for immediate volume response
 	volumeSlider.addEventListener('input', setSliderTimeout);
 	volumeSlider.addEventListener('input', sliderChanged);
-
-	// add listener for mute (pause) button under the volume slider
-	volumeSlider.querySelector('img').addEventListener('click', stopMedia);
+	// don't hide the slider while a keyboard user is on it
+	volumeSlider.addEventListener('focusin', () => clearTimeout(sliderTimeout));
+	volumeSlider.addEventListener('focusout', setSliderTimeout);
 
 	// get the playlist
 	getMedia();
@@ -59,6 +69,8 @@ const getMedia = async () => {
 	let playlistSource = '';
 
 	try {
+		// deliberate fetch (instead of safejson or others)
+		// we need to examine the headers to determine the deployment mode and path forward
 		const response = await fetch('playlist.json');
 		if (response.ok) {
 			playlist = await response.json();
@@ -71,7 +83,7 @@ const getMedia = async () => {
 			playlist = { availableFiles: [] };
 			playlistSource = `failed (${response.status} ${response.statusText})`;
 		}
-	} catch (_e) {
+	} catch {
 		// Network error or other fetch failure - fall back to directory scanning
 		playlist = await scanMusicDirectory();
 		playlistSource = 'via directory scan (after fetch failed)';
@@ -105,31 +117,56 @@ const enableMediaPlayer = () => {
 };
 
 const setIcon = () => {
-	// get the icon
-	const icon = document.getElementById('ToggleMediaContainer');
-	if (mediaPlaying.value === true) {
-		icon.classList.add('playing');
-	} else {
-		icon.classList.remove('playing');
-	}
+	// while waiting for an interaction the music is not heard, so the button shows it as off
+	const playing = mediaPlaying.value === true && !waitingForInteraction;
+	document.getElementById('ToggleMediaContainer').classList.toggle('playing', playing);
+	document.getElementById('ToggleMedia').setAttribute('aria-pressed', playing);
 };
 
-const handleClick = () => {
-	// if media is off, start it
-	if (mediaPlaying.value === false) {
-		mediaPlaying.value = true;
+// pure toggle: flips playback on/off and nothing else. Does not touch the volume popup.
+const toggleMediaPlayback = () => {
+	// music was left on and this click is the interaction the browser was waiting for, so start it
+	if (waitingForInteraction) {
+		stopWaitingForInteraction();
+		startMedia();
+		return;
 	}
-
-	if (mediaPlaying.value === true && !volumeSlider.classList.contains('show')) {
-		// if media is playing and the slider isn't open, open it
-		showVolumeSlider();
-	} else {
-		// hide the volume slider
-		hideVolumeSlider();
-	}
-
-	// handle the state change
+	mediaPlaying.value = !mediaPlaying.value;
 	stateChanged();
+};
+
+// any click or key press on the page lets the browser start the music
+const interactionStartsMedia = (e) => {
+	// the music button's own click handler takes care of that button
+	if (e.target?.closest?.('#ToggleMedia')) return;
+	stopWaitingForInteraction();
+	startMedia();
+};
+
+const waitForInteraction = () => {
+	if (waitingForInteraction) return;
+	waitingForInteraction = true;
+	setIcon();
+	setHeadend('music', 'Waiting for a click or key press to start');
+	document.addEventListener('click', interactionStartsMedia, { capture: true });
+	document.addEventListener('keydown', interactionStartsMedia, { capture: true });
+};
+
+const stopWaitingForInteraction = () => {
+	waitingForInteraction = false;
+	setIcon();
+	document.removeEventListener('click', interactionStartsMedia, { capture: true });
+	document.removeEventListener('keydown', interactionStartsMedia, { capture: true });
+};
+
+// open/close the volume popup. Independent of playback: volume can be adjusted whether or
+// not music is currently playing.
+const toggleVolumeSlider = () => {
+	if (volumeSlider.classList.contains('show')) {
+		hideVolumeSlider();
+	} else {
+		showVolumeSlider();
+	}
 };
 
 // set a timeout for the volume slider (called by interactions with the slider)
@@ -147,6 +184,7 @@ const showVolumeSlider = () => {
 	// show the slider
 	if (volumeSlider) {
 		volumeSlider.classList.add('show');
+		document.getElementById('ToggleMediaVolume').setAttribute('aria-expanded', 'true');
 	}
 };
 
@@ -159,6 +197,7 @@ const hideVolumeSlider = () => {
 	// hide the element
 	if (volumeSlider) {
 		volumeSlider.classList.remove('show');
+		document.getElementById('ToggleMediaVolume').setAttribute('aria-expanded', 'false');
 	}
 };
 
@@ -171,6 +210,11 @@ const startMedia = async () => {
 			await player.play();
 			setTrackName(playlist.availableFiles[currentTrack]);
 		} catch (e) {
+			// the browser won't play sound before the page is interacted with, keep the saved setting and try again then
+			if (e.name === 'NotAllowedError') {
+				waitForInteraction();
+				return;
+			}
 			// report the error
 			console.error('Couldn\'t play music');
 			console.error(e);
@@ -229,6 +273,12 @@ const sliderChanged = () => {
 		const cleanValue = parseFloat(newValue) / 100;
 		setVolume(cleanValue);
 		mediaVolume.value = cleanValue;
+
+		// interacting with the slider while stopped starts playback at the volume just set
+		if (!mediaPlaying.value) {
+			mediaPlaying.value = true;
+			stateChanged();
+		}
 	}
 };
 
@@ -296,14 +346,28 @@ const playerEnded = () => {
 };
 
 const setTrackName = (fileName) => {
+	// check for metadata
+	const metaData = playlist?.metaData?.[fileName];
+
+	// generate a fallback track name from the file name
 	const baseName = fileName.split('/').pop();
-	const trackName = decodeURIComponent(
+	const fileTrackName = decodeURIComponent(
 		baseName.replace(/\.mp3/gi, '').replace(/(_-)/gi, ''),
 	);
-	document.getElementById('musicTrack').innerHTML = trackName;
+	if (!metaData) {
+		setHeadend('music', fileTrackName);
+		return;
+	}
+
+	// otherwise build a name from metadata
+	let trackName = metaData.title ?? fileTrackName;
+	if (metaData?.artist) trackName += ` - ${metaData.artist}`;
+	if (metaData?.album) trackName += ` - ${metaData.album}`;
+	// min:sec format
+	const d = metaData?.duration;
+	if (d) trackName += ` (${Math.floor(d / 60)}:${String(Math.floor(d % 60)).padStart(2, '0')})`;
+
+	setHeadend('music', trackName);
 };
 
-export {
-	// eslint-disable-next-line import/prefer-default-export
-	handleClick,
-};
+export default toggleMediaPlayback;

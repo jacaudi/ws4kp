@@ -19,14 +19,21 @@ const STUBS = new URL('./scroll-display-stubs.mjs', import.meta.url).href;
 // the browser ships.
 const REAL = new Set(['./status.mjs', './utils/scroll-timing.mjs', '../vendor/auto/luxon.mjs']);
 
+// Modules loaded for real but with their own imports redirected the same way: the shared base
+// class holds drawLongCanvas()/baseCountChange(), the code these tests exist for.
+const REWRITTEN = new Set(['./scroll-weather-display.mjs']);
+
 // specifier -> what the stub module supplies for it. A display that grows a new import trips the
 // assertion below rather than failing somewhere confusing.
 const STUB_EXPORTS = {
 	'./weatherdisplay.mjs': { default: 'WeatherDisplay' },
-	'./navigation.mjs': { named: ['registerDisplay', 'timeZone'] },
+	'./navigation.mjs': { named: ['registerDisplay'] },
+	'./location.mjs': { named: ['timeZone'] },
 	'./settings.mjs': { default: 'settings' },
 	'./almanac.mjs': { default: 'getSun' },
-	'./icons.mjs': { named: ['getSmallIcon', 'getHourlyIcon'] },
+	'./icons/small.mjs': { default: 'smallIcon' },
+	'./icons/hourly.mjs': { default: 'hourlyIcon' },
+	'./utils/data-loader.mjs': { named: ['TravelCities'] },
 	'./utils/fetch.mjs': { named: ['safeJson', 'safePromiseAll'] },
 	'./utils/debug.mjs': { named: ['debugFlag'] },
 	'./utils/calc.mjs': { named: ['directionToNSEW'] },
@@ -35,28 +42,33 @@ const STUB_EXPORTS = {
 
 const MODULES = new URL('../../../server/scripts/modules/', import.meta.url);
 
+const SPECIFIER = /(\bfrom\s*)'(\.[^']*)'/g;
+
+const toDataUrl = (source) => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
+
+// eslint-disable-next-line no-use-before-define -- stubUrlFor and rewriteImports recurse through each other
+const rewriteImports = (source) => source.replace(SPECIFIER, (match, prefix, specifier) => `${prefix}'${stubUrlFor(specifier)}'`);
+
 const stubUrlFor = (specifier) => {
 	if (REAL.has(specifier)) return new URL(specifier, MODULES).href;
+	if (REWRITTEN.has(specifier)) return toDataUrl(rewriteImports(readFileSync(new URL(specifier, MODULES), 'utf8')));
 	const stub = STUB_EXPORTS[specifier];
 	assert.ok(stub, `no test stub for import '${specifier}'; add one to scroll-display-stubs.mjs or to REAL`);
 	const clauses = [...(stub.default ? [`${stub.default} as default`] : []), ...(stub.named ?? [])];
 	const source = `export { ${clauses.join(', ')} } from ${JSON.stringify(STUBS)};\n`;
-	return `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
+	return toDataUrl(source);
 };
-
-const SPECIFIER = /(\bfrom\s*)'(\.[^']*)'/g;
 
 let nonce = 0;
 
 // load a display module fresh and hand back the instance it registered
 const loadDisplay = async (moduleName) => {
 	const path = new URL(`../../../server/scripts/modules/${moduleName}`, import.meta.url);
-	const source = readFileSync(path, 'utf8')
-		.replace(SPECIFIER, (match, prefix, specifier) => `${prefix}'${stubUrlFor(specifier)}'`);
+	const source = rewriteImports(readFileSync(path, 'utf8'));
 
 	// the nonce defeats the module cache so every test gets its own instance
 	nonce += 1;
-	const url = `data:text/javascript;base64,${Buffer.from(`${source}\n// instance ${nonce}\n`).toString('base64')}`;
+	const url = toDataUrl(`${source}\n// instance ${nonce}\n`);
 	await import(url);
 
 	const display = takeRegistered();

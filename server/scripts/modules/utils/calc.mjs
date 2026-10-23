@@ -22,7 +22,11 @@ const geoDistance = (lon1, lat1, lon2, lat2) => {
 // wrap a number to 0-m
 const wrap = (x, m) => ((x % m) + m) % m;
 
+// coerce a number into the range min-max
+const coerce = (value, min, max) => Math.min(Math.max(value, min), max);
+
 export {
+	coerce,
 	directionToNSEW,
 	distance,
 	geoDistance,

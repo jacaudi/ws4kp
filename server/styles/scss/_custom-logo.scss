@@ -1,0 +1,43 @@
+// Fork-owned: the corner logo and its custom PNG upload (settings.mjs, applyCustomLogo).
+// Kept out of upstream's partials so _weather-display.scss and _lower-tabs.scss stay at parity.
+
+// a fixed box, so an uploaded PNG of any shape fits the space the stock logo occupies
+.weather-display>.header .logo {
+	width: 85px;
+	height: 67px;
+
+	.logo-corner {
+		display: block;
+		width: 85px;
+		height: 67px;
+		object-fit: contain;
+		object-position: center;
+	}
+}
+
+// one row of the settings grid: the label in the panel's label column, the controls after it
+#settings-customLogoImage-upload {
+	cursor: default;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	row-gap: 6px;
+
+	label {
+		display: block;
+		flex: none;
+		width: var(--label-width);
+		margin-right: 10px;
+	}
+
+	input[type="file"],
+	input[type="button"] {
+		margin-right: 6px;
+	}
+
+	// its own line, under the controls
+	#settings-customLogoImage-status {
+		flex-basis: 100%;
+		padding-left: calc(var(--label-width) + 10px);
+	}
+}

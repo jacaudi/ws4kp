@@ -1,13 +1,17 @@
 <%- include('header.ejs', {titleDual:{ top: 'Regional' , bottom: 'Observations' }, hasTime: true }) %>
 <div class="main has-scroll regional-forecast can-enhance">
-  <div class="map"><img src="images/maps/basemap.webp" /></div>
+  <div class="map"><img src="images/maps/forecast-conus.webp" /></div>
   <div class="location-container">
     <div class="location template">
-      <div class="icon">
-        <img src="" />
+      <div class="header">
+        <div class="city"></div>
       </div>
-      <div class="city"></div>
-      <div class="temp"></div>
+      <div class="details">
+        <div class="temp"></div>
+        <div class="icon">
+          <img src="" />
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -17,14 +17,13 @@ The codebase is intentionally open, well-commented, and as library-free as possi
 - Straightforward hand-written HTML
 - A Gulp + Webpack build to bundle scripts
 - Hand-written CSS managed with SASS
-- ESLint (airbnb-base) for consistent style
+- ESLint (airbnb-extended, flat config) for consistent style
 
 Unit tests for the newer pure-logic modules use Node's built-in test runner:
 
 ```bash
 npm run test:unit
-npm run lint        # production modules
-npm run lintall     # + datagenerators, gulp, tests
+npm run lint        # everything except tests/ (see eslint.config.mjs)
 ```
 
 ## Build & run

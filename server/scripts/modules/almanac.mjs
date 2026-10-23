@@ -1,9 +1,12 @@
 // display sun and moon data
-import { preloadImg } from './utils/image.mjs';
+import preloadImg from './utils/preload-image.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
 import STATUS from './status.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
-import { registerDisplay, timeZone } from './navigation.mjs';
+import { registerDisplay } from './navigation.mjs';
+import { timeZone } from './location.mjs';
+import { getMoonIllumination } from '../vendor/auto/suncalc.js';
+import { sunTimesForDay, moonTimesForDay } from './almanac-utils.mjs';
 
 class Almanac extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -11,17 +14,14 @@ class Almanac extends WeatherDisplay {
 
 		// occasional degraded moon icon
 		this.iconPaths = {
-			Full: imageName(Math.random() > 0.995 ? 'Degraded' : 'Full'),
-			Last: imageName('Last'),
-			New: imageName('New'),
-			First: imageName('First'),
+			Full: imageNames[Math.random() > 0.995 ? 'Degraded' : 'Full'],
+			Last: imageNames.Last,
+			New: imageNames.New,
+			First: imageNames.First,
 		};
 
 		// preload the moon images
-		preloadImg(this.iconPaths.Full);
-		preloadImg(this.iconPaths.Last);
-		preloadImg(this.iconPaths.New);
-		preloadImg(this.iconPaths.First);
+		Object.values(this.iconPaths).forEach(preloadImg);
 
 		this.timing.totalScreens = 1;
 	}
@@ -49,23 +49,22 @@ class Almanac extends WeatherDisplay {
 
 	calcSunMoonData(weatherParameters) {
 		const dayOffsets = [0, 1, 2, 3, 4, 5, 6];
-		// suncalc v2 reads the date as a UTC instant, so anchor each day to local midnight
-		const localDay = (days) => DateTime.local().plus({ days }).startOf('day');
-		const sun = dayOffsets.map((days) => SunCalc.getTimes(localDay(days).toJSDate(), weatherParameters.latitude, weatherParameters.longitude));
-		const moonTransit = dayOffsets.map((days) => moonTimesForLocalDay(localDay(days), weatherParameters.latitude, weatherParameters.longitude));
+		const days = dayOffsets.map((offset) => DateTime.local().setZone(timeZone()).plus({ days: offset }));
+		const sun = days.map((day) => sunTimesForDay(day, weatherParameters.latitude, weatherParameters.longitude));
+		const moonTransit = days.map((day) => moonTimesForDay(day, weatherParameters.latitude, weatherParameters.longitude));
 
-		// brute force the moon phases by scanning the next 30 days
+		// brute force the moon phases by scanning the next 45 days
 		const moon = [];
 		// start with yesterday
-		let moonDate = DateTime.local().minus({ days: 1 });
-		let { phase } = SunCalc.getMoonIllumination(moonDate.toJSDate());
+		let moonDate = DateTime.local().setZone(timeZone()).minus({ days: 1 });
+		let { phase } = getMoonIllumination(moonDate.toJSDate());
 		let iterations = 0;
 		do {
 			// get yesterday's moon info
 			const lastPhase = phase;
 			// calculate new values
 			moonDate = moonDate.plus({ days: 1 });
-			phase = SunCalc.getMoonIllumination(moonDate.toJSDate()).phase;
+			phase = getMoonIllumination(moonDate.toJSDate()).phase;
 			// check for 4 cases
 			if (lastPhase < 0.25 && phase >= 0.25) moon.push(this.getMoonTransition(0.25, 'First', moonDate));
 			if (lastPhase < 0.50 && phase >= 0.50) moon.push(this.getMoonTransition(0.50, 'Full', moonDate));
@@ -86,13 +85,10 @@ class Almanac extends WeatherDisplay {
 	// get moon transition from one phase to the next by drilling down by hours, minutes and seconds
 	getMoonTransition(threshold, phaseName, start, iteration = 0) {
 		let moonDate = start;
-		let { phase } = SunCalc.getMoonIllumination(moonDate.toJSDate());
+		let { phase } = getMoonIllumination(moonDate.toJSDate());
 		let iterations = 0;
 		const step = {
 			hours: iteration === 0 ? -1 : 0,
-			minutes: iteration === 1 ? 1 : 0,
-			seconds: iteration === 2 ? -1 : 0,
-			milliseconds: iteration === 3 ? 1 : 0,
 		};
 
 		// increasing test
@@ -105,7 +101,7 @@ class Almanac extends WeatherDisplay {
 			const lastPhase = phase;
 			// calculate new phase after step
 			moonDate = moonDate.plus(step);
-			phase = SunCalc.getMoonIllumination(moonDate.toJSDate()).phase;
+			phase = getMoonIllumination(moonDate.toJSDate()).phase;
 			// wrap phases > 0.9 to -0.1 for ease of detection
 			if (phase > 0.9) phase -= 1.0;
 			// compare
@@ -116,7 +112,7 @@ class Almanac extends WeatherDisplay {
 				return this.getMoonTransition(threshold, phaseName, moonDate, iteration + 1);
 			}
 			iterations += 1;
-		} while (iterations < 1000);
+		} while (iterations < 100);
 
 		return { phase: phaseName, date: moonDate };
 	}
@@ -128,7 +124,8 @@ class Almanac extends WeatherDisplay {
 		// Generate sun data grid in reading order (left-to-right, top-to-bottom)
 
 		// Set day names and sunset times
-		const Today = DateTime.local();
+		// in the location's time zone, to match the sun and moon times calculated for it
+		const Today = DateTime.local().setZone(timeZone());
 		const portraitLines = [];
 		const moonPortraitLines = [];
 		// fill all days, even if some are hidden by the mode selection.
@@ -201,41 +198,18 @@ class Almanac extends WeatherDisplay {
 	// make sun and moon data available outside this class
 	// promise allows for data to be requested before it is available
 	async getSun() {
-		return new Promise((resolve) => {
-			if (this.data) resolve(this.data);
-			// data not available, put it into the data callback queue
-			this.getDataCallbacks.push(resolve);
-		});
+		return this.dataReady();
 	}
 }
 
-const imageName = (type) => {
-	switch (type) {
-		case 'Full':
-			return 'images/icons/moon-phases/Full-Moon.gif';
-		case 'Degraded':
-			return 'images/icons/moon-phases/Full-Moon-Degraded.gif';
-		case 'Last':
-			return 'images/icons/moon-phases/Last-Quarter.gif';
-		case 'New':
-			return 'images/icons/moon-phases/New-Moon.gif';
-		case 'First':
-		default:
-			return 'images/icons/moon-phases/First-Quarter.gif';
-	}
-};
+const imageNames = {
 
-// suncalc v2 scans a UTC day, which straddles two local days, so union the neighbouring scans and keep the events inside this local day
-const moonTimesForLocalDay = (day, latitude, longitude) => {
-	const start = day.toJSDate();
-	const end = day.plus({ days: 1 }).toJSDate();
-	const scans = [-1, 0, 1].map((offset) => SunCalc.getMoonTimes(day.plus({ days: offset }).toJSDate(), latitude, longitude));
-	const earliestInDay = (key) => scans
-		.map((scan) => scan[key])
-		.filter((time) => time && time >= start && time < end)
-		.sort((a, b) => a - b)[0] ?? null;
+	Full: 'images/icons/moon-phases/Full-Moon.gif',
+	Degraded: 'images/icons/moon-phases/Full-Moon-Degraded.gif',
+	Last: 'images/icons/moon-phases/Last-Quarter.gif',
+	New: 'images/icons/moon-phases/New-Moon.gif',
+	First: 'images/icons/moon-phases/First-Quarter.gif',
 
-	return { rise: earliestInDay('rise'), set: earliestInDay('set') };
 };
 
 const formatTimeForColumn = (time) => {
@@ -254,4 +228,6 @@ const formatTimeForColumn = (time) => {
 const display = new Almanac(9, 'almanac');
 registerDisplay(display);
 
-export default display.getSun.bind(display);
+const getSun = display.getSun.bind(display);
+
+export default getSun;

@@ -2,16 +2,12 @@ import 'dotenv/config';
 import {
 	src, dest, series, parallel,
 } from 'gulp';
-import concat from 'gulp-concat';
-import terser from 'gulp-terser';
 import ejs from 'gulp-ejs';
 import rename from 'gulp-rename';
 import htmlmin from 'gulp-html-minifier-terser';
 import { deleteAsync } from 'del';
 import webpack from 'webpack-stream';
-import TerserPlugin from 'terser-webpack-plugin';
-import { readFile } from 'fs/promises';
-import file from 'gulp-file';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import log from 'fancy-log';
@@ -28,111 +24,41 @@ const RESOURCES_PATH = './dist/resources';
 
 // Data is now served as JSON files to avoid redundancy
 
+// the app's single entry point, server/scripts/ws.mjs imports every module that registers itself when it loads
+
+const wsModules = [
+	'./server/scripts/ws.mjs',
+];
+
 const webpackOptions = {
 	mode: 'production',
 	output: {
 		filename: '[name].min.js',
 	},
-	resolve: {
-		roots: ['./'],
-	},
 	devtool: 'source-map',
 	entry: {
-		index: {
-			import: './server/scripts/index.mjs',
-			dependOn: 'shared',
-		},
-		displays: {
-			import: [
-				'./server/scripts/modules/hazards.mjs',
-				'./server/scripts/modules/currentweather.mjs',
-				'./server/scripts/modules/almanac.mjs',
-				'./server/scripts/modules/spc-outlook.mjs',
-				'./server/scripts/modules/airquality.mjs',
-				'./server/scripts/modules/extendedforecast.mjs',
-				'./server/scripts/modules/hourly.mjs',
-				'./server/scripts/modules/hourly-graph.mjs',
-				'./server/scripts/modules/latestobservations.mjs',
-				'./server/scripts/modules/localforecast.mjs',
-				'./server/scripts/modules/radar.mjs',
-				'./server/scripts/modules/regionalforecast.mjs',
-				'./server/scripts/modules/travelforecast.mjs',
-			],
-			dependOn: 'shared',
-		},
-		features: {
-			import: [
-				'./server/scripts/modules/custom-scroll-text.mjs',
-				'./server/scripts/modules/currentweatherscroll.mjs',
-				'./server/scripts/modules/media.mjs',
-			],
-			dependOn: 'shared',
-		},
-		shared: [
-			'./server/scripts/modules/progress.mjs',
-			'./server/scripts/modules/settings.mjs',
-			'./server/scripts/modules/utils/setting.mjs',
-			'./server/scripts/modules/icons.mjs',
-			'./server/scripts/modules/utils/debug.mjs',
-			'./server/scripts/modules/utils/image.mjs',
-			'./server/scripts/modules/utils/metar.mjs',
-			'./server/scripts/modules/utils/mapclick.mjs',
-			'./server/scripts/modules/utils/units.mjs',
-		],
+		ws: wsModules,
 	},
-	optimization: {
-		minimize: true,
-		minimizer: [
-			new TerserPlugin({
-				extractComments: false,
-				terserOptions: {
-					// sourceMap: true,
-					format: {
-						comments: false,
-					},
-				},
-			}),
-		],
+	// the single bundle is over webpack's default 244 KiB limit, so warn when it grows past this instead
+	performance: {
+		maxAssetSize: 450 * 1024,
+		maxEntrypointSize: 450 * 1024,
+	},
+	module: {
+		rules: [{
+			// the vendor files are UMD or plain scripts; treated as ES modules, proj4 sets its global the same way it does in the browser
+			test: /[\\/]vendor[\\/]auto[\\/](proj4|swiped-events)\.js$/,
+			type: 'javascript/esm',
+		}],
 	},
 };
-
-const jsVendorSources = [
-	'server/scripts/vendor/auto/swiped-events.js',
-	'server/scripts/vendor/auto/suncalc.js',
-];
-
-const compressJsVendor = () => src(jsVendorSources)
-	.pipe(concat('vendor.min.js'))
-	.pipe(terser())
-	.pipe(dest(RESOURCES_PATH));
-
-const mjsSources = [
-	'server/scripts/modules/currentweatherscroll.mjs',
-	'server/scripts/modules/hazards.mjs',
-	'server/scripts/modules/currentweather.mjs',
-	'server/scripts/modules/almanac.mjs',
-	'server/scripts/modules/spc-outlook.mjs',
-	'server/scripts/modules/icons.mjs',
-	'server/scripts/modules/extendedforecast.mjs',
-	'server/scripts/modules/hourly.mjs',
-	'server/scripts/modules/hourly-graph.mjs',
-	'server/scripts/modules/latestobservations.mjs',
-	'server/scripts/modules/localforecast.mjs',
-	'server/scripts/modules/radar.mjs',
-	'server/scripts/modules/regionalforecast.mjs',
-	'server/scripts/modules/travelforecast.mjs',
-	'server/scripts/modules/progress.mjs',
-	'server/scripts/modules/media.mjs',
-	'server/scripts/modules/custom-scroll-text.mjs',
-	'server/scripts/index.mjs',
-];
-
-const buildJs = () => src(mjsSources)
+// webpack-stream takes its entry from the config, the files here only start the stream
+const buildJs = () => src(wsModules, { read: false })
 	.pipe(webpack(webpackOptions))
 	.pipe(dest(RESOURCES_PATH));
 
 const cssSources = [
-	'server/styles/scss/**/*.scss',
+	'server/styles/scss/ws.scss',
 ];
 const buildCss = () => src(cssSources, { sourcemaps: true })
 	.pipe(sass({ style: 'compressed' }).on('error', sass.logError))
@@ -154,7 +80,7 @@ const compressHtml = async () => {
 	const version = await getVersion();
 	return src(htmlSources)
 		.pipe(ejs({
-			production: version,
+			production: true,
 			serverAvailable: false,
 			version,
 			OVERRIDES,
@@ -169,6 +95,11 @@ const otherFiles = [
 	'server/robots.txt',
 	'server/manifest.json',
 	'server/music/**/*.mp3',
+	'server/apple-touch-icon.png',
+	'server/favicon.ico',
+	'server/.well-known/security.txt',
+	// optional custom scripts the page loads from scripts/, so static hosting and both Docker images include them
+	'server/scripts/custom*.*',
 ];
 const copyOtherFiles = () => src(otherFiles, { base: 'server/', encoding: false })
 	.pipe(dest('./dist'));
@@ -183,23 +114,24 @@ const copyDataFiles = () => src([
 const imageSources = [
 	'server/fonts/**',
 	'server/images/**',
-	'!server/images/gimp/**',
 ];
 
 const copyImageSources = () => src(imageSources, { base: './server', encoding: false })
 	.pipe(dest('./dist'));
 
 const buildPlaylist = async () => {
-	const availableFiles = await reader();
-	const playlist = { availableFiles };
-	return file('playlist.json', JSON.stringify(playlist)).pipe(dest('./dist'));
+	const playlist = await reader();
+	// dist doesn't exist yet in a fresh checkout or a Docker build, and the tasks that create it run in parallel with this one
+	await mkdir('./dist', { recursive: true });
+
+	await writeFile('./dist/playlist.json', JSON.stringify(playlist));
 };
 
 const logVersion = async () => {
 	log(`Built version: ${await getVersion()}`);
 };
 
-const buildDist = series(clean, parallel(buildJs, compressJsVendor, buildCss, compressHtml, copyOtherFiles, copyDataFiles, copyImageSources, buildPlaylist), logVersion);
+const buildDist = series(clean, parallel(buildJs, buildCss, compressHtml, copyOtherFiles, copyDataFiles, copyImageSources, buildPlaylist), logVersion);
 
 export default buildDist;
 

@@ -2,60 +2,106 @@
 // type 0 = observations, 1 = first forecast, 2 = second forecast
 
 import STATUS from './status.mjs';
-import { geoDistance } from './utils/calc.mjs';
-import {
-	LABEL_PAD,
-	filterJunkStations,
-	inVisibleWindow,
-	getXYForCity,
-	isMeasured,
-	selectRegionalCities,
-	regionalSelectionConfig,
-	resolveLabelCollisions,
-} from './regionalforecast-select.mjs';
+import { coerce, distance as calcDistance } from './utils/calc.mjs';
 import { safeJson, safePromiseAll } from './utils/fetch.mjs';
 import { temperature as temperatureUnit } from './utils/units.mjs';
-import { getSmallIcon } from './icons.mjs';
-import { preloadImg } from './utils/image.mjs';
+import preloadImg from './utils/preload-image.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay } from './navigation.mjs';
-import * as utils from './regionalforecast-utils.mjs';
-import { getPoint } from './utils/weather.mjs';
+import getPoint from './utils/get-point.mjs';
 import { debugFlag } from './utils/debug.mjs';
 import filterExpiredPeriods from './utils/forecast-utils.mjs';
 import settings from './settings.mjs';
+import createProjection, { OUTPUTSIZES } from './utils/map-projection.mjs';
+import { getRegionalObservation, formatCity, buildForecast } from './regionalforecast-utils.mjs';
+import { RegionalCities, StationInfo } from './utils/data-loader.mjs';
+
+// array indices for reference
+const PX = 0;
+const PY = 1;
+const LAT = 1;
+const LON = 0;
+
+// draw a few less stations in portrait mode to be nice to the api
+const PORTRAIT_ROW_PADDING = 26;
 
 // set up spacing and scales
-const scaling = () => {
+const scaling = (mapName) => {
 	// available space
 	const available = {
-		x: 640,
-		y: 282,
-	};
-
-	// map offset
-	const mapOffsetXY = {
-		x: 240,
-		y: 117,
+		width: 640,
+		height: 282,
 	};
 
 	if (settings.enhanced?.value) {
 		if (settings.wide?.value) {
-			mapOffsetXY.x = 320;
-			available.x = 854;
+			available.width = 854;
 		}
 
 		if (settings.portrait?.value) {
-			mapOffsetXY.y = 400;
-			available.y = 970;
+			available.height = 970;
 		}
 	}
+
+	// create a projection for the associated map
+	const projection = createProjection(mapName);
+
+	// get the full size of the map
+	const mapSize = OUTPUTSIZES[mapName];
+
+	const boxPadY = (settings.enhanced?.value && settings.portrait?.value) ? PORTRAIT_ROW_PADDING : 0;
+
 	return {
-		mapOffsetXY,
 		available,
+		projection,
+		mapSize,
+		boxPadY,
 	};
 };
+
+// AABB overlap test algorithm
+// x1 < x2, and y1 < y2 must be observed in input data
+const boxOverlaps = (a, b) => {
+	const separated = a.x2 < b.x1 // a is left of b
+		|| a.x1 > b.x2 // a is right of b
+		|| a.y2 < b.y1 // a is above b
+		|| a.y1 > b.y2; // a is below b
+	return !separated;
+};
+
+const CITYBOX = [
+	136,
+	60,
+];
+
+// calculate the box offset
+const boxOffset = [
+	// deliberate "fudge factor" in x to center more on number + icon instead of the longest possible city name
+	CITYBOX[PX] / 2 - 25,
+	CITYBOX[PY] / 2,
+];
+
+// helper function to create city "boxes", factor is used to increase the size of the box (used with stations to de-emphasize them)
+const makeCityBox = (city, padY = 0) => ({
+	x1: city.pxy[PX] - boxOffset[PX],
+	y1: city.pxy[PY] - boxOffset[PY],
+	// x2 is the max of 100 (max icon width) and the computed text width
+	// note: icon is not measured deliberately as it could change cities displayed for the same user location as the conditions/forecast changes
+	x2: city.pxy[PX] - boxOffset[PX] + Math.max(city.textWidth, 100),
+	y2: city.pxy[PY] - boxOffset[PY] + CITYBOX[PY] + padY,
+});
+
+// names a forecast period the same way in every time zone: day or night, and the local date it ends on.
+// night periods end the morning after, so "Tonight" and an after-midnight "Overnight" for the same night match
+const periodKey = (period) => `${DateTime.fromISO(period.endTime, { setZone: true }).toISODate()} ${period.isDaytime ? 'day' : 'night'}`;
+
+const cityLatLonBoundingBox = (city, minMaxLatLon) => (
+	city.lat > minMaxLatLon.minLat
+	&& city.lat < minMaxLatLon.maxLat
+	&& city.lon > minMaxLatLon.minLon
+	&& city.lon < minMaxLatLon.maxLon
+);
 
 class RegionalForecast extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -63,6 +109,10 @@ class RegionalForecast extends WeatherDisplay {
 
 		// timings
 		this.timing.totalScreens = 3;
+
+		// set while a change of display mode is choosing and loading a new set of cities, it
+		// leaves the map empty instead of showing the previous selection
+		this.reloadingForMode = false;
 	}
 
 	async getData(weatherParameters, refresh) {
@@ -72,89 +122,114 @@ class RegionalForecast extends WeatherDisplay {
 		// there are enough other cities available to populate the map sufficiently even if some do not load
 
 		// pre-load the base map
-		let baseMap = 'images/maps/basemap.webp';
-		if (weatherParameters.state === 'HI') {
+		// this.weatherParameters, not the argument: re-ticking the display's checkbox calls getData() with none
+		let baseMap = 'images/maps/forecast-conus.webp';
+		if (this.weatherParameters.state === 'HI') {
 			baseMap = 'images/maps/radar-hawaii.png';
-		} else if (weatherParameters.state === 'AK') {
+		} else if (this.weatherParameters.state === 'AK') {
 			baseMap = 'images/maps/radar-alaska.png';
 		}
 		this.elem.querySelector('.map img').src = baseMap;
 
 		// get user's location in x/y
-		const { available, mapOffsetXY } = scaling();
-		const scale = available.x / (mapOffsetXY.x * 2);
-		const sourceXY = utils.getXYFromLatitudeLongitude(this.weatherParameters.latitude, this.weatherParameters.longitude, mapOffsetXY.x, mapOffsetXY.y, weatherParameters.state);
+		this.layout = this.calcLayout();
+		const {
+			user, projection, available, boxPadY,
+		} = this.layout;
 
-		// get latitude and longitude limits
-		const minMaxLatLon = utils.getMinMaxLatitudeLongitude(sourceXY.x, sourceXY.y, mapOffsetXY.x, mapOffsetXY.y, this.weatherParameters.state);
+		const minLatLon = projection.inverse([
+			user[PX] - (available.width / 2),
+			user[PY] + (available.height / 2),
+		]);
+		const maxLatLon = projection.inverse([
+			user[PX] + (available.width / 2),
+			user[PY] - (available.height / 2),
+		]);
+		// regional cities can be coerced into the available area slightly
+		const minMaxLatLonRegional = {
+			minLat: minLatLon[LAT],
+			maxLat: maxLatLon[LAT],
+			minLon: minLatLon[LON],
+			maxLon: maxLatLon[LON],
+		};
 
-		// window-scaled cap; spacing is handled in pixels against the real label box
-		const { count } = regionalSelectionConfig(
-			!!(settings.enhanced?.value && settings.wide?.value),
-			!!(settings.enhanced?.value && settings.portrait?.value),
-		);
-		const user = { lat: this.weatherParameters.latitude, lon: this.weatherParameters.longitude };
+		// stations must fit within the exact area
+		const MAX_TEXT_WIDTH = 12 * 10; // formatCity caps names at 12 chars, 10px each
+		const minLatLonStation = projection.inverse([
+			user[PX] - (available.width / 2) + boxOffset[PX],
+			user[PY] + (available.height / 2) - (CITYBOX[PY] - boxOffset[PY]),
+		]);
+		const maxLatLonStation = projection.inverse([
+			user[PX] + (available.width / 2) - (MAX_TEXT_WIDTH - boxOffset[PX]),
+			user[PY] - (available.height / 2) + boxOffset[PY],
+		]);
+		const minMaxLatLonStations = {
+			minLat: minLatLonStation[LAT],
+			maxLat: maxLatLonStation[LAT],
+			minLon: minLatLonStation[LON],
+			maxLon: maxLatLonStation[LON],
+		};
 
-		// candidate pool: baked regional cities first, then stations; drop junk (priority >= 50)
-		//
-		// Coerce lat/lon at this boundary. regionalcities.json ships them as STRINGS
-		// while stations.json uses numbers, and the two are merged into one pool below.
-		// geoDistance takes a midpoint via (lat1 + lat2), so a string operand
-		// concatenates instead of adding and the cosine derived from that midpoint is
-		// garbage. Selection ranks on that distance, so uncoerced coordinates silently
-		// reorder the map — a nearby place losing its slot to a remoter one — with
-		// nothing thrown and no NaN to notice.
-		const cities = RegionalCities.map((c) => ({
-			...c, lat: Number(c.lat), lon: Number(c.lon), baked: true, priority: 0,
-		}));
-		const stations = Object.values(StationInfo).map((s) => ({
-			...s, lat: Number(s.lat), lon: Number(s.lon), baked: false,
-		}));
-		// Project each candidate BEFORE selecting, and drop the ones that land off the
-		// drawable area. inVisibleWindow is a coarse lat/lon prefilter; the pixel test
-		// is the authoritative one, because the window scale can push an in-window city
-		// past maxX/maxY. Doing this first means an off-map city is replaced by the next
-		// nearest candidate instead of just vanishing from the count, and — since the
-		// fetch loop below runs over the selected list — we no longer spend a forecast
-		// and an observation request on a city that could never be drawn.
-		const candidates = filterJunkStations([...cities, ...stations])
-			.filter((c) => inVisibleWindow(c, minMaxLatLon))
-			.map((c) => ({
-				...c,
-				xy: getXYForCity(c, minMaxLatLon.maxLat, minMaxLatLon.minLon, this.weatherParameters.state, scale, available.x - 60, available.y),
-			}))
-			.filter((c) => c.xy);
+		const regionalCitiesNearby = (await RegionalCities).filter((city) => cityLatLonBoundingBox(city, minMaxLatLonRegional));
 
-		// rank nearest-to-user (stations de-emphasised), space by label box, cap at count
-		const regionalCities = selectRegionalCities(user, candidates, { count });
+		// bring the cities within the actual available space (left sloppy above to favor regional cities over stations)
+		// and copy the city so we don't mutate the original RegionalCities array
+		const regionalCitiesNearbyCoerced = regionalCitiesNearby.map((city) => {
+			const lon = coerce(parseFloat(city.lon), minMaxLatLonStations.minLon, minMaxLatLonStations.maxLon);
+			// were interested if a city is coerced at the right edge of the map
+			// this creates an ugly column of stations and can be adjusted by right-aligning this station's box
+			const coercedRight = parseFloat(city.lon) !== lon && Math.abs(lon - minMaxLatLonStations.maxLon) < 0.00001;
+			return {
+				...city,
+				lat: coerce(parseFloat(city.lat), minMaxLatLonStations.minLat, minMaxLatLonStations.maxLat),
+				lon,
+				coercedRight,
+			};
+		});
+		const regionalCitiesDistance = regionalCitiesNearbyCoerced.map((city) => calcDistPxyBBox(city, projection, user));
+
+		const sortedRegionalCities = regionalCitiesDistance.sort((a, b) => a.distance - b.distance);
+
+		// Determine which cities do not overlap each other, starting with the closest city
+		const regionalCities = placeCities(sortedRegionalCities, boxPadY);
+
+		// now do the same for the list of stations (back fills empty areas on the map)
+		const stationsNearby = Object.values(await StationInfo).filter((city) => cityLatLonBoundingBox(city, minMaxLatLonStations));
+
+		const stationsDistance = stationsNearby.map((city) => calcDistPxyBBox(city, projection, user));
+		const sortedStations = stationsDistance.sort((a, b) => a.distance - b.distance);
+
+		// place non-overlapping stations
+		// placeCities returns the union of non overlapping sortedStations and regional cities
+		const combinedStations = placeCities(sortedStations, boxPadY, regionalCities);
+
+		// limit stations to 15 on non-portrait, in portrait the additional box height helps with density
+		const limitedStations = combinedStations.slice(0, settings.portrait?.value ? Infinity : 15);
 
 		// get a unit converter
 		const temperatureConverter = temperatureUnit();
 
 		// get regional forecasts and observations using centralized safe Promise handling
-		const regionalDataAll = await safePromiseAll(regionalCities.map(async (city) => {
+		const regionalDataAll = await safePromiseAll(limitedStations.map(async (city) => {
 			try {
 				const point = city?.point ?? (await getAndFormatPoint(city.lat, city.lon));
 				if (!point) {
 					if (debugFlag('verbose-failures')) {
-						console.warn(`Unable to get Points for '${city.Name ?? city.city}'`);
+						console.warn(`Unable to get Points for '${city.city}'`);
 					}
 					return false;
 				}
 
 				// start off the observation task
-				const observationPromise = utils.getRegionalObservation(point, city);
+				const observationPromise = getRegionalObservation(city);
 
-				const forecast = await safeJson(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/forecast`);
+				const forecast = await safeJson(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/forecast`, { retryCount: 1, timeout: 5000 });
 				if (!forecast) {
 					if (debugFlag('verbose-failures')) {
-						console.warn(`Regional Forecast request for ${city.Name ?? city.city} failed`);
+						console.warn(`Regional Forecast request for ${city.city} failed`);
 					}
 					return false;
 				}
-
-				// projected during candidate selection above, so it is known drawable here
-				const cityXY = { ...city.xy, dist: geoDistance(user.lon, user.lat, city.lon, city.lat) };
 
 				// wait for the regional observation if it's not done yet
 				const observation = await observationPromise;
@@ -163,41 +238,53 @@ class RegionalForecast extends WeatherDisplay {
 
 				// format the observation the same as the forecast
 				const regionalObservation = {
-					daytime: !!/\/day\//.test(observation.icon),
 					temperature: temperatureConverter(observation.temperature.value),
-					name: utils.formatCity(city.city),
-					icon: observation.icon,
-					x: cityXY.x,
-					y: cityXY.y,
-					dist: cityXY.dist,
+					name: formatCity(city.city),
+					icon: observation.ws4icon,
+					x: city.pxy[PX],
+					y: city.pxy[PY],
+					coercedRight: city.coercedRight,
 				};
 
 				// preload the icon
-				preloadImg(getSmallIcon(regionalObservation.icon, !regionalObservation.daytime));
+				preloadImg(regionalObservation.icon);
 
 				// filter out expired periods first, then use the next two periods for forecast
 				const activePeriods = filterExpiredPeriods(forecast.properties.periods);
 
 				// ensure we have enough periods for forecast
 				if (activePeriods.length < 3) {
-					console.warn(`Insufficient active periods for ${city.Name ?? city.city}: only ${activePeriods.length} periods available`);
+					console.warn(`Insufficient active periods for ${city.city}: only ${activePeriods.length} periods available`);
 					return false;
 				}
 
-				// group together the current observation and next two periods
-				return [
-					regionalObservation,
-					utils.buildForecast(activePeriods[1], city, cityXY),
-					utils.buildForecast(activePeriods[2], city, cityXY),
-				];
+				// determine the necessary forecast periods to find
+
+				// the forecast periods to show are picked once all the stations have loaded
+				return { regionalObservation, activePeriods, city };
 			} catch (error) {
-				console.error(`Unexpected error getting Regional Forecast data for '${city.name ?? city.city}': ${error.message}`);
+				console.error(`Unexpected error getting Regional Forecast data for '${city.city}': ${error.message}`);
 				return false;
 			}
 		}));
 
 		// filter out any false (unavailable data)
-		const regionalData = regionalDataAll.filter((data) => data);
+		const loaded = regionalDataAll.filter((data) => data);
+
+		// the first station that loaded picks the two forecast periods, the same station sets the title.
+		// every other station shows its matching periods, which can sit at a different index when it's
+		// in another time zone and has already rolled over from day to night
+		const targets = loaded.length > 0 ? [periodKey(loaded[0].activePeriods[1]), periodKey(loaded[0].activePeriods[2])] : [];
+		const regionalData = loaded.map(({ regionalObservation, activePeriods, city }) => {
+			const periods = targets.map((key) => activePeriods.find((period) => periodKey(period) === key));
+			if (periods.some((period) => !period)) {
+				if (debugFlag('verbose-failures')) {
+					console.warn(`Regional Forecast for ${city.city} has no period matching ${targets.join(', ')}`);
+				}
+				return false;
+			}
+			return [regionalObservation, ...periods.map((period) => buildForecast(period, city))];
+		}).filter((data) => data);
 
 		// test for data present
 		if (regionalData.length === 0) {
@@ -205,20 +292,68 @@ class RegionalForecast extends WeatherDisplay {
 			return;
 		}
 
-		// return the weather data and offsets
+		// return the weather data
+		// the offsets used to draw it come from this.layout, which is recalculated whenever the
+		// display mode changes
 		this.data = {
 			regionalData,
-			mapOffsetXY,
-			sourceXY,
 		};
 
 		this.setStatus(STATUS.loaded);
 	}
 
+	// arithmetic only: one projection build, a coerce and a subtraction.
+	// called from getData() and from modeChanged(), never from drawCanvas()
+	calcLayout() {
+		const {
+			available, mapSize, projection, boxPadY,
+		} = scaling('forecast-conus');
+		const user = projection.forward([this.weatherParameters.longitude, this.weatherParameters.latitude]);
+		user[PX] = coerce(user[PX], available.width / 2, mapSize.width - (available.width / 2));
+		user[PY] = coerce(user[PY], available.height / 2, mapSize.height - (available.height / 2));
+		return {
+			available,
+			projection,
+			boxPadY,
+			user,
+			offset: [user[PX] - (available.width / 2), user[PY] - (available.height / 2)],
+		};
+	}
+
+	// the cities shown are chosen to fit the available space, so a change of display mode has to
+	// pick them again. the map re-centres immediately and is left empty while the new selection
+	// is chosen and loaded
+	async modeChanged() {
+		if (this.status !== STATUS.loaded) return;
+
+		const previous = this.layout;
+		this.layout = this.calcLayout();
+
+		// widescreen only adds space when enhanced is also on, so a switch between standard and
+		// widescreen leaves the available area, and the cities that fit in it, unchanged
+		if (previous
+			&& previous.available.width === this.layout.available.width
+			&& previous.available.height === this.layout.available.height) return;
+
+		// the cities that fit the new area have not been chosen yet, so empty the map rather than
+		// leave the previous selection sitting in places that no longer match it. the map itself
+		// re-centres right away, which is arithmetic only
+		this.reloadingForMode = true;
+		if (this.active) this.drawCanvas();
+
+		// choose and load the cities for the new area through the normal data path
+		try {
+			await this.getData(this.weatherParameters, true);
+		} finally {
+			this.reloadingForMode = false;
+		}
+		if (this.active) this.drawCanvas();
+	}
+
 	drawCanvas() {
 		super.drawCanvas();
 		// break up data into useful values
-		const { regionalData: data, sourceXY } = this.data;
+		const { regionalData: data } = this.data;
 
 		// draw the header graphics
 
@@ -240,27 +375,33 @@ class RegionalForecast extends WeatherDisplay {
 				: `${dayName} Night`;
 		}
 
-		// draw the map
-		const { available, mapOffsetXY } = scaling();
-		const scale = available.x / (mapOffsetXY.x * 2);
-		const map = this.elem.querySelector('.map');
-		map.style.transform = `scale(${scale}) translate(-${sourceXY.x}px, -${sourceXY.y}px)`;
+		// calculate the overall offset (top/left corner)
+		const { offset } = this.layout;
 
-		const cities = data.map((city) => {
+		// draw the map
+		const map = this.elem.querySelector('.map');
+		map.style.transform = `translate(-${offset[PX]}px, -${offset[PY]}px)`;
+
+		// a change of display mode leaves the map empty until the new selection has loaded
+		const cities = this.reloadingForMode ? [] : data.map((city) => {
 			const fill = {};
 			const period = city[this.screenIndex];
 
-			fill.icon = { type: 'img', src: getSmallIcon(period.icon, !period.daytime) };
+			fill.icon = { type: 'img', src: period.icon };
 			fill.city = period.name;
 			const { temperature } = period;
 			fill.temp = temperature;
 
-			const { x, y } = period;
+			const { x, y, coercedRight } = period;
 
 			const elem = this.fillTemplate('location', fill);
-			elem.style.left = `${x}px`;
-			elem.style.top = `${y}px`;
-			elem.dataset.dist = period.dist;
+			elem.style.top = `${y - offset[PY] - boxOffset[PY]}px`;
+			// stations coerced on the right edge get placed at the right edge
+			if (!coercedRight) {
+				elem.style.left = `${x - offset[PX] - boxOffset[PX]}px`;
+			} else {
+				elem.style.right = 0;
+			}
 
 			return elem;
 		});
@@ -269,97 +410,29 @@ class RegionalForecast extends WeatherDisplay {
 		locationContainer.innerHTML = '';
 		locationContainer.append(...cities);
 
-		// drop labels whose real rendered box overlaps a nearer kept label
-		this.declutterLabels(locationContainer, cities);
-
 		this.finishDraw();
 	}
-
-	// Anything painted over the map that a label must not sit on top of. Measured
-	// from the DOM rather than hard-coded, so enhanced/wide/portrait layouts — which
-	// move the header and resize the map — are handled without a second set of
-	// constants to keep in sync.
-	chromeObstacles(container) {
-		const containerRect = container.getBoundingClientRect();
-		const toLocal = (r) => ({
-			left: r.left - containerRect.left,
-			top: r.top - containerRect.top,
-			right: r.right - containerRect.left,
-			bottom: r.bottom - containerRect.top,
-		});
-		const selectors = ['.header', '.logo', '.title', '.date-time', '.scroll', '.hazard-lines'];
-		return selectors
-			.flatMap((sel) => Array.from(this.elem.querySelectorAll(sel)))
-			.map((el) => el.getBoundingClientRect())
-			.filter((r) => r.width > 0 && r.height > 0)
-			.map(toLocal);
-	}
-
-	// eslint-disable-next-line class-methods-use-this -- pure DOM-measurement helper, no instance state needed
-	measureLabels(container, elems) {
-		const containerRect = container.getBoundingClientRect();
-		return elems.map((el) => {
-			let left = Infinity;
-			let top = Infinity;
-			let right = -Infinity;
-			let bottom = -Infinity;
-			Array.from(el.children).forEach((child) => {
-				const r = child.getBoundingClientRect();
-				if (!r.width) return;
-				left = Math.min(left, r.left);
-				top = Math.min(top, r.top);
-				right = Math.max(right, r.right);
-				bottom = Math.max(bottom, r.bottom);
-			});
-			return {
-				el,
-				dist: Number(el.dataset.dist),
-				rect: {
-					left: left - containerRect.left,
-					top: top - containerRect.top,
-					right: right - containerRect.left,
-					bottom: bottom - containerRect.top,
-				},
-			};
-		});
-	}
-
-	// Decluttering is a MEASUREMENT, so it cannot run in the same tick as the append
-	// that created these elements — at that point the children have no layout, every
-	// box comes back degenerate, and resolveLabelCollisions quietly keeps everything.
-	// That is what let overlapping labels ship. Wait for a frame, and if the boxes
-	// still are not real (the display can be laid out lazily when hidden), try again
-	// for a few frames rather than decluttering against garbage.
-	declutterLabels(container, elems, attempt = 0) {
-		const MAX_ATTEMPTS = 10;
-		requestAnimationFrame(() => {
-			// elements may have been replaced by a newer draw while we waited
-			if (!elems.length || !elems[0].isConnected) return;
-
-			const items = this.measureLabels(container, elems);
-			if (!items.every((i) => isMeasured(i.rect))) {
-				if (attempt < MAX_ATTEMPTS) this.declutterLabels(container, elems, attempt + 1);
-				return;
-			}
-
-			const main = this.elem.querySelector('.main');
-			const containerRect = container.getBoundingClientRect();
-			const bounds = main
-				? {
-					left: main.getBoundingClientRect().left - containerRect.left,
-					top: main.getBoundingClientRect().top - containerRect.top,
-					right: main.getBoundingClientRect().right - containerRect.left,
-					bottom: main.getBoundingClientRect().bottom - containerRect.top,
-				}
-				: undefined;
-
-			const kept = new Set(
-				resolveLabelCollisions(items, LABEL_PAD, this.chromeObstacles(container), bounds).map((i) => i.el),
-			);
-			elems.forEach((el) => { if (!kept.has(el)) el.remove(); });
-		});
-	}
 }
+
+const calcDistPxyBBox = (city, projection, user) => {
+	// pixel z and y locations
+	const pxy = projection.forward([parseFloat(city.lon), parseFloat(city.lat)]);
+
+	// render the city's text for bounding box calculation
+	// Star4000 is a fixed width font
+	// 973 units wide on a 2048 units-per-em grid
+	// at font-size: 20px this is 973/2048x20 = 9.5 px/letter
+	// rounded to 10px for some minor rendering consistencies across platforms
+	const textWidth = formatCity(city.city).length * 10;
+
+	return {
+		...city,
+		// calculate distance from user
+		distance: calcDistance(user[PX], user[PY], pxy[PX], pxy[PY]),
+		pxy,
+		textWidth,
+	};
+};
 
 const getAndFormatPoint = async (lat, lon) => {
 	try {
@@ -384,8 +457,23 @@ const getAndFormatPoint = async (lat, lon) => {
 			wfo: gridId,
 		};
 	} catch (error) {
-		throw new Error(`Unexpected error getting point for ${lat},${lon}: ${error.message}`);
+		throw new Error(`Unexpected error getting point for ${lat}, ${lon}: ${error.message} `);
 	}
+};
+
+const placeCities = (cities, boxPadY, existingCities = []) => {
+	// Determine which stations do not overlap each other, starting with the closest city
+	cities.forEach((city) => {
+		const cityBox = makeCityBox(city, boxPadY);
+		const overlaps = existingCities.some((test) => boxOverlaps(cityBox, test.box));
+		if (!overlaps) {
+			existingCities.push({
+				...city,
+				box: cityBox,
+			});
+		}
+	});
+	return existingCities;
 };
 
 // register display

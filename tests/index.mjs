@@ -4,7 +4,7 @@
 //
 // A location FAILS if, while it loads:
 //   - the page throws an uncaught error, or
-//   - the forecast never resolves (the grid point in the footer stays empty), or
+//   - the forecast never resolves (the grid point in the Headend tab stays empty), or
 //   - fewer displays register than there are modules calling registerDisplay(), or
 //   - the rotation never reaches at least two real display screens.
 //
@@ -121,7 +121,7 @@ const checkLocation = async (location) => {
 		await delay(600); // let autocomplete settle before submitting
 		await page.click('#btnGetLatLng');
 
-		// The footer grid point populates once /points + /gridpoints resolve — our "loaded" signal.
+		// The Headend tab's grid point populates once /points + /gridpoints resolve — our "loaded" signal.
 		//
 		// Only an app-level problem aborts the wait. A transient upstream 5xx used to
 		// end it immediately, which was wrong: utils/fetch.mjs retries, so the location
@@ -130,7 +130,7 @@ const checkLocation = async (location) => {
 		const deadline = Date.now() + SETTLE_MS;
 		while (Date.now() < deadline && appProblems.length === 0) {
 			// eslint-disable-next-line no-await-in-loop
-			const grid = await page.$eval('#spanGridPoint', (el) => el.textContent.trim()).catch(() => '');
+			const grid = await page.$eval('#divInfo [data-headend="grid"]', (el) => el.textContent.trim()).catch(() => '');
 			if (grid) { resolved = true; break; }
 			// eslint-disable-next-line no-await-in-loop
 			await delay(POLL_MS);

@@ -1,0 +1,45 @@
+<div class="header">
+  <div class="logo"><img class="logo-corner" src="images/logos/logo-corner.svg" width="85" height="67" alt="WeatherStar 4000+" /></div>
+  <div class="title dual">
+    <div class="top">
+      <%-titleTop%>
+    </div>
+    <div class="bottom">
+      Radar
+    </div>
+  </div>
+  <div class="right">
+    <div class="precip">
+      <div class="precip-header">PRECIP</div>
+      <div class="scale">
+        <div class="text">Light</div>
+        <div class="scale-table">
+          <div class="box box-1"></div>
+          <div class="box box-2"></div>
+          <div class="box box-3"></div>
+          <div class="box box-4"></div>
+          <div class="box box-5"></div>
+          <div class="box box-6"></div>
+          <div class="box box-7"></div>
+          <div class="box box-8"></div>
+        </div>
+        <div class="text">Heavy</div>
+      </div>
+      <div class="time"></div>
+    </div>
+  </div>
+</div>
+
+<div class="main <%-mainClass%> can-enhance">
+  <div class="container">
+    <%# the img placeholders and the width of the tile containers are created by tiles.mjs from TILE_GRID %>
+    <div class="map-tiles tiles"></div>
+    <div class="scroll-area">
+      <div class="frame template">
+        <div class="map">
+        </div>
+      </div>
+    </div>
+    <div class="overlay-tiles tiles"></div>
+  </div>
+</div>

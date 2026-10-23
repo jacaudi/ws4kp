@@ -2,8 +2,10 @@
 // list all stations in a single file
 // only find stations with 4 letter codes
 
-import { writeFileSync } from 'fs';
-import https from './https.mjs';
+import { writeFile } from 'node:fs/promises';
+import pLimit from 'p-limit';
+import { setTimeout } from 'node:timers/promises';
+import getHttps from './https.mjs';
 import states from './stations-states.mjs';
 import chunk from './chunk.mjs';
 import overrides from './stations-overrides.mjs';
@@ -20,6 +22,16 @@ const chunkStates = chunk(states, 3);
 const output = {};
 let completed = 0;
 
+// limit the number of in-flight requests at one time
+const limit = pLimit(5);
+const HTTPS_GET_INTERVAL = 500; // ms
+
+const httpsGetLimited = async (...args) => {
+	// be nice to the api wait
+	await setTimeout(HTTPS_GET_INTERVAL);
+	return limit(getHttps, ...args);
+};
+
 // get data from api if desired
 if (!USE_CACHE) {
 	// process all chunks
@@ -33,14 +45,17 @@ if (!USE_CACHE) {
 				let stations;
 				let next = `https://api.weather.gov/stations?state=${state}`;
 				let round = 0;
+				let count = 0;
+				let usedCount = 0;
 				do {
 					console.log(`Getting: ${state}-${round}`);
 					// get list and parse the JSON
 					// eslint-disable-next-line no-await-in-loop
-					const stationsRaw = await https(next);
+					const stationsRaw = await httpsGetLimited(next);
 					stations = JSON.parse(stationsRaw);
 					// filter against starting letter
 					const stationsFiltered = stations.features.filter(stationFilter);
+					count += stations.features.length;
 					// add each resulting station to the output
 					stationsFiltered.forEach((station) => {
 						const id = station.properties.stationIdentifier;
@@ -48,6 +63,11 @@ if (!USE_CACHE) {
 							console.log(`Duplicate station: ${state}-${id}`);
 							return;
 						}
+						if (station.properties.provider === '' && station.properties.subProvider === '') {
+							console.log(`No providers for: ${state}\\${id}`);
+							return;
+						}
+						usedCount += 1;
 						output[id] = {
 							id,
 							city: station.properties.name,
@@ -59,14 +79,16 @@ if (!USE_CACHE) {
 					next = stations?.pagination?.next;
 					round += 1;
 					// write the output
-					writeFileSync('./datagenerators/output/stations-raw.json', JSON.stringify(output, null, 2));
+					// eslint-disable-next-line no-await-in-loop
+					await writeFile('./datagenerators/output/stations-raw.json', JSON.stringify(output, null, 2));
 				}
 				while (next && stations.features.length > 0);
 				completed += 1;
-				console.log(`Complete: ${state} ${completed}/${states.length}`);
+				console.log(`Complete: ${state} ${completed}/${states.length} Stations: ${usedCount}/${count}`);
 				return true;
-			} catch {
+			} catch (e) {
 				console.error(`Unable to get state: ${state}`);
+				console.error(e);
 				return false;
 			}
 		}));
@@ -75,7 +97,7 @@ if (!USE_CACHE) {
 
 // run the post processor
 // data is passed through the file stations-raw.json
-const postProcessed = postProcessor();
+const postProcessed = await postProcessor({ writeFile: true });
 
 // apply any overrides
 Object.entries(overrides).forEach(([id, values]) => {
@@ -89,37 +111,25 @@ Object.entries(overrides).forEach(([id, values]) => {
 	}
 });
 
-// bake grid points for every station so runtime never issues a live /points
+// bake grid points for every station so the regional forecast never issues a live /points per station
 const stationList = Object.values(postProcessed);
-const pointChunks = chunk(stationList, 5);
-for (let i = 0; i < pointChunks.length; i += 1) {
-	const stationChunk = pointChunks[i];
-	// eslint-disable-next-line no-await-in-loop
-	const chunkResult = await Promise.all(stationChunk.map(async (station) => {
-		if (station.point) return station;
-		try {
-			// NWS /points canonicalizes coordinates to 4 decimal places and 301s
-			// otherwise; the https helper doesn't follow redirects, so round here
-			const lat = station.lat.toFixed(4);
-			const lon = station.lon.toFixed(4);
-			const data = await https(`https://api.weather.gov/points/${lat},${lon}`);
-			const point = JSON.parse(data);
-			return {
-				...station,
-				point: {
-					x: point.properties.gridX,
-					y: point.properties.gridY,
-					wfo: point.properties.gridId,
-				},
-			};
-		} catch (e) {
-			console.error(`Unable to get point for ${station.id}: ${e.message}`);
-			return station;
-		}
-	}));
-	chunkResult.forEach((station) => { postProcessed[station.id] = station; });
-	console.log(`Baked points: ${Math.min((i + 1) * 5, stationList.length)}/${stationList.length}`);
-}
+let baked = 0;
+await Promise.all(stationList.map(async (station) => {
+	try {
+		// NWS /points canonicalizes coordinates to 4 decimal places and 301s otherwise,
+		// and getHttps does not follow redirects, so round here
+		const data = await httpsGetLimited(`https://api.weather.gov/points/${station.lat.toFixed(4)},${station.lon.toFixed(4)}`);
+		const { gridX, gridY, gridId } = JSON.parse(data).properties;
+		postProcessed[station.id] = {
+			...station,
+			point: { x: gridX, y: gridY, wfo: gridId },
+		};
+	} catch (e) {
+		console.error(`Unable to get point for ${station.id}: ${e.message}`);
+	}
+	baked += 1;
+	if (baked % 100 === 0) console.log(`Baked points: ${baked}/${stationList.length}`);
+}));
 
 // write final file to disk
-writeFileSync('./datagenerators/output/stations.json', JSON.stringify(postProcessed, null, 2));
+await writeFile('./datagenerators/output/stations.json', JSON.stringify(postProcessed, null, 2));

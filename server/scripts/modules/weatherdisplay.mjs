@@ -3,18 +3,30 @@
 import STATUS, { calcStatusClass, statusClasses } from './status.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
 import {
-	msg, displayNavMessage, isPlaying, updateStatus, timeZone,
+	msg, displayNavMessage, isPlaying, updateStatus, showDisplay, isLocationActive,
 } from './navigation.mjs';
 import { parseQueryString } from './utils/setting.mjs';
 import settings from './settings.mjs';
-import { elemForEach } from './utils/elem.mjs';
-import { debugFlag } from './utils/debug.mjs';
+import elemForEach from './utils/elem-for-each.mjs';
+import {
+	logNavStart, logBaseCountTick, logScreenTransition, logNavSummary,
+} from './utils/debug.mjs';
+import { timeZone } from './location.mjs';
+
+let drawStartedAt = null;
+
+// one clock for every display: it updates the display that drew last, while that display is on screen
+let clockDisplay = null;
+let clockInterval = null;
+const clockTick = () => {
+	if (clockDisplay?.active) clockDisplay.drawCurrentDateTime();
+};
 
 class WeatherDisplay {
 	constructor(navId, elemId, name, defaultEnabled) {
 		// navId is used in messaging and sort order
 		this.navId = navId;
-		this.elemId = undefined;
+		this.elemId = elemId;
 		this.data = undefined;
 		this.loadingStatus = STATUS.loading;
 		this.name = name ?? elemId;
@@ -35,9 +47,6 @@ class WeatherDisplay {
 		};
 		this.navBaseCount = 0;
 		this.screenIndex = -1;	// special starting condition
-
-		// store elemId once
-		this.storeElemId(elemId);
 
 		if (this.isEnabled) {
 			this.setStatus(STATUS.loading);
@@ -74,7 +83,7 @@ class WeatherDisplay {
 
 		// create a checkbox in the selected displays area
 		const label = document.createElement('label');
-		label.for = `${this.elemId}-checkbox`;
+		label.htmlFor = `${this.elemId}-checkbox`;
 		label.id = `${this.elemId}-label`;
 		const checkbox = document.createElement('input');
 		checkbox.type = 'checkbox';
@@ -86,14 +95,24 @@ class WeatherDisplay {
 		const span = document.createElement('span');
 		span.innerHTML = this.name;
 		const alert = document.createElement('span');
-		alert.innerHTML = '!!!';
+		alert.innerHTML = 'ALERT';
 		alert.classList.add('alert');
 
 		label.append(checkbox, span, alert);
+		label.addEventListener('click', (e) => this.labelClick(e));
 
 		this.checkbox = label;
 
 		return label;
+	}
+
+	// clicking the name or status of a ready display shows it, the checkbox still turns it on or off
+	labelClick(e) {
+		if (e.target.type === 'checkbox' || this.status !== STATUS.loaded) return;
+		// don't toggle the checkbox
+		e.preventDefault();
+		showDisplay(this);
+		document.querySelector('#divTwc').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 	}
 
 	checkboxChange(e) {
@@ -101,8 +120,19 @@ class WeatherDisplay {
 		this.isEnabled = e.target.checked;
 		// store the value for the next load
 		window.localStorage.setItem(`display-enabled: ${this.elemId}`, this.isEnabled);
+		// without a location there is nothing to load, the choice is used once one is entered
+		if (!isLocationActive()) return;
 		// calling get data will update the status and actually get the data if we're set to enabled
 		this.getData();
+	}
+
+	// return to the state before a location was entered, used by the reset button
+	reset() {
+		this.clearAutoReload();
+		this.data = undefined;
+		this.status = STATUS.loading;
+		this.checkbox?.classList.remove(...statusClasses);
+		this.hideCanvas();
 	}
 
 	// set data status and send update to navigation module
@@ -114,7 +144,8 @@ class WeatherDisplay {
 		});
 
 		// update coloring of checkbox at bottom of page
-		if (!this.checkbox) return;
+		// a request that finishes after the reset button must not color the list again
+		if (!this.checkbox || !isLocationActive()) return;
 		this.checkbox.classList.remove(...statusClasses);
 		this.checkbox.classList.add(calcStatusClass(value));
 	}
@@ -125,12 +156,6 @@ class WeatherDisplay {
 
 	set status(state) {
 		this.loadingStatus = state;
-	}
-
-	storeElemId(elemId) {
-		// only create it once
-		if (this.elemId) return;
-		this.elemId = elemId;
 	}
 
 	// get necessary data for this display
@@ -150,6 +175,7 @@ class WeatherDisplay {
 			this.setStatus(STATUS.loading);
 		} else {
 			this.setStatus(STATUS.disabled);
+			// returns false when disabled; displays that publish data to other modules should continue fetching anyway
 			return false;
 		}
 
@@ -169,27 +195,38 @@ class WeatherDisplay {
 		this.getDataCallbacks = [];
 	}
 
+	// make data available outside this class
+	// resolves right away if the data is here, otherwise when it arrives (undefined if loading fails)
+	dataReady(stillWaiting) {
+		if (this.data) return Promise.resolve(this.data);
+		if (stillWaiting) this.stillWaitingCallbacks.push(stillWaiting);
+		return new Promise((resolve) => {
+			this.getDataCallbacks.push(resolve);
+		});
+	}
+
 	drawCanvas() {
 		// clean up the first-run flag in screen index
 		if (this.screenIndex < 0) this.screenIndex = 0;
 		if (this.okToDrawCurrentDateTime) this.drawCurrentDateTime();
-		if (this.okToDrawCurrentConditions) postMessage({ type: 'current-weather-scroll', method: 'start' });
-		if (!this.okToDrawCurrentConditions) postMessage({ type: 'current-weather-scroll', method: 'non-display' });
-		if (this.okToDrawCurrentConditions === false) postMessage({ type: 'current-weather-scroll', method: 'hide' });
-		this.sendRenderStart();
+		if (this.okToDrawCurrentConditions) {
+			window.dispatchEvent(new CustomEvent('current-weather-scroll', { detail: 'start' }));
+		} else {
+			window.dispatchEvent(new CustomEvent('current-weather-scroll', { detail: 'non-display' }));
+			window.dispatchEvent(new CustomEvent('current-weather-scroll', { detail: 'hide' }));
+		}
+		WeatherDisplay.sendRenderStart();
 	}
 
 	finishDraw() {
 		// draw date and time
 		if (this.okToDrawCurrentDateTime) {
 			this.drawCurrentDateTime();
-			// auto clock refresh
-			if (!this.dateTimeInterval) {
-				// only draw if canvas is active to conserve battery
-				this.dateTimeInterval = setInterval(() => this.active && this.drawCurrentDateTime(), 100);
-			}
+			// hand the shared clock to this display, the clock is started by the first display to draw
+			clockDisplay = this;
+			if (!clockInterval) clockInterval = setInterval(clockTick, 100);
 		}
-		this.sendRenderEnd();
+		WeatherDisplay.sendRenderEnd();
 	}
 
 	drawCurrentDateTime() {
@@ -230,16 +267,27 @@ class WeatherDisplay {
 		document.querySelector('#divTwc').classList.add(this.elemId);
 	}
 
+	// a display can be shown on request from the display list when it has something to show
+	canShowOnRequest() {
+		return this.timing.totalScreens > 0;
+	}
+
+	// hook for displays that skip content during play but should show it on request
+	// eslint-disable-next-line class-methods-use-this
+	prepareShowOnRequest() { }
+
 	hideCanvas() {
 		this.resetNavBaseCount();
-		if (this.elem.classList.contains('show')) { this.sendRenderStart(); }
+		if (this.elem.classList.contains('show')) {
+			WeatherDisplay.sendRenderStart();
+		}
 		this.elem.classList.remove('show');
 		// used to change backgrounds for widescreen
 		document.querySelector('#divTwc').classList.remove(this.elemId);
 	}
 
 	get active() {
-		return this.elem.offsetHeight !== 0;
+		return this.elem?.offsetHeight !== undefined && this.elem.offsetHeight !== 0;
 	}
 
 	get enabled() {
@@ -259,23 +307,7 @@ class WeatherDisplay {
 		if (!isPlaying() || !this.active) return;
 		// increment the base count
 		this.navBaseCount += 1;
-
-		if (debugFlag('weatherdisplay')) {
-			const now = Date.now();
-			if (!this.timingDebug) {
-				this.timingDebug = { startTime: now, lastTransition: now, baseCountLog: [] };
-				if (this.navBaseCount !== 1) {
-					console.log(`⏱️ [${this.constructor.name}] Starting at baseCount ${this.navBaseCount}`);
-				}
-			}
-			const elapsed = now - this.timingDebug.lastTransition;
-			this.timingDebug.baseCountLog.push({
-				baseCount: this.navBaseCount,
-				timestamp: now,
-				elapsedMs: elapsed,
-				screenIndex: this.screenIndex,
-			});
-		}
+		logBaseCountTick(this);
 
 		// call base count change if available for this function
 		if (this.baseCountChange) this.baseCountChange(this.navBaseCount);
@@ -298,40 +330,26 @@ class WeatherDisplay {
 		// test for no change and exit early
 		if (nextScreenIndex === this.screenIndex) return;
 
-		if (debugFlag('weatherdisplay') && this.timingDebug) {
-			const now = Date.now();
-			const elapsed = now - this.timingDebug.lastTransition;
-			this.timingDebug.lastTransition = now;
-			console.log(`⏱️ [${this.constructor.name}] Screen Transition: ${this.screenIndex} → ${nextScreenIndex === -1 ? 0 : nextScreenIndex}, baseCount=${this.navBaseCount}, duration=${elapsed}ms`);
-			if (this.screenIndex !== -1 && this.timing && this.timing.delay !== undefined) { // Skip expected duration calculation for the first transition (screenIndex -1 → 0)
-				let expectedMs;
-				if (Array.isArray(this.timing.delay)) { // Array-based timing (different delay per screen/period)
-					// Find the timing index for the screen we just LEFT (the one that just finished displaying)
-					// For transition "X → Y", we want the timing for screen X (which is this.screenIndex before it gets updated)
-					const timingIndex = this.screenIndex;
-					if (timingIndex >= 0 && timingIndex < this.timing.delay.length) { // Handle both simple number delays and object delays with time property (radar)
-						const delayValue = typeof this.timing.delay[timingIndex] === 'object' ? this.timing.delay[timingIndex].time : this.timing.delay[timingIndex];
-						expectedMs = this.timing.baseDelay * delayValue * (settings?.speed?.value || 1);
-					}
-				} else if (typeof this.timing.delay === 'number') { // Simple number-based timing (same delay for all screens)
-					expectedMs = this.timing.baseDelay * this.timing.delay * (settings?.speed?.value || 1);
-				}
-				if (expectedMs !== undefined) {
-					console.log(`⏱️ [${this.constructor.name}] Expected duration: ${expectedMs}ms, Actual: ${elapsed}ms, Diff: ${elapsed - expectedMs}ms`);
-				}
-			}
-		}
+		// before screenIndex changes, the log reports how long the screen being left was shown
+		logScreenTransition(this, nextScreenIndex, settings.speed?.value);
 
 		// test for -1 (no screen displayed yet)
 		this.screenIndex = nextScreenIndex === -1 ? 0 : nextScreenIndex;
 
-		// call the appropriate screen index change method
+		// Optional hook. Defining this REPLACES the automatic drawCanvas() call on screen
+		// transitions - implementors are responsible for drawing (typically from showCanvas).
 		if (this.screenIndexChange) {
-			this.screenIndexChange(this.screenIndex);
+			this.screenIndexChange();
 		} else {
 			await this.drawCanvas();
 		}
 		this.showCanvas();
+	}
+
+	// Optional hook, called on every base count tick while this display is active.
+	// eslint-disable-next-line class-methods-use-this
+	baseCountChange() {
+		return false;
 	}
 
 	// take the three timing formats shown above and break them into arrays for consistent usage in navigation functions
@@ -371,6 +389,15 @@ class WeatherDisplay {
 			this.timing.screenIndexes = [];
 			for (let i = 0; i < this.timing.totalScreens; i += 1) this.timing.screenIndexes.push(i);
 		}
+	}
+
+	// keep showing the same screen after the timing changes (such as on a change of display mode)
+	// roll back a screen index that is now past the end, and re-sync the base count to the start of
+	// that screen so the new timing array picks up where the old one left off instead of jumping
+	resyncScreenIndex() {
+		const { totalScreens, fullDelay } = this.timing;
+		if (this.screenIndex >= totalScreens) this.screenIndex = totalScreens - 1;
+		this.navBaseCount = this.screenIndex <= 0 ? 0 : fullDelay[this.screenIndex - 1];
 	}
 
 	// navigate to next screen
@@ -422,27 +449,13 @@ class WeatherDisplay {
 	// start and stop base counter
 	startNavCount() {
 		if (!this.navInterval) {
-			if (debugFlag('weatherdisplay')) {
-				console.log(`⏱️ [${this.constructor.name}] Starting navigation:`, {
-					baseDelay: this.timing.baseDelay,
-					intervalMs: this.timing.baseDelay * (settings?.speed?.value || 1),
-					totalScreens: this.timing.totalScreens,
-					delayArray: this.timing.delay,
-					fullDelayArray: this.timing.fullDelay,
-					screenIndexes: this.timing.screenIndexes,
-				});
-			}
+			logNavStart(this, settings.speed?.value);
 			this.navInterval = setInterval(() => this.navBaseTime(), this.timing.baseDelay * settings.speed.value);
 		}
 	}
 
 	resetNavBaseCount() {
-		if (debugFlag('weatherdisplay') && this.timingDebug && this.timingDebug.baseCountLog.length > 1) {
-			const totalDuration = this.timingDebug.baseCountLog[this.timingDebug.baseCountLog.length - 1].timestamp - this.timingDebug.baseCountLog[0].timestamp;
-			const avgInterval = totalDuration / (this.timingDebug.baseCountLog.length - 1);
-			console.log(`⏱️ [${this.constructor.name}] Total duration: ${totalDuration}ms, Avg base interval: ${avgInterval.toFixed(1)}ms, Base count range: ${this.timingDebug.baseCountLog[0].baseCount}-${this.timingDebug.baseCountLog[this.timingDebug.baseCountLog.length - 1].baseCount}`);
-			this.timingDebug = null;
-		}
+		logNavSummary(this);
 
 		this.navBaseCount = 0;
 		this.screenIndex = -1;
@@ -501,6 +514,12 @@ class WeatherDisplay {
 		return template;
 	}
 
+	// stub hood
+	// displays that need to load additional data or re-layout their screens
+	// should implement this hook to allow clean, no refresh switching between enhanced and non-enhanced modes
+	// eslint-disable-next-line class-methods-use-this
+	modeChanged() { }
+
 	// still waiting for data (retries triggered)
 	stillWaiting() {
 		if (this.isEnabled) this.setStatus(STATUS.retrying);
@@ -520,22 +539,23 @@ class WeatherDisplay {
 		this.autoRefreshHandle = this.autoRefreshHandle ?? setInterval(() => this.getData(this.weatherParameters, true), refreshTime);
 	}
 
-	sendRenderStart() {
-		if (!this.drawStartedAt) {
-			this.drawStartedAt = Date.now();
+	// these hooks work with ws4channels to suppress grabbing a frame mid-change
+	static sendRenderStart() {
+		if (!drawStartedAt) {
+			drawStartedAt = Date.now();
 		}
 		document.dispatchEvent(new Event('ws4kp-render-start'));
 	}
 
-	sendRenderEnd() {
+	static sendRenderEnd() {
 		requestAnimationFrame(() => requestAnimationFrame(() => {
 			document.dispatchEvent(new CustomEvent('ws4kp-render-end', {
 				detail: {
-					startedAt: this.drawStartedAt,
+					startedAt: drawStartedAt,
 					endedAt: Date.now(),
 				},
 			}));
-			this.drawStartedAt = null;
+			drawStartedAt = null;
 		}));
 	}
 }

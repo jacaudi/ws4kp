@@ -1,18 +1,22 @@
 import { json } from './modules/utils/fetch.mjs';
 import noSleep from './modules/utils/nosleep.mjs';
 import {
-	message as navMessage, isPlaying, resize, resetStatuses, latLonReceived, isIOS,
+	message as navMessage, isPlaying, resetStatuses, resetDisplays,
 } from './modules/navigation.mjs';
+import { latLonReceived, setLocationStatus, cancelWeather } from './modules/location.mjs';
 import { round2 } from './modules/utils/units.mjs';
 import { registerHiddenSetting } from './modules/share.mjs';
+import './modules/tabs.mjs';
+import { clearLocationRows } from './modules/headend.mjs';
 import settings from './modules/settings.mjs';
 import AutoComplete from './modules/autocomplete.mjs';
-import { loadAllData } from './modules/utils/data-loader.mjs';
+import { StationInfo } from './modules/utils/data-loader.mjs';
 import { debugFlag } from './modules/utils/debug.mjs';
 import { parseQueryString } from './modules/utils/setting.mjs';
 import { Settings } from './vendor/auto/luxon.mjs';
+import { resize, isIOS } from './modules/utils/scaling.mjs';
 
-// set luxon's default locale to en-US as the forecast text and other hard coded assets are only available in Englixh
+// set luxon's default locale to en-US as the forecast text and other hard coded assets are only available in English
 Settings.defaultLocale = 'en-US';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,27 +35,23 @@ const categories = [
 	'Postal', 'Populated Place',
 ];
 const category = categories.join(',');
+
+// suggestions are ranked toward the saved location, which is rounded to about 10 km so that precise
+// GPS coordinates are not sent to the geocoder with every keystroke
+const locationBias = () => {
+	try {
+		const { lat, lon } = JSON.parse(localStorage.getItem('latLon'));
+		return { location: `${lon.toFixed(1)},${lat.toFixed(1)}` };
+	} catch {
+		// nothing saved yet, so no bias
+		return {};
+	}
+};
 const TXT_ADDRESS_SELECTOR = '#txtLocation';
 const TOGGLE_FULL_SCREEN_SELECTOR = '#ToggleFullScreen';
-const BNT_GET_GPS_SELECTOR = '#btnGetGps';
+const BTN_GET_GPS_SELECTOR = '#btnGetGps';
 
 const init = async () => {
-	// Load core data first - app cannot function without it
-	try {
-		await loadAllData(typeof OVERRIDES !== 'undefined' && OVERRIDES.VERSION ? OVERRIDES.VERSION : '');
-	} catch (error) {
-		console.error('Failed to load core application data:', error);
-		// Show error message to user and halt initialization
-		document.body.innerHTML = `
-			<div>
-				<h2>Unable to load Weather Data</h2>
-				<p>The application cannot start because core data failed to load.</p>
-				<p>Please check your connection and try refreshing.</p>
-			</div>
-		`;
-		return; // Stop initialization
-	}
-
 	document.querySelector(TXT_ADDRESS_SELECTOR).addEventListener('focus', (e) => {
 		e.target.select();
 	});
@@ -63,6 +63,12 @@ const init = async () => {
 	document.querySelector('#NavigatePlay').addEventListener('click', btnNavigatePlayClick);
 	document.querySelector('#ToggleScanlines').addEventListener('click', btnNavigateToggleScanlines);
 
+	// a mouse click leaves focus on the toolbar button, which would stop the keyboard shortcuts from working
+	// keyboard presses (detail 0) keep focus so keyboard users can keep tabbing through the toolbar
+	document.querySelector('#divTwcBottom').addEventListener('click', (e) => {
+		if (e.detail > 0) e.target.closest('button')?.blur();
+	});
+
 	// Hide fullscreen button on iOS since it doesn't support true fullscreen
 	const fullscreenButton = document.querySelector(TOGGLE_FULL_SCREEN_SELECTOR);
 	if (isIOS()) {
@@ -70,8 +76,9 @@ const init = async () => {
 	} else {
 		fullscreenButton.addEventListener('click', btnFullScreenClick);
 	}
+	document.addEventListener('fullscreenchange', fullscreenChanged);
 
-	const btnGetGps = document.querySelector(BNT_GET_GPS_SELECTOR);
+	const btnGetGps = document.querySelector(BTN_GET_GPS_SELECTOR);
 	btnGetGps.addEventListener('click', btnGetGpsClick);
 	if (!navigator.geolocation) btnGetGps.style.display = 'none';
 
@@ -82,18 +89,23 @@ const init = async () => {
 	document.querySelector('#btnGetLatLng').addEventListener('click', () => autoComplete.directFormSubmit());
 
 	document.addEventListener('keydown', documentKeydown);
-	document.addEventListener('touchmove', (e) => { if (document.fullscreenElement) e.preventDefault(); });
+	document.addEventListener('touchmove', (e) => {
+		if (document.fullscreenElement) e.preventDefault();
+	});
 
 	const autoComplete = new AutoComplete(document.querySelector(TXT_ADDRESS_SELECTOR), {
 		serviceUrl: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest',
 		deferRequestBy: 300,
+		// the full width of .location-input, so the list follows the text box as the page resizes
+		width: '100%',
 		paramName: 'text',
-		params: {
+		params: () => ({
 			f: 'json',
 			countryCode: 'USA',
 			category,
 			maxSuggestions: 10,
-		},
+			...locationBias(),
+		}),
 		dataType: 'json',
 		transformResult: (response) => ({
 			suggestions: response.suggestions.map((i) => ({
@@ -104,8 +116,9 @@ const init = async () => {
 		minChars: 3,
 		showNoSuggestionNotice: true,
 		noSuggestionNotice: 'No results found. Please try a different search string.',
-		onSelect(suggestion) { autocompleteOnSelect(suggestion); },
-		width: 490,
+		onSelect(suggestion) {
+			autocompleteOnSelect(suggestion);
+		},
 	});
 	window.autoComplete = autoComplete;
 
@@ -116,12 +129,13 @@ const init = async () => {
 	// Auto load the parsed parameters and fall back to the previous query
 	const query = parsedParameters.latLonQuery ?? localStorage.getItem('latLonQuery');
 	const latLon = parsedParameters.latLon ?? localStorage.getItem('latLon');
-	const fromGPS = localStorage.getItem('latLonFromGPS') && !loadFromParsed;
+	// compared to the string, earlier versions could store 'false'
+	const fromGPS = localStorage.getItem('latLonFromGPS') === 'true' && !loadFromParsed;
 
 	if (parsedParameters.latLonQuery && !parsedParameters.latLon) {
 		const txtAddress = document.querySelector(TXT_ADDRESS_SELECTOR);
 		txtAddress.value = parsedParameters.latLonQuery;
-		const geometry = await geocodeLatLonQuery(parsedParameters.latLonQuery);
+		const geometry = await findLocation({ text: parsedParameters.latLonQuery });
 		if (geometry) {
 			doRedirectToGeometry(geometry);
 		}
@@ -134,7 +148,7 @@ const init = async () => {
 		// use lat-long lookup if that's all that was provided in the query string
 		if (loadFromParsed && parsedParameters.latLon && !parsedParameters.latLonQuery) {
 			const { lat, lon } = JSON.parse(latLon);
-			getForecastFromLatLon(lat, lon, true);
+			getForecastFromLatLon(lat, lon);
 		} else {
 			// otherwise use pre-stored data
 			loadData(JSON.parse(latLon));
@@ -159,24 +173,35 @@ const init = async () => {
 
 	// Auto-play logic: also play immediately if kiosk mode is enabled
 	const play = settings.kiosk.value || urlKioskCheckbox === 'true' ? 'true' : localStorage.getItem('play');
-	if (play === null || play === 'true') postMessage('navButton', 'play');
+	if (play === null || play === 'true') sendNavButtonMessage('navButton', 'play');
 
 	document.querySelector('#btnClearQuery').addEventListener('click', () => {
-		document.querySelector('#spanCity').innerHTML = '';
-		document.querySelector('#spanState').innerHTML = '';
-		document.querySelector('#spanStationId').innerHTML = '';
-		document.querySelector('#spanRadarId').innerHTML = '';
-		document.querySelector('#spanZoneId').innerHTML = '';
-		document.querySelector('#spanOfficeId').innerHTML = '';
-		document.querySelector('#spanGridPoint').innerHTML = '';
+		// stop any lookup still running, then go back to the title card
+		cancelWeather();
+		resetDisplays();
+		currentLatLon = undefined;
 
+		// the button is not inside a form, so it does not clear the location box by itself
+		autoComplete.reset();
+		clearLocationRows();
+
+		// playing is the default, so the next location entered starts playing
 		localStorage.removeItem('play');
-		postMessage('navButton', 'play');
+		sendNavButtonMessage('navButton', 'play');
 
 		localStorage.removeItem('latLonQuery');
 		localStorage.removeItem('latLon');
 		localStorage.removeItem('latLonFromGPS');
-		document.querySelector(BNT_GET_GPS_SELECTOR).classList.remove('active');
+		// the next load is treated as a first visit, which lets custom code (such as a geoip lookup) run again
+		localStorage.removeItem('firstRun');
+		document.querySelector(BTN_GET_GPS_SELECTOR).classList.remove('active');
+		setLocationStatus();
+
+		// a location in the address would be loaded again on a refresh, other parameters (kiosk, settings) are kept
+		const url = new URL(window.location.href);
+		url.searchParams.delete('latLonQuery');
+		url.searchParams.delete('latLon');
+		window.history.replaceState(null, '', url);
 	});
 
 	// swipe functionality
@@ -186,46 +211,61 @@ const init = async () => {
 	// register hidden settings for search and location query
 	registerHiddenSetting('latLonQuery', () => localStorage.getItem('latLonQuery'));
 	registerHiddenSetting('latLon', () => localStorage.getItem('latLon'));
+
+	// Station info is required for location lookup,
+	// Other static data missing is handled by the pages that use it
+	try {
+		await StationInfo;
+	} catch (error) {
+		console.error('Failed to load core application data:', error);
+		// Show error message to user and halt initialization
+		document.body.innerHTML = `
+			<div>
+				<h2>Unable to load Weather Data</h2>
+				<p>The application cannot start because core data failed to load.</p>
+				<p>Please check your connection and try refreshing.</p>
+			</div>
+		`;
+	}
 };
 
-const geocodeLatLonQuery = async (query) => {
+// look up a search, or a chosen suggestion (text and magicKey), and return its geometry
+// reports the problem to the user and returns null when the location can't be found
+const findLocation = async (search) => {
+	setLocationStatus();
 	try {
+		// Note: it's fine that this uses json instead of safeJson since it's infrequent and user-initiated
 		const data = await json('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find', {
 			data: {
-				text: query,
+				...search,
 				f: 'json',
 			},
+		}, {
+			retryCount: 0,
 		});
+		// json() returns null when the request was aborted
+		if (!data) throw new Error('no response');
 
-		const loc = data.locations?.[0];
-		if (loc) {
-			return loc.feature.geometry;
-		}
-		return null;
+		const geometry = data.locations?.[0]?.feature?.geometry;
+		if (!geometry) setLocationStatus(`Couldn't find "${search.text}". Try a different search.`);
+		return geometry ?? null;
 	} catch (error) {
 		console.error('Geocoding failed:', error);
+		setLocationStatus('Location search isn\'t responding. Please try again.');
 		return null;
 	}
 };
 
 const autocompleteOnSelect = async (suggestion) => {
-	// Note: it's fine that this uses json instead of safeJson since it's infrequent and user-initiated
-	const data = await json('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find', {
-		data: {
-			text: suggestion.value,
-			magicKey: suggestion.data,
-			f: 'json',
-		},
+	const geometry = await findLocation({
+		text: suggestion.value,
+		magicKey: suggestion.data,
 	});
+	if (!geometry) return;
 
-	const loc = data.locations[0];
-	if (loc) {
-		localStorage.removeItem('latLonFromGPS');
-		document.querySelector(BNT_GET_GPS_SELECTOR).classList.remove('active');
-		doRedirectToGeometry(loc.feature.geometry);
-	} else {
-		console.error('An unexpected error occurred. Please try a different search string.');
-	}
+	localStorage.removeItem('latLonFromGPS');
+	document.querySelector(BTN_GET_GPS_SELECTOR).classList.remove('active');
+	doRedirectToGeometry(geometry);
 };
 
 const doRedirectToGeometry = (geom, haveDataCallback) => {
@@ -240,7 +280,8 @@ const doRedirectToGeometry = (geom, haveDataCallback) => {
 
 const btnFullScreenClick = () => {
 	if (document.fullscreenElement) {
-		exitFullscreen();
+		// Note: Chrome can't leave a fullscreen the user entered with F11 this way
+		document.exitFullscreen();
 	} else {
 		enterFullScreen();
 	}
@@ -251,94 +292,65 @@ const btnFullScreenClick = () => {
 		noSleep(false);
 	}
 
-	updateFullScreenNavigate();
-
 	return false;
 };
 
-// This is async because modern browsers return a Promise from requestFullscreen
+// This is async because requestFullscreen returns a Promise
 const enterFullScreen = async () => {
 	const element = document.querySelector('#divTwc');
 
-	// Supports most browsers and their versions.
-	const requestMethod = element.requestFullscreen || element.webkitRequestFullscreen || element.mozRequestFullscreen || element.msRequestFullscreen;
-
-	if (requestMethod) {
-		try {
-			// Native full screen with options for optimal display
-			await requestMethod.call(element, {
-				navigationUI: 'hide',
-				allowsInlineMediaPlayback: true,
-			});
-
-			if (debugFlag('fullscreen')) {
-				setTimeout(() => {
-					console.log(`🖥️ Fullscreen engaged. window=${window.innerWidth}x${window.innerHeight} fullscreenElement=${!!document.fullscreenElement}`);
-				}, 150);
-			}
-		} catch (error) {
-			console.error('❌ Fullscreen request failed:', error);
-		}
-	} else {
-		// iOS doesn't support FullScreen API.
+	if (!element.requestFullscreen) {
+		// iPhone Safari has no fullscreen for page elements
 		window.scrollTo(0, 0);
 		resize(true); // Force resize for iOS
+		updateFullScreenNavigate();
+		return;
 	}
+
+	try {
+		await element.requestFullscreen({ navigationUI: 'hide' });
+
+		if (debugFlag('fullscreen')) {
+			setTimeout(() => {
+				console.log(`🖥️ Fullscreen engaged. window=${window.innerWidth}x${window.innerHeight} fullscreenElement=${!!document.fullscreenElement}`);
+			}, 150);
+		}
+	} catch (error) {
+		console.error('❌ Fullscreen request failed:', error);
+	}
+};
+
+// the button and the control bar follow the fullscreen state however it changed:
+// the button, the F key, Esc or the browser's own controls
+// Note: resize is called by the fullscreenchange listener in scaling.mjs
+const fullscreenChanged = () => {
+	const isFullscreen = !!document.fullscreenElement;
+	const label = isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen';
+	const button = document.querySelector(TOGGLE_FULL_SCREEN_SELECTOR);
+	button.querySelector('img').src = isFullscreen ? 'images/nav/ic_fullscreen_exit_white_24dp_2x.png' : 'images/nav/ic_fullscreen_white_24dp_2x.png';
+	button.title = label;
+	button.setAttribute('aria-label', label);
+
+	// shows the control bar and cursor, and hides them again after a pause while fullscreen
 	updateFullScreenNavigate();
-
-	// change hover text and image
-	const img = document.querySelector(TOGGLE_FULL_SCREEN_SELECTOR);
-	if (img && img.style.display !== 'none') {
-		img.src = 'images/nav/ic_fullscreen_exit_white_24dp_2x.png';
-		img.title = 'Exit fullscreen';
-	}
-};
-
-const exitFullscreen = () => {
-	// exit full-screen
-
-	if (document.exitFullscreen) {
-		// Chrome 71 broke this if the user pressed F11 to enter full screen mode.
-		document.exitFullscreen();
-	} else if (document.webkitExitFullscreen) {
-		document.webkitExitFullscreen();
-	} else if (document.mozCancelFullscreen) {
-		document.mozCancelFullscreen();
-	} else if (document.msExitFullscreen) {
-		document.msExitFullscreen();
-	}
-	// Note: resize will be called by fullscreenchange event listener
-	exitFullScreenVisibilityChanges();
-};
-
-const exitFullScreenVisibilityChanges = () => {
-	// change hover text and image
-	const img = document.querySelector(TOGGLE_FULL_SCREEN_SELECTOR);
-	if (img && img.style.display !== 'none') {
-		img.src = 'images/nav/ic_fullscreen_white_24dp_2x.png';
-		img.title = 'Enter fullscreen';
-	}
-	document.querySelector('#divTwc').classList.remove('no-cursor');
-	const divTwcBottom = document.querySelector('#divTwcBottom');
-	divTwcBottom.classList.remove('hidden');
-	divTwcBottom.classList.add('visible');
 };
 
 const btnNavigateMenuClick = () => {
-	postMessage('navButton', 'menu');
+	sendNavButtonMessage('navButton', 'menu');
 	return false;
 };
 
+let currentLatLon;
+
 const loadData = (_latLon, haveDataCallback) => {
 	// if latlon is provided store it locally
-	if (_latLon) loadData.latLon = _latLon;
+	if (_latLon) currentLatLon = _latLon;
 	// get the data
-	const { latLon } = loadData;
 	// if there's no data stop
-	if (!latLon) return;
+	if (!currentLatLon) return;
 
 	document.querySelector(TXT_ADDRESS_SELECTOR).blur();
-	latLonReceived(latLon, haveDataCallback);
+	latLonReceived(currentLatLon, haveDataCallback);
 };
 
 const swipeCallBack = (direction) => {
@@ -362,13 +374,13 @@ const btnNavigateRefreshClick = () => {
 };
 
 const btnNavigateNextClick = () => {
-	postMessage('navButton', 'next');
+	sendNavButtonMessage('navButton', 'next');
 
 	return false;
 };
 
 const btnNavigatePreviousClick = () => {
-	postMessage('navButton', 'previous');
+	sendNavButtonMessage('navButton', 'previous');
 
 	return false;
 };
@@ -401,8 +413,8 @@ const documentKeydown = (e) => {
 
 	// Handle Ctrl+K to exit kiosk mode (even when other modifiers would normally be ignored)
 	if (e.ctrlKey && (key === 'k' || key === 'K')) {
-		e.preventDefault();
 		if (settings.kiosk?.value) {
+			e.preventDefault();
 			settings.kiosk.value = false;
 		}
 		return false;
@@ -411,6 +423,7 @@ const documentKeydown = (e) => {
 	// don't trigger on ctrl/alt/shift modified key for other shortcuts
 	if (e.altKey || e.ctrlKey || e.shiftKey) return false;
 
+	// these shortcuts are listed in the README under "Keyboard shortcuts"
 	if (document.fullscreenElement || document.activeElement === document.body) {
 		switch (key) {
 			case ' ': // Space
@@ -433,12 +446,12 @@ const documentKeydown = (e) => {
 				btnNavigatePreviousClick();
 				return false;
 
-			case 'ArrowUp': // Home
+			case 'ArrowUp': // menu: stop playback and show the list of displays
 				e.preventDefault();
 				btnNavigateMenuClick();
 				return false;
 
-			case '0': // "O" Restart
+			case '0': // zero: reload the forecast data
 				btnNavigateRefreshClick();
 				return false;
 
@@ -454,7 +467,7 @@ const documentKeydown = (e) => {
 };
 
 const btnNavigatePlayClick = () => {
-	postMessage('navButton', 'playToggle');
+	sendNavButtonMessage('navButton', 'playToggle');
 
 	return false;
 };
@@ -465,17 +478,17 @@ const btnNavigateToggleScanlines = () => {
 };
 
 // post a message to the iframe
-const postMessage = (type, myMessage = {}) => {
+const sendNavButtonMessage = (type, myMessage = {}) => {
 	navMessage({ type, message: myMessage });
 };
 
-const getPosition = async () => new Promise((resolve) => {
-	navigator.geolocation.getCurrentPosition(resolve);
+const getPosition = async () => new Promise((resolve, reject) => {
+	navigator.geolocation.getCurrentPosition(resolve, reject);
 });
 
 const btnGetGpsClick = async () => {
 	if (!navigator.geolocation) return;
-	const btn = document.querySelector(BNT_GET_GPS_SELECTOR);
+	const btn = document.querySelector(BTN_GET_GPS_SELECTOR);
 
 	// toggle first
 	if (btn.classList.contains('active')) {
@@ -486,12 +499,31 @@ const btnGetGpsClick = async () => {
 
 	// set gps active
 	btn.classList.add('active');
+	setLocationStatus();
 
 	// get position
-	const position = await getPosition();
-	const { latitude, longitude } = position.coords;
+	try {
+		const position = await getPosition();
+		const { latitude, longitude } = position.coords;
+		getForecastFromLatLon(latitude, longitude, true);
+	} catch (error) {
+		btn.classList.remove('active');
+		console.error('Unable to get GPS location:', error.message);
+		setLocationStatus(gpsErrorText(error));
+	}
+};
 
-	getForecastFromLatLon(latitude, longitude, true);
+// explain a failed geolocation request, error.code is from GeolocationPositionError
+const gpsErrorText = (error) => {
+	switch (error.code) {
+		case 1: // PERMISSION_DENIED
+			return 'Location access was blocked. Allow location access for this site, or enter a location.';
+		case 3: // TIMEOUT
+			return 'Finding your location took too long. Try again, or enter a location.';
+		case 2: // POSITION_UNAVAILABLE
+		default:
+			return 'Your location couldn\'t be determined. Try again, or enter a location.';
+	}
 };
 
 const getForecastFromLatLon = (latitude, longitude, fromGps = false) => {
@@ -504,12 +536,18 @@ const getForecastFromLatLon = (latitude, longitude, fromGps = false) => {
 		const query = `${location.city}, ${location.state}`;
 		localStorage.setItem('latLon', JSON.stringify({ lat: latitude, lon: longitude }));
 		localStorage.setItem('latLonQuery', query);
-		localStorage.setItem('latLonFromGPS', fromGps);
+		if (fromGps) {
+			localStorage.setItem('latLonFromGPS', 'true');
+		} else {
+			localStorage.removeItem('latLonFromGPS');
+			document.querySelector(BTN_GET_GPS_SELECTOR).classList.remove('active');
+		}
 		txtAddress.value = `${location.city}, ${location.state}`;
 	});
 };
 
 const getCustomCode = async () => {
+	console.log('A 404 error for custom.js or custom.mjs is expected below for most applications');
 	// fetch the custom file and see if it returns a 200 status
 	const response = await fetch('scripts/custom.js', { method: 'HEAD' });
 	if (response.ok) {

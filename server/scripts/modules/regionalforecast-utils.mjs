@@ -1,56 +1,58 @@
-import { getSmallIcon } from './icons.mjs';
-import { preloadImg } from './utils/image.mjs';
+import smallIcon from './icons/small.mjs';
+import preloadImg from './utils/preload-image.mjs';
 import { safeJson } from './utils/fetch.mjs';
 import { temperature as temperatureUnit } from './utils/units.mjs';
 import augmentObservationWithMetar from './utils/metar.mjs';
 import { debugFlag } from './utils/debug.mjs';
 import { enhanceObservationWithMapClick } from './utils/mapclick.mjs';
 
-export { getXYForCity } from './regionalforecast-select.mjs';
-
-const buildForecast = (forecast, city, cityXY) => {
+const buildForecast = (forecast, city) => {
 	// get a unit converter
 	const temperatureConverter = temperatureUnit('us');
+	const icon = smallIcon(forecast.icon, !forecast.isDaytime);
+	preloadImg(icon);
 	return {
 		daytime: forecast.isDaytime,
 		temperature: temperatureConverter(forecast.temperature || 0),
 		name: formatCity(city.city),
-		icon: forecast.icon,
-		x: cityXY.x,
-		y: cityXY.y,
-		dist: cityXY.dist,
+		icon,
+		x: city.pxy[0],
+		y: city.pxy[1],
 		time: forecast.startTime,
+		coercedRight: city.coercedRight,
 	};
 };
 
-const getRegionalObservation = async (point, city) => {
+// fallback method to get a station ID for a provided city
+// temporary while stations.json expires for users
+const getStationId = async (city) => {
+	// get stations using centralized safe handling
+	const { point } = city;
+	const stations = await safeJson(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/stations?limit=10`);
+
+	if (!stations || !stations.features || stations.features.length === 0) {
+		if (debugFlag('verbose-failures')) {
+			console.warn(`Unable to get regional stations for ${city.city}`);
+		}
+		return false;
+	}
+
+	// get the first station with a 4-letter id (generally has appropriate data)
+	const station4Letter = stations.features.find((station) => {
+		if (station?.properties?.stationIdentifier?.length === 4) return station.properties;
+		return false;
+	});
+	if (!station4Letter) return false;
+	const stationId = station4Letter.properties.stationIdentifier;
+	return stationId;
+};
+
+const getRegionalObservation = async (city) => {
+	const stationId = city?.id ?? await getStationId(city);
+	if (!stationId) return false;
 	try {
-		// get stations using centralized safe handling
-		const stations = await safeJson(`https://api.weather.gov/gridpoints/${point.wfo}/${point.x},${point.y}/stations?limit=10`);
-
-		if (!stations || !stations.features || stations.features.length === 0) {
-			if (debugFlag('verbose-failures')) {
-				console.warn(`Unable to get regional stations for ${city.city}`);
-			}
-			return false;
-		}
-
-		// get the first station with a 4-letter id (generally has appropriate data)
-		const station4Letter = stations.features.find((station) => {
-			if (station.properties.stationIdentifier.length === 4) return station.properties;
-			return false;
-		});
-		// some grids have no 4-letter station; bail out gracefully instead of throwing
-		if (!station4Letter) {
-			if (debugFlag('verbose-failures')) {
-				console.warn(`No 4-letter observation station for ${city.city}`);
-			}
-			return false;
-		}
-		const station = station4Letter.id;
-		const stationId = station4Letter.properties.stationIdentifier;
 		// get the observation data using centralized safe handling
-		const observation = await safeJson(`${station}/observations/latest`);
+		const observation = await safeJson(`https://api.weather.gov/stations/${stationId}/observations/latest`, { retryCount: 1, timeout: 5000 });
 
 		if (!observation) {
 			if (debugFlag('verbose-failures')) {
@@ -77,21 +79,26 @@ const getRegionalObservation = async (point, city) => {
 		});
 
 		augmentedObservation = enhancedResult.data;
-		const { missingFields } = enhancedResult;
+		const { missingRequired, missingOptional } = enhancedResult;
 
 		// Check final data quality
-		if (missingFields.length > 0) {
+		if ((missingRequired.length + missingOptional.length) > 0) {
 			if (debugFlag('regionalforecast')) {
-				console.log(`Regional Observations for station ${stationId} is missing fields: ${missingFields.join(', ')} (skipping)`);
+				console.log(`Regional Observations for station ${stationId} is missing fields: ${[...missingRequired, ...missingOptional].join(', ')} (skipping)`);
 			}
 			return false;
 		}
 
 		// preload the image
 		if (!augmentedObservation.icon) return false;
-		const icon = getSmallIcon(augmentedObservation.icon, !augmentedObservation.daytime);
+		// the icon url carries day/night (/icons/land/day/...), which smallIcon reads when no override is given
+		const icon = smallIcon(augmentedObservation.icon);
 		if (!icon) return false;
-		preloadImg(icon);
+
+		// add the icon url to the dataset
+		augmentedObservation.ws4icon = icon;
+		augmentedObservation.coercedRight = city.coercedRight;
+
 		// return the observation
 		return augmentedObservation;
 	} catch (error) {
@@ -100,132 +107,11 @@ const getRegionalObservation = async (point, city) => {
 	}
 };
 
-// utility latitude/pixel conversions
-const getXYFromLatitudeLongitude = (Latitude, Longitude, OffsetX, OffsetY, state) => {
-	if (state === 'AK') return getXYFromLatitudeLongitudeAK(Latitude, Longitude, OffsetX, OffsetY);
-	if (state === 'HI') return getXYFromLatitudeLongitudeHI(Latitude, Longitude, OffsetX, OffsetY);
-	let y = 0;
-	let x = 0;
-	const ImgHeight = 1600;
-	const ImgWidth = 2550;
-
-	y = (50.5 - Latitude) * 55.2;
-	y -= OffsetY; // Centers map.
-	// Do not allow the map to exceed the max/min coordinates.
-	if (y > (ImgHeight - (OffsetY * 2))) {
-		y = ImgHeight - (OffsetY * 2);
-	} else if (y < 0) {
-		y = 0;
-	}
-
-	x = ((-127.5 - Longitude) * 41.775) * -1;
-	x -= OffsetX; // Centers map.
-	// Do not allow the map to exceed the max/min coordinates.
-	if (x > (ImgWidth - (OffsetX * 2))) {
-		x = ImgWidth - (OffsetX * 2);
-	} else if (x < 0) {
-		x = 0;
-	}
-
-	return { x, y };
-};
-
-const getXYFromLatitudeLongitudeAK = (Latitude, Longitude, OffsetX, OffsetY) => {
-	let y = 0;
-	let x = 0;
-	const ImgHeight = 1142;
-	const ImgWidth = 1200;
-
-	y = (73.0 - Latitude) * 56;
-	y -= OffsetY; // Centers map.
-	// Do not allow the map to exceed the max/min coordinates.
-	if (y > (ImgHeight - (OffsetY * 2))) {
-		y = ImgHeight - (OffsetY * 2);
-	} else if (y < 0) {
-		y = 0;
-	}
-
-	x = ((-175.0 - Longitude) * 25.0) * -1;
-	x -= OffsetX; // Centers map.
-	// Do not allow the map to exceed the max/min coordinates.
-	if (x > (ImgWidth - (OffsetX * 2))) {
-		x = ImgWidth - (OffsetX * 2);
-	} else if (x < 0) {
-		x = 0;
-	}
-
-	return { x, y };
-};
-
-const getXYFromLatitudeLongitudeHI = (Latitude, Longitude, OffsetX, OffsetY) => {
-	let y = 0;
-	let x = 0;
-	const ImgHeight = 571;
-	const ImgWidth = 600;
-
-	y = (25 - Latitude) * 55.2;
-	y -= OffsetY; // Centers map.
-	// Do not allow the map to exceed the max/min coordinates.
-	if (y > (ImgHeight - (OffsetY * 2))) {
-		y = ImgHeight - (OffsetY * 2);
-	} else if (y < 0) {
-		y = 0;
-	}
-
-	x = ((-164.5 - Longitude) * 41.775) * -1;
-	x -= OffsetX; // Centers map.
-	// Do not allow the map to exceed the max/min coordinates.
-	if (x > (ImgWidth - (OffsetX * 2))) {
-		x = ImgWidth - (OffsetX * 2);
-	} else if (x < 0) {
-		x = 0;
-	}
-
-	return { x, y };
-};
-
-const getMinMaxLatitudeLongitude = (X, Y, OffsetX, OffsetY, state) => {
-	if (state === 'AK') return getMinMaxLatitudeLongitudeAK(X, Y, OffsetX, OffsetY);
-	if (state === 'HI') return getMinMaxLatitudeLongitudeHI(X, Y, OffsetX, OffsetY);
-	const maxLat = ((Y / 55.2) - 50.5) * -1;
-	const minLat = (((Y + (OffsetY * 2)) / 55.2) - 50.5) * -1;
-	const minLon = (((X * -1) / 41.775) + 127.5) * -1;
-	const maxLon = ((((X + (OffsetX * 2)) * -1) / 41.775) + 127.5) * -1;
-
-	return {
-		minLat, maxLat, minLon, maxLon,
-	};
-};
-
-const getMinMaxLatitudeLongitudeAK = (X, Y, OffsetX, OffsetY) => {
-	const maxLat = ((Y / 56) - 73.0) * -1;
-	const minLat = (((Y + (OffsetY * 2)) / 56) - 73.0) * -1;
-	const minLon = (((X * -1) / 25) + 175.0) * -1;
-	const maxLon = ((((X + (OffsetX * 2)) * -1) / 25) + 175.0) * -1;
-
-	return {
-		minLat, maxLat, minLon, maxLon,
-	};
-};
-
-const getMinMaxLatitudeLongitudeHI = (X, Y, OffsetX, OffsetY) => {
-	const maxLat = ((Y / 55.2) - 25) * -1;
-	const minLat = (((Y + (OffsetY * 2)) / 55.2) - 25) * -1;
-	const minLon = (((X * -1) / 41.775) + 164.5) * -1;
-	const maxLon = ((((X + (OffsetX * 2)) * -1) / 41.775) + 164.5) * -1;
-
-	return {
-		minLat, maxLat, minLon, maxLon,
-	};
-};
-
 // to fit on the map, remove anything after punctuation and then limit to 15 characters
-const formatCity = (city) => city.match(/[^,/;\\-]*/)[0].substr(0, 12);
+const formatCity = (city) => city.match(/[^,/;\\-]*/)[0].substring(0, 12);
 
 export {
 	buildForecast,
 	getRegionalObservation,
-	getXYFromLatitudeLongitude,
-	getMinMaxLatitudeLongitude,
 	formatCity,
 };

@@ -41,6 +41,10 @@
 					margin-left: 50px;
 					width: calc(p.$blue-box-width - 140px);
 				}
+
+				.wind-portrait {
+					white-space: pre;
+				}
 			}
 
 			&.left {
@@ -75,10 +79,21 @@
 
 
 				.row {
+					display: flex;
+					justify-content: space-between;
 					margin-bottom: 12px;
 
 					&.hidden {
 						display: none;
+					}
+
+					// the flex above outranks the global .portrait-only rule, so portrait rows have to be hidden and shown again here
+					&.portrait-only {
+						display: none;
+
+						.portrait.enhanced &:not(.hidden) {
+							display: flex;
+						}
 					}
 
 					.label,
@@ -132,6 +147,7 @@
 			.wind {
 				text-align: right;
 				float: right;
+				white-space: pre;
 			}
 		}
 

@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import cache from '../../proxy/cache.mjs';
 
 // The singleton starts a periodic cleanup setInterval; clear it so the test
-// process can exit instead of hanging on the open timer handle.
-after(() => cache.destroy());
+// process can exit instead of hanging on the open timer handle. (Upstream v8
+// removed HttpCache.destroy(), so reach the handle directly.)
+after(() => clearInterval(cache.cleanupInterval));
 
 // setFilteredHeaders is a static method on the HttpCache class; the module only
 // exports the singleton, so reach the class through its constructor.
@@ -35,9 +36,10 @@ test('setFilteredHeaders strips hop-by-hop headers so a re-buffered (Content-Len
 		upgrade: 'h2c',
 		'proxy-authenticate': 'Basic',
 		'proxy-authorization': 'Basic abc',
+		'content-length': '512',
 	});
 
-	for (const h of ['transfer-encoding', 'connection', 'keep-alive', 'te', 'trailer', 'upgrade', 'proxy-authenticate', 'proxy-authorization']) {
+	for (const h of ['transfer-encoding', 'connection', 'keep-alive', 'te', 'trailer', 'upgrade', 'proxy-authenticate', 'proxy-authorization', 'content-length']) {
 		assert.equal(res.headers[h], undefined, `hop-by-hop header "${h}" must not be forwarded`);
 	}
 });
@@ -45,7 +47,7 @@ test('setFilteredHeaders strips hop-by-hop headers so a re-buffered (Content-Len
 test('setFilteredHeaders strips upstream set-cookie so a third party cannot set cookies through the proxy', () => {
 	// NWS replies carry a Dynatrace analytics cookie scoped to Domain=.weather.gov.
 	// Forwarded from our own host the browser rejects it for domain mismatch, which
-	// is pure console noise today -- but the same EXCLUDED_RESPONSE_HEADERS set also
+	// is pure console noise today -- but the same SKIPPED_HEADERS list also
 	// filters what gets stored, so an un-stripped set-cookie is cached and re-emitted
 	// to every client on each cache hit. A proxy has no business relaying a third
 	// party's cookies either way.

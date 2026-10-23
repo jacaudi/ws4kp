@@ -1,12 +1,13 @@
 // current weather conditions display
 import STATUS from './status.mjs';
-import { preloadImg } from './utils/image.mjs';
+import preloadImg from './utils/preload-image.mjs';
 import { safeJson } from './utils/fetch.mjs';
 import { directionToNSEW } from './utils/calc.mjs';
-import { locationCleanup } from './utils/string.mjs';
-import { getLargeIcon } from './icons.mjs';
+import { locationCleanup, shortConditions } from './utils/string.mjs';
+import largeIcon from './icons/large.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay } from './navigation.mjs';
+import { timeZone } from './location.mjs';
 import augmentObservationWithMetar from './utils/metar.mjs';
 import {
 	temperature, windSpeed, pressure, distanceMeters, distanceKilometers,
@@ -15,6 +16,8 @@ import { debugFlag } from './utils/debug.mjs';
 import { isDataStale, enhanceObservationWithMapClick } from './utils/mapclick.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
 import settings from './settings.mjs';
+import setHeadend from './headend.mjs';
+import { StationInfo } from './utils/data-loader.mjs';
 
 class CurrentWeather extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -24,6 +27,8 @@ class CurrentWeather extends WeatherDisplay {
 	async getData(weatherParameters, refresh) {
 		// always load the data for use in the lower scroll
 		const superResult = super.getData(weatherParameters, refresh);
+		// the auto refresh interval runs from the start of each fetch
+		const fetchedAt = DateTime.now();
 		// note: current weather does not use old data on a silent refresh
 		// this is deliberate because it can pull data from more than one station in sequence
 
@@ -33,6 +38,31 @@ class CurrentWeather extends WeatherDisplay {
 		// Load the observations
 		let observations;
 		let station;
+		let filledFromMetar = [];
+
+		const metarFields = [
+			{ name: 'temperature', check: (orig, metar) => orig.temperature?.value === null && metar.temperature?.value !== null },
+			{ name: 'windSpeed', check: (orig, metar) => orig.windSpeed?.value === null && metar.windSpeed?.value !== null },
+			{ name: 'windDirection', check: (orig, metar) => orig.windDirection?.value === null && metar.windDirection?.value !== null },
+			{ name: 'windGust', check: (orig, metar) => orig.windGust?.value === null && metar.windGust?.value !== null },
+			{ name: 'dewpoint', check: (orig, metar) => orig.dewpoint?.value === null && metar.dewpoint?.value !== null },
+			{ name: 'barometricPressure', check: (orig, metar) => orig.barometricPressure?.value === null && metar.barometricPressure?.value !== null },
+			{ name: 'relativeHumidity', check: (orig, metar) => orig.relativeHumidity?.value === null && metar.relativeHumidity?.value !== null },
+			{ name: 'visibility', check: (orig, metar) => orig.visibility?.value === null && metar.visibility?.value !== null },
+			{ name: 'ceiling', check: (orig, metar) => orig.cloudLayers?.[0]?.base?.value === null && metar.cloudLayers?.[0]?.base?.value !== null },
+		];
+
+		// test data quality - check required fields and allow one optional field to be missing
+		const requiredFields = [
+			{ name: 'temperature', check: (props) => props.temperature?.value === null, required: true },
+			{ name: 'textDescription', check: (props) => props.textDescription === null || props.textDescription === '', required: true },
+			{ name: 'windSpeed', check: (props) => props.windSpeed?.value === null, required: false },
+			{ name: 'dewpoint', check: (props) => props.dewpoint?.value === null, required: false },
+			{ name: 'barometricPressure', check: (props) => props.barometricPressure?.value === null, required: false },
+			{ name: 'visibility', check: (props) => props.visibility?.value === null, required: false },
+			{ name: 'relativeHumidity', check: (props) => props.relativeHumidity?.value === null, required: false },
+			{ name: 'ceiling', check: (props) => props.cloudLayers?.[0]?.base?.value === null, required: false },
+		];
 
 		// station number counter
 		let stationNum = 0;
@@ -63,34 +93,11 @@ class CurrentWeather extends WeatherDisplay {
 				// Attempt making observation data usable with METAR data
 				const originalData = { ...candidateObservation.features[0].properties };
 				candidateObservation.features[0].properties = augmentObservationWithMetar(candidateObservation.features[0].properties);
-				const metarFields = [
-					{ name: 'temperature', check: (orig, metar) => orig.temperature?.value === null && metar.temperature?.value !== null },
-					{ name: 'windSpeed', check: (orig, metar) => orig.windSpeed?.value === null && metar.windSpeed?.value !== null },
-					{ name: 'windDirection', check: (orig, metar) => orig.windDirection?.value === null && metar.windDirection?.value !== null },
-					{ name: 'windGust', check: (orig, metar) => orig.windGust?.value === null && metar.windGust?.value !== null },
-					{ name: 'dewpoint', check: (orig, metar) => orig.dewpoint?.value === null && metar.dewpoint?.value !== null },
-					{ name: 'barometricPressure', check: (orig, metar) => orig.barometricPressure?.value === null && metar.barometricPressure?.value !== null },
-					{ name: 'relativeHumidity', check: (orig, metar) => orig.relativeHumidity?.value === null && metar.relativeHumidity?.value !== null },
-					{ name: 'visibility', check: (orig, metar) => orig.visibility?.value === null && metar.visibility?.value !== null },
-					{ name: 'ceiling', check: (orig, metar) => orig.cloudLayers?.[0]?.base?.value === null && metar.cloudLayers?.[0]?.base?.value !== null },
-				];
 				const augmentedData = candidateObservation.features[0].properties;
 				const metarReplacements = metarFields.filter((field) => field.check(originalData, augmentedData)).map((field) => field.name);
 				if (debugFlag('currentweather') && metarReplacements.length > 0) {
 					console.log(`Current Conditions for station ${stationId} were augmented with METAR data for ${metarReplacements.join(', ')}`);
 				}
-
-				// test data quality - check required fields and allow one optional field to be missing
-				const requiredFields = [
-					{ name: 'temperature', check: (props) => props.temperature?.value === null, required: true },
-					{ name: 'textDescription', check: (props) => props.textDescription === null || props.textDescription === '', required: true },
-					{ name: 'windSpeed', check: (props) => props.windSpeed?.value === null, required: false },
-					{ name: 'dewpoint', check: (props) => props.dewpoint?.value === null, required: false },
-					{ name: 'barometricPressure', check: (props) => props.barometricPressure?.value === null, required: false },
-					{ name: 'visibility', check: (props) => props.visibility?.value === null, required: false },
-					{ name: 'relativeHumidity', check: (props) => props.relativeHumidity?.value === null, required: false },
-					{ name: 'ceiling', check: (props) => props.cloudLayers?.[0]?.base?.value === null, required: false },
-				];
 
 				// Use enhanced observation with MapClick fallback
 				// eslint-disable-next-line no-await-in-loop
@@ -106,15 +113,7 @@ class CurrentWeather extends WeatherDisplay {
 
 				candidateObservation.features[0].properties = enhancedResult.data;
 
-				const { missingFields } = enhancedResult;
-				const missingRequired = missingFields.filter((fieldName) => {
-					const field = requiredFields.find((f) => f.name === fieldName && f.required);
-					return !!field;
-				});
-				const missingOptional = missingFields.filter((fieldName) => {
-					const field = requiredFields.find((f) => f.name === fieldName && !f.required);
-					return !!field;
-				});
+				const { missingRequired, missingOptional } = enhancedResult;
 				const missingOptionalCount = missingOptional.length;
 
 				// Check final data quality
@@ -122,6 +121,7 @@ class CurrentWeather extends WeatherDisplay {
 				if (missingRequired.length === 0 && missingOptionalCount <= 1) {
 					// Station data is good, use it
 					observations = candidateObservation;
+					filledFromMetar = metarReplacements;
 					if (debugFlag('currentweather') && missingOptional.length > 0) {
 						console.log(`Data for station ${stationId} is missing optional fields: ${missingOptional.join(', ')} (acceptable)`);
 					}
@@ -143,20 +143,16 @@ class CurrentWeather extends WeatherDisplay {
 		if (!observations) {
 			console.error('Current Conditions failure: all nearby weather stations exhausted!');
 			if (this.isEnabled) this.setStatus(STATUS.failed);
-			// send failed to subscribers
-			this.getDataCallback(undefined);
+			setHeadend('station', 'none available');
+			setHeadend('observed');
+			// release anyone waiting, they get the data from the last successful load (undefined if there isn't any)
+			this.getDataCallback();
 			return;
 		}
 
 		// we only get here if there was no error above
 		this.data = parseData({ ...observations, station });
 		this.getDataCallback();
-
-		// stop here if we're disabled
-		if (!superResult) return;
-
-		// Data is available, ensure we're enabled for display
-		this.timing.totalScreens = 1;
 
 		// Check final data age
 		const { isStale, ageInMinutes } = isDataStale(observations.features[0].properties.timestamp, 80); // hourly observation + 20 minute propagation delay
@@ -166,9 +162,18 @@ class CurrentWeather extends WeatherDisplay {
 			console.warn(`Current Conditions: Data is ${ageInMinutes.toFixed(0)} minutes old (from ${new Date(observations.features[0].properties.timestamp).toISOString()})`);
 		}
 
+		// headend is updated even when disabled because the data still feeds the lower scroll
+		updateHeadend(station, observations, fetchedAt, filledFromMetar, isStale, ageInMinutes);
+
+		// stop here if we're disabled
+		if (!superResult) return;
+
+		// Data is available, ensure we're enabled for display
+		this.timing.totalScreens = 1;
+
 		// preload the icon if available
 		if (observations.features[0].properties.icon) {
-			const iconResult = getLargeIcon(observations.features[0].properties.icon);
+			const iconResult = largeIcon(observations.features[0].properties.icon);
 			if (iconResult) {
 				preloadImg(iconResult);
 			}
@@ -190,12 +195,12 @@ class CurrentWeather extends WeatherDisplay {
 			condition = shortConditions(condition);
 		}
 
-		const wind = (typeof this.data.WindSpeed === 'number') ? this.data.WindDirection.padEnd(3, '') + this.data.WindSpeed.toString().padStart(3, ' ') : this.data.WindSpeed;
+		const wind = (typeof this.data.WindSpeed === 'number') ? this.data.WindDirection.padEnd(3, ' ') + this.data.WindSpeed.toString().padStart(2, ' ') : this.data.WindSpeed;
 
 		// get location (city name) from StationInfo if available (allows for overrides)
 		// longer name allowed if in wide-enhanced
 		const locationLimit = (settings.wide?.value && settings.enhanced?.value) ? 25 : 20;
-		const location = (StationInfo[this.data.station.properties.stationIdentifier]?.city ?? locationCleanup(this.data.station.properties.name)).substr(0, locationLimit);
+		const location = ((await StationInfo)[this.data.station.properties.stationIdentifier]?.city ?? locationCleanup(this.data.station.properties.name)).substring(0, locationLimit);
 
 		const fill = {
 			temp: this.data.Temperature + String.fromCharCode(176),
@@ -244,37 +249,14 @@ class CurrentWeather extends WeatherDisplay {
 	}
 
 	// make data available outside this class
-	// promise allows for data to be requested before it is available
+	// always resolves to { data, parameters }, data is undefined if loading failed
 	async getCurrentWeather(stillWaiting) {
 		// an external caller has requested data, set up auto reload
 		this.setAutoReload();
-		if (stillWaiting) this.stillWaitingCallbacks.push(stillWaiting);
-		return new Promise((resolve) => {
-			if (this.data) resolve({ data: this.data, parameters: this.weatherParameters });
-			// data not available, put it into the data callback queue
-			this.getDataCallbacks.push(() => resolve(this.data));
-		});
+		const data = await this.dataReady(stillWaiting);
+		return { data, parameters: this.weatherParameters };
 	}
 }
-
-const shortConditions = (_condition) => {
-	let condition = _condition;
-	condition = condition.replace(/Light/g, 'L');
-	condition = condition.replace(/Heavy/g, 'H');
-	condition = condition.replace(/Partly/g, 'P');
-	condition = condition.replace(/Mostly/g, 'M');
-	condition = condition.replace(/Few/g, 'F');
-	condition = condition.replace(/Thunderstorm/g, 'T\'storm');
-	condition = condition.replace(/ in /g, '');
-	condition = condition.replace(/Vicinity/g, '');
-	condition = condition.replace(/ and /g, ' ');
-	condition = condition.replace(/Freezing Rain/g, 'Frz Rn');
-	condition = condition.replace(/Freezing/g, 'Frz');
-	condition = condition.replace(/Unknown Precip/g, '');
-	condition = condition.replace(/L Snow Fog/g, 'L Snw/Fog');
-	condition = condition.replace(/ with /g, '/');
-	return condition;
-};
 
 // format the received data
 const parseData = (data) => {
@@ -306,7 +288,7 @@ const parseData = (data) => {
 	data.Humidity = Math.round(observations.relativeHumidity.value);
 
 	// Get the large icon, but provide a fallback if it returns false
-	const iconResult = getLargeIcon(observations.icon);
+	const iconResult = largeIcon(observations.icon);
 	data.Icon = iconResult || observations.icon; // Use original icon if getLargeIcon returns false
 
 	data.PressureDirection = '';
@@ -365,7 +347,25 @@ const backfillProperty = (data, key) => data.reduce(
 	{ value: null }, // null is the default provided by the api
 );
 
+// the station list is in distance order but a station is skipped when its data is incomplete
+// show the one that was actually used along with when it reported and the refresh schedule
+const updateHeadend = (station, observations, fetchedAt, filledFromMetar, isStale, ageInMinutes) => {
+	const zone = timeZone();
+	const observedAt = DateTime.fromISO(observations.features[0].properties.timestamp).setZone(zone);
+	let observed = observedAt.toFormat('h:mm a');
+	if (isStale) observed += ` (stale, ${ageInMinutes.toFixed(0)} min old)`;
+	if (filledFromMetar.length > 0) observed += `, METAR filled ${filledFromMetar.join(', ')}`;
+
+	const nextRefresh = fetchedAt.plus({ milliseconds: settings.refreshTime.value });
+
+	setHeadend('station', station.properties.stationIdentifier);
+	setHeadend('observed', observed);
+	setHeadend('refreshed', `${fetchedAt.setZone(zone).toFormat('h:mm a')}, next ${nextRefresh.setZone(zone).toFormat('h:mm a')}`);
+};
+
 const display = new CurrentWeather(1, 'current-weather');
 registerDisplay(display);
 
-export default display.getCurrentWeather.bind(display);
+const getCurrentWeather = display.getCurrentWeather.bind(display);
+
+export default getCurrentWeather;
