@@ -3,30 +3,27 @@
 
 import { geoDistance } from './utils/calc.mjs';
 
-// Basemap projection px/deg — the SAME source values as getXYFromLatitudeLongitude
-// (CONUS/HI y=55.2, x=41.775; AK y=56, x=25 — see regionalforecast-utils.mjs).
-const projectionPxPerDeg = (state) => (state === 'AK'
-	? { lon: 25, lat: 56 }
-	: { lon: 41.775, lat: 55.2 });
-
-// Markers live in .location-container (a sibling of .map, NOT scaled by the CSS
-// transform), so their on-screen px/deg = basemap px/deg * scale. This single-sources
-// the marker projection against the map transform and removes the 57/70 drift.
-// Returns undefined when the city falls outside the drawable area. It used to
-// clamp instead (y = 30, x = maxX, ...), which pinned off-map cities to the
-// border and drew them at coordinates that were simply wrong — a label sitting on
-// the edge claiming to be a place that is not there. Callers must treat undefined
-// as "not drawable" and drop the candidate.
-const getXYForCity = (city, maxLat, minLon, state, scale, maxX = 580, maxY = 282) => {
-	const px = projectionPxPerDeg(state);
-	const x = (city.lon - minLon) * px.lon * scale;
-	const y = (maxLat - city.lat) * px.lat * scale;
-
-	if (y < 30 || y > maxY) return undefined;
-	if (x < 40 || x > maxX) return undefined;
-
-	return { x, y };
+// Alaska and Hawaii keep 7.4.0's maps and linear projections: v8 only ships a CONUS
+// projection, and its regional forecast shows nothing (Hawaii) or the wrong coast (Alaska).
+// west/north are the lon/lat at the image's top-left pixel; 7.4.0 drew both maps at 4/3
+// (640 screen px for 480 image px) in every display mode.
+const STATE_MAP_SCALE = 4 / 3;
+const STATE_MAPS = {
+	AK: {
+		image: 'images/maps/radar-alaska.png', width: 1200, height: 1142, west: -175, north: 73, pxPerDegLon: 25, pxPerDegLat: 56, scale: STATE_MAP_SCALE,
+	},
+	HI: {
+		image: 'images/maps/radar-hawaii.png', width: 600, height: 571, west: -164.5, north: 25, pxPerDegLon: 41.775, pxPerDegLat: 55.2, scale: STATE_MAP_SCALE,
+	},
 };
+
+// the same forward/inverse interface as utils/map-projection.mjs, in displayed-image px
+const linearProjection = ({
+	west, north, pxPerDegLon, pxPerDegLat, scale,
+}) => ({
+	forward: ([lon, lat]) => [(lon - west) * pxPerDegLon * scale, (north - lat) * pxPerDegLat * scale],
+	inverse: ([x, y]) => [west + (x / (pxPerDegLon * scale)), north - (y / (pxPerDegLat * scale))],
+});
 
 // Junk filter: keep baked cities always; drop stations with priority >= 50
 // (50 = weather/monitoring station, 99 = unknown/non-town). Missing priority = junk.
@@ -60,43 +57,48 @@ const rectsOverlap = (a, b, pad) => a.left < b.right - pad
 // selectRegionalCities.
 const LABEL_PAD = 2;
 
-// Rendered label geometry in CSS px, measured from the live DOM and pinned by
-// _regional-forecast.scss: .location carries margin-left -40 / margin-top -35, and its
-// children (city text, icon at top 26 h32, temp at top 28) span 62px vertically.
-// Width measures 83-114px depending on name length; 95 is the midpoint, and the
-// post-render declutter pass re-tests with REAL measured boxes, so an under-estimate
-// here costs at most one label rather than producing an overlap.
+// Rendered label geometry in CSS px, measured from the live DOM (v8's regional-forecast.ejs and
+// _regional-forecast.scss). drawCanvas places each .location's top-left offsetX/offsetY from the
+// city's point; its children span 62px. Width is the wider of the city name (Star4000 at 20px,
+// ~9.5px a character, measured 114px at the 12-character cap) and the temp + icon row (~72px).
+// The post-render declutter pass re-tests with real measured boxes, so a small estimate error
+// costs at most one label rather than producing an overlap.
 //
-// Spacing is expressed in pixels rather than degrees because labels are wide and short
-// while the projection is not: ~55.7 px per degree of longitude against 73.6 per degree
-// of latitude. A single isotropic degree threshold is therefore simultaneously too
-// loose horizontally (neighbours pass selection, then collide and get decluttered away)
-// and too tight vertically (stacked pairs are rejected with room to spare). The box is
-// identical in every display mode, and all three modes share the same projection scale,
-// so this needs no per-mode tuning.
+// Spacing is in pixels rather than degrees because labels are wide and short while the
+// projection is not, so a single degree threshold is too loose one way and too tight the other.
 const LABEL_BOX = {
-	w: 95, h: 62, offsetX: -40, offsetY: -35,
+	h: 62, offsetX: -43, offsetY: -30, minWidth: 72, pxPerChar: 9.5,
 };
 
+const labelWidth = (name) => Math.max(LABEL_BOX.minWidth, Math.ceil(name.length * LABEL_BOX.pxPerChar));
+
 // The label rect a candidate would occupy, or undefined when it cannot be placed.
-// A candidate reaches selection with an xy attached by regionalforecast.mjs; a missing
-// or non-finite one must mean "unusable", never "overlaps nothing" — treating a
-// degenerate box as collision-free is exactly what silently disabled decluttering.
+// A missing or non-finite xy or width must mean "unusable", never "overlaps nothing" —
+// treating a degenerate box as collision-free is exactly what silently disabled decluttering.
 const labelBox = (candidate) => {
 	const xy = candidate?.xy;
-	if (!xy || !Number.isFinite(xy.x) || !Number.isFinite(xy.y)) return undefined;
+	const width = candidate?.labelWidth;
+	if (!xy || !Number.isFinite(xy.x) || !Number.isFinite(xy.y) || !Number.isFinite(width)) return undefined;
 	const left = xy.x + LABEL_BOX.offsetX;
 	const top = xy.y + LABEL_BOX.offsetY;
 	return {
-		left, top, right: left + LABEL_BOX.w, bottom: top + LABEL_BOX.h,
+		left, top, right: left + width, bottom: top + LABEL_BOX.h,
 	};
 };
 
-// coarse visible-window prefilter; keeps the existing asymmetric right-edge fudge
-const inVisibleWindow = (city, mm) => city.lat > mm.minLat
-	&& city.lat < mm.maxLat
-	&& city.lon > mm.minLon
-	&& city.lon < mm.maxLon - 1;
+// Project each candidate and keep it only if its whole label fits inside the drawable area.
+// pxy is the point on the map image, xy the point on screen (map minus the scroll offset).
+// A candidate that does not fit is dropped, never moved: v8 coerced off-map cities onto the
+// edge, which draws a label where the place is not.
+const placeCandidates = (candidates, projection, offset, area) => candidates
+	.map((c) => {
+		const pxy = projection.forward([c.lon, c.lat]);
+		return { ...c, pxy, xy: { x: pxy[0] - offset[0], y: pxy[1] - offset[1] } };
+	})
+	.filter((c) => {
+		const box = labelBox(c);
+		return box && box.left >= 0 && box.top >= 0 && box.right <= area.width && box.bottom <= area.height;
+	});
 
 // Rank nearest-first, then keep a candidate only if its label box clears every box
 // already kept, capped at count. Candidates must arrive with the projected xy that
@@ -196,12 +198,13 @@ const resolveLabelCollisions = (items, pad = LABEL_PAD, obstacles = [], bounds =
 export {
 	LABEL_BOX,
 	LABEL_PAD,
+	STATE_MAPS,
 	STATION_RANK_PENALTY,
-	projectionPxPerDeg,
-	getXYForCity,
 	filterJunkStations,
-	inVisibleWindow,
 	isMeasured,
+	labelWidth,
+	linearProjection,
+	placeCandidates,
 	selectRegionalCities,
 	regionalSelectionConfig,
 	resolveLabelCollisions,
