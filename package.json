@@ -30,7 +30,7 @@
 		"@eslint/config-helpers": "^0.7.0",
 		"@eslint/js": "^9.39.5",
 		"@zakj/no-sleep": "^0.13.6",
-		"del": "^8.0.0",
+		"del": "^9.0.0",
 		"eslint": "^9.39.5",
 		"eslint-config-airbnb-extended": "^3.1.1",
 		"fancy-log": "^2.0.0",
