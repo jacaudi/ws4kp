@@ -11,6 +11,7 @@
 
 import { safeJson } from './fetch.mjs';
 import { debugFlag } from './debug.mjs';
+import { StationInfo } from './data-loader.mjs';
 
 /**
  * Parse MapClick date format to JavaScript Date
@@ -388,32 +389,34 @@ export const enhanceObservationWithMapClick = async (observationData, options = 
 		return returnOriginalData('no original observation data');
 	}
 
-	// Look up station coordinates from global StationInfo
-	if (!stationId || typeof window === 'undefined' || !window.StationInfo) {
-		return returnOriginalData('no station ID');
+	// Categorize fields by required/optional
+	const requiredFieldDefs = requiredFields.filter((field) => field.required !== false);
+	const optionalFieldDefs = requiredFields.filter((field) => field.required === false);
+
+	// Check current data quality before anything can return early: every return reports these,
+	// and a caller that is told nothing is missing accepts the observation as it is
+	const missingRequired = requiredFieldDefs.filter((field) => field.check(observationData)).map((field) => field.name);
+	const missingOptional = optionalFieldDefs.filter((field) => field.check(observationData)).map((field) => field.name);
+	const missingOptionalCount = missingOptional.length;
+
+	// Look up station coordinates (a failed station list load leaves nothing to look up)
+	const stationInfo = stationId ? await StationInfo.catch(() => null) : null;
+	if (!stationInfo) {
+		return returnOriginalData('no station ID or station list', missingRequired, missingOptional);
 	}
 
-	const stationLookup = Object.values(window.StationInfo).find((s) => s.id === stationId);
+	const stationLookup = Object.values(stationInfo).find((s) => s.id === stationId);
 	if (!stationLookup) {
 		let reason = null;
 		if (stationId.length === 4) { // MapClick only supports 4-letter station IDs, so other failures are "expected"
 			reason = `station ${stationId} not found in StationInfo`;
 		}
-		return returnOriginalData(reason);
+		return returnOriginalData(reason, missingRequired, missingOptional);
 	}
 
 	// Check data staleness
 	const observationTime = new Date(observationData.timestamp);
 	const { isStale, ageInMinutes } = isDataStale(observationTime, maxAgeMinutes);
-
-	// Categorize fields by required/optional
-	const requiredFieldDefs = requiredFields.filter((field) => field.required !== false);
-	const optionalFieldDefs = requiredFields.filter((field) => field.required === false);
-
-	// Check current data quality
-	const missingRequired = requiredFieldDefs.filter((field) => field.check(observationData)).map((field) => field.name);
-	const missingOptional = optionalFieldDefs.filter((field) => field.check(observationData)).map((field) => field.name);
-	const missingOptionalCount = missingOptional.length;
 
 	// Determine if we should try MapClick
 	const shouldTryMapClick = isStale || missingRequired.length > 0 || missingOptionalCount > maxOptionalMissing;
