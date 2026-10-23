@@ -6,9 +6,18 @@
 // right-column rows are 36px apart; the slot spans the Dewpoint, Ceiling and Visibility rows,
 // so Wind lands level with Pressure and Gusts with Heat Index, where the canvas version drew them
 $icon-slot-height: 3 * 36px;
+// the condition text draws its glyphs above the bottom of its box and the wind row below the top of
+// its own, so the box centre sits above the centre of what is visible; 4px balances the clear space
+// above and below across the gifs (measured from the rendered pixels)
+$icon-optical-offset: 4px;
+// tallest icon: leaves ~11px of clear space above and below, so a full-height gif (Fog, Rain)
+// doesn't crowd the condition text and read as sitting high
+$icon-max-height: 96px;
 
 .weather-display .main.current-weather .col.left .icon {
+	box-sizing: border-box;
 	height: $icon-slot-height;
+	padding-top: $icon-optical-offset;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -17,12 +26,13 @@ $icon-slot-height: 3 * 36px;
 		margin: 0;
 		// the canvas version's max_width; it brings every gif, Fog included (148x122), inside the slot
 		max-width: 126px;
-		max-height: 100%;
+		max-height: $icon-max-height;
 	}
 
 	// portrait enhanced has its own scaled icon layout upstream
 	.portrait.enhanced & {
 		height: auto;
+		padding-top: 0;
 		display: block;
 
 		img {
