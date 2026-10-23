@@ -36,7 +36,8 @@ SKILL.md Step 1 for the exact commands. If you let `$B` go empty, every range be
 silently becomes upstream's entire history.
 
 **Partition before you read diffs.** `comm -12` / `comm -13` on the two changed-file
-lists against the recorded baseline. Most upstream changes touch files this fork never
+lists against the recorded baseline, built with `git diff --no-renames --name-only` —
+rename detection drops a moved file's old path and misfiles it (see SKILL.md Step 2). Most upstream changes touch files this fork never
 modified and need no judgement. Do this first; it collapses the problem.
 
 **Verify claims against the working tree.** Before calling something "a fix we need",

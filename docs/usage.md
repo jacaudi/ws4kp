@@ -56,11 +56,27 @@ Kiosk mode is a full-screen-like view without the play/volume toolbar, scaled to
 - iOS/iPadOS strips URL parameters when adding to Home Screen and runs shortcuts in isolated storage. After enabling kiosk on a Home-Screen app there, the only way to change settings is to delete and recreate the shortcut.
 - Where you *can* edit a shortcut's URL, remove a sticky kiosk with `&kiosk=false` (or press **Ctrl-K** with a keyboard).
 
+## Keyboard shortcuts
+
+These work while the page itself has focus (click the weather display first if you've been typing in the location box or using a tab), including in fullscreen and kiosk mode.
+
+| Key | Action |
+|---|---|
+| `Space` | Play or pause |
+| `→` or `Page Down` | Next screen |
+| `←` or `Page Up` | Previous screen |
+| `↑` | Stop playback and show the list of displays |
+| `0` (zero) | Reload the forecast data |
+| `F` | Enter or exit fullscreen |
+| `Ctrl-K` | Exit kiosk mode |
+
+On a touch screen, swipe left or right on the weather display for the next or previous screen.
+
 ## Settings reference
 
 | Setting | Description |
 |---|---|
-| **Speed** | Playback speed multiplier, from "Very Fast" (1.5×) to "Very Slow" (0.5×); "Normal" is 1×. |
+| **Speed** | Playback speed, from "Very Fast" (2×) to "Very Slow" (0.67×); "Normal" is 1×. |
 | **Display Mode** | **Standard** (classic 4:3), **Widescreen** (16:9, no pillarboxing), **Widescreen Enhanced** (wider maps / more data), **Portrait Enhanced** (16:9 portrait, in progress). |
 | **Kiosk** | Immediately enters kiosk mode (hides settings). Exit by refreshing or **Ctrl-K**. |
 | **Sticky Kiosk** | Persists the kiosk preference in local storage so the page auto-enters kiosk on later visits (designed for iOS/iPad Home-Screen apps). |

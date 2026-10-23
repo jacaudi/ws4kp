@@ -32,7 +32,7 @@
 		"city": "Mobile, Mobile Downtown Airport",
 		"state": "AL",
 		"lat": 30.61389,
-		"lon": -88.0633299
+		"lon": -88.06333
 	},
 	"KBFZ": {
 		"id": "KBFZ",
@@ -202,6 +202,13 @@
 		"lat": 32.38333,
 		"lon": -86.36667
 	},
+	"KNBJ": {
+		"id": "KNBJ",
+		"city": "Barin, Barin Field, Naval Air Facility",
+		"state": "AL",
+		"lat": 30.39111,
+		"lon": -87.6325
+	},
 	"KOZR": {
 		"id": "KOZR",
 		"city": "Cairns Army Air Field / Ozark",
@@ -283,7 +290,7 @@
 		"id": "PABA",
 		"city": "Barter Island, Barter Island LRRS Airport",
 		"state": "AK",
-		"lat": 70.1338899,
+		"lat": 70.13389,
 		"lon": -143.57694
 	},
 	"PABE": {
@@ -299,13 +306,6 @@
 		"state": "AK",
 		"lat": 64,
 		"lon": -145.73333
-	},
-	"PABL": {
-		"id": "PABL",
-		"city": "Buckland, Buckland Airport",
-		"state": "AK",
-		"lat": 65.98222,
-		"lon": -161.15194
 	},
 	"PABR": {
 		"id": "PABR",
@@ -334,6 +334,20 @@
 		"state": "AK",
 		"lat": 55.22083,
 		"lon": -162.72778
+	},
+	"PACE": {
+		"id": "PACE",
+		"city": "CENTRAL AIRPORT             US         TG",
+		"state": "AK",
+		"lat": 65.57,
+		"lon": -144.78
+	},
+	"PACM": {
+		"id": "PACM",
+		"city": "Scammon Bay",
+		"state": "AK",
+		"lat": 61.8453,
+		"lon": -165.5713
 	},
 	"PACV": {
 		"id": "PACV",
@@ -384,6 +398,13 @@
 		"lat": 59.05,
 		"lon": -158.51667
 	},
+	"PADM": {
+		"id": "PADM",
+		"city": "Marshall",
+		"state": "AK",
+		"lat": 61.8643,
+		"lon": -162.0261
+	},
 	"PADQ": {
 		"id": "PADQ",
 		"city": "Kodiak, Kodiak Airport",
@@ -417,7 +438,7 @@
 		"city": "Cape Newenham, Cape Newenham LRRS Airport",
 		"state": "AK",
 		"lat": 58.65,
-		"lon": -162.0666699
+		"lon": -162.06667
 	},
 	"PAEI": {
 		"id": "PAEI",
@@ -425,13 +446,6 @@
 		"state": "AK",
 		"lat": 64.65,
 		"lon": -147.1
-	},
-	"PAEL": {
-		"id": "PAEL",
-		"city": "Elfin Cove - Elfin Cove Seaplane Base",
-		"state": "AK",
-		"lat": 58.19467,
-		"lon": -136.34663
 	},
 	"PAEM": {
 		"id": "PAEM",
@@ -467,6 +481,13 @@
 		"state": "AK",
 		"lat": 56.964,
 		"lon": -133.913
+	},
+	"PAFM": {
+		"id": "PAFM",
+		"city": "Ambler, Ambler Airport",
+		"state": "AK",
+		"lat": 67.1,
+		"lon": -157.85
 	},
 	"PAFR": {
 		"id": "PAFR",
@@ -573,6 +594,13 @@
 		"lat": 59.65,
 		"lon": -151.48333
 	},
+	"PAHP": {
+		"id": "PAHP",
+		"city": "Hooper Bay, Hooper Bay Airport",
+		"state": "AK",
+		"lat": 61.51667,
+		"lon": -166.13333
+	},
 	"PAHX": {
 		"id": "PAHX",
 		"city": "Shageluk Airport",
@@ -636,13 +664,6 @@
 		"lat": 65.6226,
 		"lon": -168.0949
 	},
-	"PAJK": {
-		"id": "PAJK",
-		"city": "NWS Office: Juneau",
-		"state": "AK",
-		"lat": 58.4,
-		"lon": -134.57001
-	},
 	"PAJN": {
 		"id": "PAJN",
 		"city": "Juneau, Juneau International Airport",
@@ -655,7 +676,7 @@
 		"city": "Koliganek",
 		"state": "AK",
 		"lat": 59.727,
-		"lon": -157.2589999
+		"lon": -157.259
 	},
 	"PAKF": {
 		"id": "PAKF",
@@ -697,7 +718,7 @@
 		"city": "Anaktuvuk Pass, Anaktuvuk Pass Airport",
 		"state": "AK",
 		"lat": 68.13361,
-		"lon": -151.7433299
+		"lon": -151.74333
 	},
 	"PAKT": {
 		"id": "PAKT",
@@ -801,8 +822,8 @@
 		"id": "PAMM",
 		"city": "Metlakatla, Metlakatla Seaplane Base",
 		"state": "AK",
-		"lat": 55.13111,
-		"lon": -131.57806
+		"lat": 55.1288,
+		"lon": -131.5886
 	},
 	"PAMO": {
 		"id": "PAMO",
@@ -818,19 +839,19 @@
 		"lat": 61.21667,
 		"lon": -149.85
 	},
-	"PANA": {
-		"id": "PANA",
-		"city": "Napakiak Airport",
+	"PAMY": {
+		"id": "PAMY",
+		"city": "Mekoryuk, Mekoryuk Airport",
 		"state": "AK",
-		"lat": 60.6903,
-		"lon": -161.9785
+		"lat": 60.36667,
+		"lon": -166.26667
 	},
 	"PANC": {
 		"id": "PANC",
 		"city": "Anchorage, Ted Stevens Anchorage International Airport",
 		"state": "AK",
 		"lat": 61.17444,
-		"lon": -149.9961099
+		"lon": -149.99611
 	},
 	"PANI": {
 		"id": "PANI",
@@ -845,13 +866,6 @@
 		"state": "AK",
 		"lat": 64.54796,
 		"lon": -149.08398
-	},
-	"PANU": {
-		"id": "PANU",
-		"city": "Nulato Airport",
-		"state": "AK",
-		"lat": 64.72933,
-		"lon": -158.07422
 	},
 	"PANV": {
 		"id": "PANV",
@@ -872,7 +886,7 @@
 		"city": "Hoonah - Hoonah Seaplane Base",
 		"state": "AK",
 		"lat": 58.097,
-		"lon": -135.4139999
+		"lon": -135.414
 	},
 	"PAOM": {
 		"id": "PAOM",
@@ -886,7 +900,7 @@
 		"city": "Toksook Bay",
 		"state": "AK",
 		"lat": 60.53352,
-		"lon": -165.1142999
+		"lon": -165.1143
 	},
 	"PAOR": {
 		"id": "PAOR",
@@ -930,13 +944,6 @@
 		"lat": 56.95,
 		"lon": -158.63333
 	},
-	"PAPM": {
-		"id": "PAPM",
-		"city": "Platinum",
-		"state": "AK",
-		"lat": 59.01667,
-		"lon": -161.8166699
-	},
 	"PAPN": {
 		"id": "PAPN",
 		"city": "Pilot Point Airport",
@@ -969,7 +976,7 @@
 		"id": "PAQT",
 		"city": "Nuiqsut, Nuiqsut Airport",
 		"state": "AK",
-		"lat": 70.2099999,
+		"lat": 70.21,
 		"lon": -151.00556
 	},
 	"PARC": {
@@ -1028,13 +1035,6 @@
 		"lat": 57.048,
 		"lon": -135.3647
 	},
-	"PASK": {
-		"id": "PASK",
-		"city": "Selawik",
-		"state": "AK",
-		"lat": 66.61667,
-		"lon": -160
-	},
 	"PASL": {
 		"id": "PASL",
 		"city": "Sleetmute",
@@ -1068,7 +1068,7 @@
 		"city": "Sparrevohn Airways Facilities Sector",
 		"state": "AK",
 		"lat": 61.1,
-		"lon": -155.5666699
+		"lon": -155.56667
 	},
 	"PASX": {
 		"id": "PASX",
@@ -1077,13 +1077,6 @@
 		"lat": 60.48333,
 		"lon": -151.03333
 	},
-	"PASY": {
-		"id": "PASY",
-		"city": "Shemya, Eareckson AFB",
-		"state": "AK",
-		"lat": 52.71667,
-		"lon": 174.11667
-	},
 	"PATA": {
 		"id": "PATA",
 		"city": "Tanana, Calhoun Memorial Airport",
@@ -1091,18 +1084,11 @@
 		"lat": 65.16667,
 		"lon": -152.1
 	},
-	"PATC": {
-		"id": "PATC",
-		"city": "Tin City Airways Facilities Sector",
-		"state": "AK",
-		"lat": 65.56667,
-		"lon": -167.91667
-	},
 	"PATE": {
 		"id": "PATE",
 		"city": "Teller",
 		"state": "AK",
-		"lat": 65.2403999,
+		"lat": 65.2404,
 		"lon": -166.3393
 	},
 	"PATG": {
@@ -1147,19 +1133,19 @@
 		"lat": 63.88333,
 		"lon": -160.8
 	},
+	"PAUT": {
+		"id": "PAUT",
+		"city": "Akun Airport",
+		"state": "AK",
+		"lat": 54.1446,
+		"lon": -165.6041
+	},
 	"PAVA": {
 		"id": "PAVA",
 		"city": "Chevak Airport",
 		"state": "AK",
 		"lat": 61.5408,
 		"lon": -165.6009
-	},
-	"PAVC": {
-		"id": "PAVC",
-		"city": "King Cove",
-		"state": "AK",
-		"lat": 55.116,
-		"lon": -162.266
 	},
 	"PAVD": {
 		"id": "PAVD",
@@ -1224,20 +1210,6 @@
 		"lat": 61.93333,
 		"lon": -147.16667
 	},
-	"PFCB": {
-		"id": "PFCB",
-		"city": "Chenega Bay Airport",
-		"state": "AK",
-		"lat": 60.07856,
-		"lon": -147.99473
-	},
-	"PFCL": {
-		"id": "PFCL",
-		"city": "Clarks Point Airport",
-		"state": "AK",
-		"lat": 58.8337,
-		"lon": -158.5294
-	},
 	"PFEL": {
 		"id": "PFEL",
 		"city": "Elim Airport",
@@ -1245,26 +1217,12 @@
 		"lat": 64.615,
 		"lon": -162.2705
 	},
-	"PFKO": {
-		"id": "PFKO",
-		"city": "Kotlik Airport",
-		"state": "AK",
-		"lat": 63.03058,
-		"lon": -163.5326399
-	},
 	"PFKT": {
 		"id": "PFKT",
 		"city": "Brevig Mission Airport",
 		"state": "AK",
 		"lat": 65.3313,
 		"lon": -166.4657
-	},
-	"PFKW": {
-		"id": "PFKW",
-		"city": "Kwethluk Airport",
-		"state": "AK",
-		"lat": 60.7903,
-		"lon": -161.4437
 	},
 	"PFNO": {
 		"id": "PFNO",
@@ -1280,13 +1238,6 @@
 		"lat": 64.3711,
 		"lon": -161.224
 	},
-	"PFTO": {
-		"id": "PFTO",
-		"city": "Tok Junction Airport",
-		"state": "AK",
-		"lat": 63.32951,
-		"lon": -142.95368
-	},
 	"PFWS": {
 		"id": "PFWS",
 		"city": "South Naknek Nr 2 Airport",
@@ -1301,32 +1252,11 @@
 		"lat": 66.56667,
 		"lon": -145.26667
 	},
-	"PFZK": {
-		"id": "PFZK",
-		"city": "Akiachak Airport",
-		"state": "AK",
-		"lat": 60.91381,
-		"lon": -161.4933299
-	},
-	"POKA": {
-		"id": "POKA",
-		"city": "Tununak Airport",
-		"state": "AK",
-		"lat": 60.56953,
-		"lon": -165.24628
-	},
-	"PPIT": {
-		"id": "PPIT",
-		"city": "Nunapitchuk Airport",
-		"state": "AK",
-		"lat": 60.906,
-		"lon": -162.4406
-	},
 	"PPIZ": {
 		"id": "PPIZ",
 		"city": "Point Lay, Point Lay LRRS Airport",
 		"state": "AK",
-		"lat": 69.7166699,
+		"lat": 69.71667,
 		"lon": -163
 	},
 	"KALK": {
@@ -1357,13 +1287,6 @@
 		"lat": 33.4204,
 		"lon": -112.6862
 	},
-	"KCGZ": {
-		"id": "KCGZ",
-		"city": "Casa Grande, Casa Grande Municipal Airport",
-		"state": "AZ",
-		"lat": 32.95,
-		"lon": -111.76667
-	},
 	"KCHD": {
 		"id": "KCHD",
 		"city": "Chandler, Chandler Municipal Airport",
@@ -1375,7 +1298,7 @@
 		"id": "KCMR",
 		"city": "Williams/Clark Memorial Airport",
 		"state": "AZ",
-		"lat": 35.3054721,
+		"lat": 35.3054722,
 		"lon": -112.1943889
 	},
 	"KDMA": {
@@ -1417,7 +1340,7 @@
 		"id": "KFLG",
 		"city": "Flagstaff Pulliam Airport",
 		"state": "AZ",
-		"lat": 35.1443299,
+		"lat": 35.14433,
 		"lon": -111.66637
 	},
 	"KGCN": {
@@ -1466,7 +1389,7 @@
 		"id": "KIGM",
 		"city": "Kingman, Kingman Airport",
 		"state": "AZ",
-		"lat": 35.2577799,
+		"lat": 35.25778,
 		"lon": -113.93306
 	},
 	"KINW": {
@@ -1487,7 +1410,7 @@
 		"id": "KJTC",
 		"city": "Springerville Municipal Airport",
 		"state": "AZ",
-		"lat": 34.1293999,
+		"lat": 34.1294,
 		"lon": -109.3109
 	},
 	"KLGF": {
@@ -1504,13 +1427,6 @@
 		"lat": 33.53333,
 		"lon": -112.38333
 	},
-	"KMZJ": {
-		"id": "KMZJ",
-		"city": "Pinal Airpark",
-		"state": "AZ",
-		"lat": 32.50983,
-		"lon": -111.32533
-	},
 	"KNOZ": {
 		"id": "KNOZ",
 		"city": "Yuma Auxiliary Airfield",
@@ -1522,7 +1438,7 @@
 		"id": "KNYL",
 		"city": "Yuma, Marine Corps Air Station",
 		"state": "AZ",
-		"lat": 32.6594399,
+		"lat": 32.65944,
 		"lon": -114.59306
 	},
 	"KOLS": {
@@ -1634,7 +1550,7 @@
 		"id": "KAGO",
 		"city": "Ralph C Weiser Field Airport",
 		"state": "AR",
-		"lat": 33.2274699,
+		"lat": 33.22747,
 		"lon": -93.217
 	},
 	"KARG": {
@@ -1700,19 +1616,12 @@
 		"lat": 34.04694,
 		"lon": -94.39944
 	},
-	"KDRP": {
-		"id": "KDRP",
-		"city": "Delta Regional Airport",
-		"state": "AR",
-		"lat": 35.12005,
-		"lon": -90.8265
-	},
 	"KELD": {
 		"id": "KELD",
 		"city": "South Arkansas Regional Airport",
 		"state": "AR",
 		"lat": 33.22075,
-		"lon": -92.8139999
+		"lon": -92.814
 	},
 	"KFLP": {
 		"id": "KFLP",
@@ -1733,7 +1642,7 @@
 		"city": "Fayetteville, Drake Field",
 		"state": "AR",
 		"lat": 36.01028,
-		"lon": -94.1677799
+		"lon": -94.16778
 	},
 	"KHKA": {
 		"id": "KHKA",
@@ -1821,10 +1730,10 @@
 	},
 	"KRUE": {
 		"id": "KRUE",
-		"city": "Russelville Municipal Airport",
+		"city": "Russellville Regional Airport",
 		"state": "AR",
 		"lat": 35.25737,
-		"lon": -93.0949399
+		"lon": -93.09494
 	},
 	"KSGT": {
 		"id": "KSGT",
@@ -1845,7 +1754,7 @@
 		"city": "Searcy Municipal Airport",
 		"state": "AR",
 		"lat": 35.21349,
-		"lon": -91.7392799
+		"lon": -91.73928
 	},
 	"KSUZ": {
 		"id": "KSUZ",
@@ -1866,21 +1775,14 @@
 		"city": "Bentonville, Bentonville Municipal Airport/Louise M Thaden Field",
 		"state": "AR",
 		"lat": 36.35,
-		"lon": -94.2166699
+		"lon": -94.21667
 	},
 	"KXNA": {
 		"id": "KXNA",
 		"city": "Northwest Arkansas Regional Airport",
 		"state": "AR",
 		"lat": 36.28977,
-		"lon": -94.3114499
-	},
-	"KABH": {
-		"id": "KABH",
-		"city": "ELLICOTT-B AFA",
-		"state": "CO",
-		"lat": 38.7578,
-		"lon": -104.3013
+		"lon": -94.31145
 	},
 	"KAEJ": {
 		"id": "KAEJ",
@@ -1907,7 +1809,7 @@
 		"id": "KAJZ",
 		"city": "Delta/Blake Field Airport",
 		"state": "CO",
-		"lat": 38.7868799,
+		"lat": 38.78688,
 		"lon": -108.06584
 	},
 	"KAKO": {
@@ -1954,7 +1856,7 @@
 	},
 	"KBJC": {
 		"id": "KBJC",
-		"city": "Rocky Mountain Metro",
+		"city": "Broomfield / Jeffco",
 		"state": "CO",
 		"lat": 39.90085,
 		"lon": -105.10417
@@ -1998,7 +1900,7 @@
 		"id": "KCOS",
 		"city": "City of Colorado Springs Municipal Airport",
 		"state": "CO",
-		"lat": 38.8094899,
+		"lat": 38.80949,
 		"lon": -104.68873
 	},
 	"KCPW": {
@@ -2012,7 +1914,7 @@
 		"id": "KCWN",
 		"city": "Cheyenne Mountain",
 		"state": "CO",
-		"lat": 38.7434299,
+		"lat": 38.74343,
 		"lon": -104.84334
 	},
 	"KDEN": {
@@ -2111,7 +2013,7 @@
 		"city": "Hayden, Yampa Valley Airport",
 		"state": "CO",
 		"lat": 40.48333,
-		"lon": -107.2166699
+		"lon": -107.21667
 	},
 	"KHEQ": {
 		"id": "KHEQ",
@@ -2125,13 +2027,13 @@
 		"city": "Burlington - Carson County Airport",
 		"state": "CO",
 		"lat": 39.24149,
-		"lon": -102.2818999
+		"lon": -102.2819
 	},
 	"KLAA": {
 		"id": "KLAA",
 		"city": "Lamar Municipal Airport",
 		"state": "CO",
-		"lat": 38.0717799,
+		"lat": 38.07178,
 		"lon": -102.68745
 	},
 	"KLHX": {
@@ -2167,7 +2069,7 @@
 		"city": "Elbert Mountain - Monument Pass",
 		"state": "CO",
 		"lat": 39.22317,
-		"lon": -104.6422599
+		"lon": -104.64226
 	},
 	"KMTJ": {
 		"id": "KMTJ",
@@ -2341,7 +2243,7 @@
 		"id": "KBLH",
 		"city": "Blythe, Blythe Airport",
 		"state": "CA",
-		"lat": 33.6191699,
+		"lat": 33.61917,
 		"lon": -114.71694
 	},
 	"KBLU": {
@@ -2390,7 +2292,7 @@
 		"id": "KCIC",
 		"city": "Chico Municipal Airport",
 		"state": "CA",
-		"lat": 39.7987899,
+		"lat": 39.79879,
 		"lon": -121.85795
 	},
 	"KCMA": {
@@ -2411,7 +2313,7 @@
 		"id": "KCPU",
 		"city": "San Andreas Calaveras County Airport",
 		"state": "CA",
-		"lat": 38.1460999,
+		"lat": 38.1461,
 		"lon": -120.6482
 	},
 	"KCRQ": {
@@ -2453,7 +2355,7 @@
 		"id": "KDWA",
 		"city": "Yolo County Airport",
 		"state": "CA",
-		"lat": 38.5793899,
+		"lat": 38.57939,
 		"lon": -121.85694
 	},
 	"KEDU": {
@@ -2481,7 +2383,7 @@
 		"id": "KEMT",
 		"city": "El Monte",
 		"state": "CA",
-		"lat": 34.0833299,
+		"lat": 34.08333,
 		"lon": -118.03333
 	},
 	"KFAT": {
@@ -2516,21 +2418,21 @@
 		"id": "KGOO",
 		"city": "Nevada County Air Park",
 		"state": "CA",
-		"lat": 39.2240279,
+		"lat": 39.224028,
 		"lon": -121.003083
 	},
 	"KHAF": {
 		"id": "KHAF",
 		"city": "Half Moon Bay Airport",
 		"state": "CA",
-		"lat": 37.5135999,
+		"lat": 37.5136,
 		"lon": -122.4996
 	},
 	"KHHR": {
 		"id": "KHHR",
 		"city": "Hawthorne, Hawthorne Municipal Airport",
 		"state": "CA",
-		"lat": 33.9236099,
+		"lat": 33.92361,
 		"lon": -118.33194
 	},
 	"KHJO": {
@@ -2638,11 +2540,18 @@
 		"lat": 37.28306,
 		"lon": -120.50778
 	},
+	"KMER": {
+		"id": "KMER",
+		"city": "Merced / Castle Air Force Base",
+		"state": "CA",
+		"lat": 37.36667,
+		"lon": -120.56667
+	},
 	"KMHR": {
 		"id": "KMHR",
 		"city": "Sacramento Mather Airport",
 		"state": "CA",
-		"lat": 38.5599599,
+		"lat": 38.55996,
 		"lon": -121.28397
 	},
 	"KMHS": {
@@ -2908,7 +2817,7 @@
 		"id": "KRHV",
 		"city": "San Jose / Reid / Hillv",
 		"state": "CA",
-		"lat": 37.3333299,
+		"lat": 37.33333,
 		"lon": -121.81667
 	},
 	"KRIV": {
@@ -2950,28 +2859,28 @@
 		"id": "KSBD",
 		"city": "San Bernardino Intl. Airport",
 		"state": "CA",
-		"lat": 34.0902699,
+		"lat": 34.09027,
 		"lon": -117.24705
 	},
 	"KSBP": {
 		"id": "KSBP",
 		"city": "San Luis Obispo, San Luis Obispo County-Mc Chesney Field",
 		"state": "CA",
-		"lat": 35.2361099,
+		"lat": 35.23611,
 		"lon": -120.63611
 	},
 	"KSCK": {
 		"id": "KSCK",
 		"city": "Stockton, Stockton Metropolitan Airport",
 		"state": "CA",
-		"lat": 37.8897199,
+		"lat": 37.88972,
 		"lon": -121.22361
 	},
 	"KSDB": {
 		"id": "KSDB",
 		"city": "Sandberg",
 		"state": "CA",
-		"lat": 34.7436099,
+		"lat": 34.74361,
 		"lon": -118.72444
 	},
 	"KSDM": {
@@ -3083,8 +2992,15 @@
 		"id": "KTCY",
 		"city": "Tracy Municipal Airport",
 		"state": "CA",
-		"lat": 37.6888999,
+		"lat": 37.6889,
 		"lon": -121.44158
+	},
+	"KTNP": {
+		"id": "KTNP",
+		"city": "29PALMS",
+		"state": "CA",
+		"lat": 34.13159,
+		"lon": -115.94582
 	},
 	"KTOA": {
 		"id": "KTOA",
@@ -3092,13 +3008,6 @@
 		"state": "CA",
 		"lat": 33.8,
 		"lon": -118.33333
-	},
-	"KTQS": {
-		"id": "KTQS",
-		"city": "Vandenberg SFB - South",
-		"state": "CA",
-		"lat": 34.633,
-		"lon": -120.617
 	},
 	"KTRK": {
 		"id": "KTRK",
@@ -3125,7 +3034,7 @@
 		"id": "KTVL",
 		"city": "South Lake Tahoe, Lake Tahoe Airport",
 		"state": "CA",
-		"lat": 38.8983599,
+		"lat": 38.89836,
 		"lon": -119.99615
 	},
 	"KUKI": {
@@ -3139,7 +3048,7 @@
 		"id": "KVBG",
 		"city": "Vandenberg Space Force Base",
 		"state": "CA",
-		"lat": 34.7294399,
+		"lat": 34.72944,
 		"lon": -120.57667
 	},
 	"KVCB": {
@@ -3190,27 +3099,6 @@
 		"state": "CA",
 		"lat": 36.93944,
 		"lon": -121.78889
-	},
-	"KDOV": {
-		"id": "KDOV",
-		"city": "Dover Air Force Base",
-		"state": "DE",
-		"lat": 39.13333,
-		"lon": -75.4666699
-	},
-	"KGED": {
-		"id": "KGED",
-		"city": "Georgetown - Delaware Coastal Airport",
-		"state": "DE",
-		"lat": 38.68974,
-		"lon": -75.36245
-	},
-	"KILG": {
-		"id": "KILG",
-		"city": "Wilmington Airport",
-		"state": "DE",
-		"lat": 39.67442,
-		"lon": -75.60567
 	},
 	"KBDL": {
 		"id": "KBDL",
@@ -3289,12 +3177,40 @@
 		"lat": 41.38389,
 		"lon": -72.50583
 	},
+	"KDOV": {
+		"id": "KDOV",
+		"city": "Dover Air Force Base",
+		"state": "DE",
+		"lat": 39.13333,
+		"lon": -75.46667
+	},
+	"KGED": {
+		"id": "KGED",
+		"city": "Georgetown - Delaware Coastal Airport",
+		"state": "DE",
+		"lat": 38.68974,
+		"lon": -75.36245
+	},
+	"KILG": {
+		"id": "KILG",
+		"city": "Wilmington Airport",
+		"state": "DE",
+		"lat": 39.67442,
+		"lon": -75.60567
+	},
 	"KAAF": {
 		"id": "KAAF",
 		"city": "Apalachicola, Apalachicola",
 		"state": "FL",
 		"lat": 29.72694,
 		"lon": -85.02472
+	},
+	"KAGR": {
+		"id": "KAGR",
+		"city": "Avon Park Gunnery Range",
+		"state": "FL",
+		"lat": 27.65,
+		"lon": -81.33333
 	},
 	"KAPF": {
 		"id": "KAPF",
@@ -3314,7 +3230,7 @@
 		"id": "KBCT",
 		"city": "Boca Raton, Boca Raton Airport",
 		"state": "FL",
-		"lat": 26.3786099,
+		"lat": 26.37861,
 		"lon": -80.10778
 	},
 	"KBKV": {
@@ -3343,7 +3259,7 @@
 		"city": "Crystal River Airport",
 		"state": "FL",
 		"lat": 28.8673,
-		"lon": -82.5712999
+		"lon": -82.5713
 	},
 	"KCLW": {
 		"id": "KCLW",
@@ -3373,13 +3289,6 @@
 		"lat": 30.33709,
 		"lon": -81.51275
 	},
-	"KCTY": {
-		"id": "KCTY",
-		"city": "Cross City Airport",
-		"state": "FL",
-		"lat": 29.633326,
-		"lon": -83.105458
-	},
 	"KDAB": {
 		"id": "KDAB",
 		"city": "Daytona Beach International Airport",
@@ -3394,6 +3303,13 @@
 		"lat": 29.067,
 		"lon": -81.2837
 	},
+	"KDJT": {
+		"id": "KDJT",
+		"city": "President Donald J. Trump International Airport",
+		"state": "FL",
+		"lat": 26.6851,
+		"lon": -80.09919
+	},
 	"KDTS": {
 		"id": "KDTS",
 		"city": "Destin, Destin-Ft. Walton Beach Airport",
@@ -3406,7 +3322,7 @@
 		"city": "Panama City - Northwest Florida Beaches International Airport",
 		"state": "FL",
 		"lat": 30.3582,
-		"lon": -85.7955999
+		"lon": -85.7956
 	},
 	"KEGI": {
 		"id": "KEGI",
@@ -3510,7 +3426,7 @@
 		"id": "KHST",
 		"city": "Homestead Air Reserve Base",
 		"state": "FL",
-		"lat": 25.4948799,
+		"lat": 25.49488,
 		"lon": -80.37324
 	},
 	"KHWO": {
@@ -3519,13 +3435,6 @@
 		"state": "FL",
 		"lat": 25.99889,
 		"lon": -80.24111
-	},
-	"KIMM": {
-		"id": "KIMM",
-		"city": "IMMOKALEE",
-		"state": "FL",
-		"lat": 26.43,
-		"lon": -81.4
 	},
 	"KINF": {
 		"id": "KINF",
@@ -3634,7 +3543,7 @@
 	},
 	"KNEN": {
 		"id": "KNEN",
-		"city": "WHITEHOUSE NOF",
+		"city": "WHITEHOUSE NOF: JACKSON     US         TG",
 		"state": "FL",
 		"lat": 30.35,
 		"lon": -81.88
@@ -3657,7 +3566,7 @@
 		"id": "KNQX",
 		"city": "Key West Naval Air Station",
 		"state": "FL",
-		"lat": 24.5800899,
+		"lat": 24.58009,
 		"lon": -81.68293
 	},
 	"KNRB": {
@@ -3715,13 +3624,6 @@
 		"state": "FL",
 		"lat": 30.06444,
 		"lon": -85.5637
-	},
-	"KPBI": {
-		"id": "KPBI",
-		"city": "West Palm Beach - Palm Beach International Airport",
-		"state": "FL",
-		"lat": 26.6850999,
-		"lon": -80.0991899
 	},
 	"KPCM": {
 		"id": "KPCM",
@@ -3919,13 +3821,6 @@
 		"lat": 21.48333,
 		"lon": -158.03333
 	},
-	"PHHN": {
-		"id": "PHHN",
-		"city": "HANA",
-		"state": "HI",
-		"lat": 20.79563,
-		"lon": -156.01444
-	},
 	"PHJR": {
 		"id": "PHJR",
 		"city": "Oahu, Kalaeloa Airport",
@@ -3945,7 +3840,7 @@
 		"city": "Lihue, Lihue Airport",
 		"state": "HI",
 		"lat": 21.98389,
-		"lon": -159.3411099
+		"lon": -159.34111
 	},
 	"PHMK": {
 		"id": "PHMK",
@@ -3986,7 +3881,7 @@
 		"id": "PHOG",
 		"city": "Kahului, Kahului Airport",
 		"state": "HI",
-		"lat": 20.8924999,
+		"lat": 20.8925,
 		"lon": -156.43694
 	},
 	"PHSF": {
@@ -4001,7 +3896,7 @@
 		"city": "Hilo, Hilo International Airport",
 		"state": "HI",
 		"lat": 19.72222,
-		"lon": -155.0558299
+		"lon": -155.05583
 	},
 	"KABY": {
 		"id": "KABY",
@@ -4029,7 +3924,7 @@
 		"city": "Athens, Athens Airport",
 		"state": "GA",
 		"lat": 33.95083,
-		"lon": -83.3280599
+		"lon": -83.32806
 	},
 	"KAJR": {
 		"id": "KAJR",
@@ -4037,13 +3932,6 @@
 		"state": "GA",
 		"lat": 34.4998,
 		"lon": -83.5567
-	},
-	"KAMG": {
-		"id": "KAMG",
-		"city": "Alma, Bacon County Airport",
-		"state": "GA",
-		"lat": 31.53611,
-		"lon": -82.50667
 	},
 	"KATL": {
 		"id": "KATL",
@@ -4059,26 +3947,12 @@
 		"lat": 31.25,
 		"lon": -82.4
 	},
-	"KAZE": {
-		"id": "KAZE",
-		"city": "Hazlehurst Airport",
-		"state": "GA",
-		"lat": 31.8847,
-		"lon": -82.6474
-	},
 	"KBGE": {
 		"id": "KBGE",
 		"city": "Bainbridge, Decatur County Industrial Air Park Airport",
 		"state": "GA",
 		"lat": 30.96667,
 		"lon": -84.63333
-	},
-	"KBHC": {
-		"id": "KBHC",
-		"city": "Baxley Municipal Airport",
-		"state": "GA",
-		"lat": 31.7138,
-		"lon": -82.3938
 	},
 	"KBIJ": {
 		"id": "KBIJ",
@@ -4092,7 +3966,7 @@
 		"city": "Brunswick / Glynco",
 		"state": "GA",
 		"lat": 31.25,
-		"lon": -81.4666699
+		"lon": -81.46667
 	},
 	"KCCO": {
 		"id": "KCCO",
@@ -4114,13 +3988,6 @@
 		"state": "GA",
 		"lat": 34.31056,
 		"lon": -84.42389
-	},
-	"KCPP": {
-		"id": "KCPP",
-		"city": "Greene County Regional Airport",
-		"state": "GA",
-		"lat": 33.5979699,
-		"lon": -83.13826
 	},
 	"KCSG": {
 		"id": "KCSG",
@@ -4147,7 +4014,7 @@
 		"id": "KCWV",
 		"city": "Claxton Evans County Airport",
 		"state": "GA",
-		"lat": 32.1950999,
+		"lat": 32.1951,
 		"lon": -81.8696
 	},
 	"KCXU": {
@@ -4248,13 +4115,6 @@
 		"lat": 33.3899,
 		"lon": -84.331
 	},
-	"KHOE": {
-		"id": "KHOE",
-		"city": "Homerville Airport",
-		"state": "GA",
-		"lat": 31.0559,
-		"lon": -82.7741
-	},
 	"KHQU": {
 		"id": "KHQU",
 		"city": "Thomson, Thomson-McDuffie County Airport",
@@ -4281,7 +4141,7 @@
 		"city": "Jesup-Wayne County Airport",
 		"state": "GA",
 		"lat": 31.554,
-		"lon": -81.8824999
+		"lon": -81.8825
 	},
 	"KJYL": {
 		"id": "KJYL",
@@ -4289,13 +4149,6 @@
 		"state": "GA",
 		"lat": 32.64528,
 		"lon": -81.59639
-	},
-	"KJZP": {
-		"id": "KJZP",
-		"city": "Jasper Pickens County Airport",
-		"state": "GA",
-		"lat": 34.45417,
-		"lon": -84.45971
 	},
 	"KLGC": {
 		"id": "KLGC",
@@ -4315,7 +4168,7 @@
 		"id": "KLSF",
 		"city": "Fort Benning",
 		"state": "GA",
-		"lat": 32.3333299,
+		"lat": 32.33333,
 		"lon": -84.83333
 	},
 	"KLZU": {
@@ -4360,12 +4213,19 @@
 		"lat": 33.15417,
 		"lon": -83.24056
 	},
+	"KMQW": {
+		"id": "KMQW",
+		"city": "Telfair-Wheeler Airport",
+		"state": "GA",
+		"lat": 32.09699,
+		"lon": -82.87941
+	},
 	"KOPN": {
 		"id": "KOPN",
 		"city": "Thomaston, Thomaston-Upson County Airport",
 		"state": "GA",
 		"lat": 32.955,
-		"lon": -84.2644399
+		"lon": -84.26444
 	},
 	"KPDK": {
 		"id": "KPDK",
@@ -4385,21 +4245,28 @@
 		"id": "KPUJ",
 		"city": "Dallas Paulding County Regional Airport",
 		"state": "GA",
-		"lat": 33.9189999,
+		"lat": 33.919,
 		"lon": -84.952
+	},
+	"KPXE": {
+		"id": "KPXE",
+		"city": "Perry-Houston County Airport",
+		"state": "GA",
+		"lat": 32.5106,
+		"lon": -83.7673
 	},
 	"KRMG": {
 		"id": "KRMG",
 		"city": "Rome, R. B. Russell Airport",
 		"state": "GA",
 		"lat": 34.34778,
-		"lon": -85.1611099
+		"lon": -85.16111
 	},
 	"KRVJ": {
 		"id": "KRVJ",
 		"city": "Swinton Smith Field at Reidsville Municipal Airport",
 		"state": "GA",
-		"lat": 32.0594899,
+		"lat": 32.05949,
 		"lon": -82.15358
 	},
 	"KRYY": {
@@ -4413,7 +4280,7 @@
 		"id": "KSAV",
 		"city": "Savannah-Hilton Head International Airport",
 		"state": "GA",
-		"lat": 32.1313699,
+		"lat": 32.13137,
 		"lon": -81.20226
 	},
 	"KSBO": {
@@ -4442,7 +4309,7 @@
 		"city": "Statesboro, Statesboro-Bulloch County Airport",
 		"state": "GA",
 		"lat": 32.48306,
-		"lon": -81.7372199
+		"lon": -81.73722
 	},
 	"KTMA": {
 		"id": "KTMA",
@@ -4455,7 +4322,7 @@
 		"id": "KTOC",
 		"city": "Toccoa Le Tourneau Airport",
 		"state": "GA",
-		"lat": 34.5927999,
+		"lat": 34.5928,
 		"lon": -83.2964
 	},
 	"KTVI": {
@@ -4535,13 +4402,6 @@
 		"lat": 43.74167,
 		"lon": -111.09778
 	},
-	"KETI": {
-		"id": "KETI",
-		"city": "Ketchum Ranger Station",
-		"state": "ID",
-		"lat": 43.6816666,
-		"lon": -114.3627777
-	},
 	"KEUL": {
 		"id": "KEUL",
 		"city": "Caldwell - Caldwell Industrial Airport",
@@ -4567,7 +4427,7 @@
 		"id": "KIDA",
 		"city": "Idaho Falls Regional Airport",
 		"state": "ID",
-		"lat": 43.5208299,
+		"lat": 43.52083,
 		"lon": -112.06611
 	},
 	"KJER": {
@@ -4654,47 +4514,12 @@
 		"lat": 48.29944,
 		"lon": -116.56
 	},
-	"KTBI": {
-		"id": "KTBI",
-		"city": "Kettle Butte",
-		"state": "ID",
-		"lat": 43.5486099,
-		"lon": -112.32583
-	},
 	"KTWF": {
 		"id": "KTWF",
 		"city": "Joslin Field - Magic Valley Regional Airport",
 		"state": "ID",
-		"lat": 42.4784999,
+		"lat": 42.4785,
 		"lon": -114.47739
-	},
-	"PALI": {
-		"id": "PALI",
-		"city": "Snake River near Irwin, ID",
-		"state": "ID",
-		"lat": 43.3508333,
-		"lon": -111.2183333
-	},
-	"PARI": {
-		"id": "PARI",
-		"city": "Boise River near Parma, ID",
-		"state": "ID",
-		"lat": 43.7816666,
-		"lon": -116.9713888
-	},
-	"PAYI": {
-		"id": "PAYI",
-		"city": "North Fork Payette River at McCall, Idaho",
-		"state": "ID",
-		"lat": 44.9083333,
-		"lon": -116.1194444
-	},
-	"PECI": {
-		"id": "PECI",
-		"city": "Peoples Canal",
-		"state": "ID",
-		"lat": 43.2841666,
-		"lon": -112.25
 	},
 	"PICI": {
 		"id": "PICI",
@@ -4703,68 +4528,12 @@
 		"lat": 43.31167,
 		"lon": -114.16583
 	},
-	"PLCI": {
-		"id": "PLCI",
-		"city": "Palisades Canal near Irwin, ID",
-		"state": "ID",
-		"lat": 43.7458333,
-		"lon": -112.1027777
-	},
-	"PLEI": {
-		"id": "PLEI",
-		"city": "Payette River near Letha, ID",
-		"state": "ID",
-		"lat": 43.8963888,
-		"lon": -116.6258333
-	},
 	"PMAI": {
 		"id": "PMAI",
 		"city": "PARMA",
 		"state": "ID",
 		"lat": 43.8,
 		"lon": -116.93333
-	},
-	"PNRI": {
-		"id": "PNRI",
-		"city": "PN Region USBR Hydromet Test Site - Boise, ID",
-		"state": "ID",
-		"lat": 43.6225,
-		"lon": -116.1933333
-	},
-	"POCI": {
-		"id": "POCI",
-		"city": "Porter Canal",
-		"state": "ID",
-		"lat": 43.5030555,
-		"lon": -112.0480555
-	},
-	"PRKI": {
-		"id": "PRKI",
-		"city": "Parks and Lewisville Canal near Rigby, ID",
-		"state": "ID",
-		"lat": 43.6888888,
-		"lon": -111.8661111
-	},
-	"PRLI": {
-		"id": "PRLI",
-		"city": "South Fork Payette River at Lowman, ID",
-		"state": "ID",
-		"lat": 44.0847222,
-		"lon": -115.6027777
-	},
-	"PRPI": {
-		"id": "PRPI",
-		"city": "Payette River near Payette, ID",
-		"state": "ID",
-		"lat": 44.0424999,
-		"lon": -116.9241666
-	},
-	"PSFI": {
-		"id": "PSFI",
-		"city": "Post Falls",
-		"state": "ID",
-		"lat": 47.71366,
-		"lon": -116.9701
 	},
 	"KAID": {
 		"id": "KAID",
@@ -4799,7 +4568,7 @@
 		"city": "Virgil I Grissom Municipal Airport",
 		"state": "IN",
 		"lat": 38.84003,
-		"lon": -86.4453599
+		"lon": -86.44536
 	},
 	"KBMG": {
 		"id": "KBMG",
@@ -4833,7 +4602,7 @@
 		"id": "KEVV",
 		"city": "Evansville, Evansville Regional Airport",
 		"state": "IN",
-		"lat": 38.0430599,
+		"lat": 38.04306,
 		"lon": -87.52028
 	},
 	"KEYE": {
@@ -4904,7 +4673,7 @@
 		"city": "Auburn De Kalb County Airport",
 		"state": "IN",
 		"lat": 41.307,
-		"lon": -85.0639999
+		"lon": -85.064
 	},
 	"KGYY": {
 		"id": "KGYY",
@@ -4918,7 +4687,14 @@
 		"city": "Greenwood Municipal Airport",
 		"state": "IN",
 		"lat": 39.6276,
-		"lon": -86.0879999
+		"lon": -86.088
+	},
+	"KHHG": {
+		"id": "KHHG",
+		"city": "Huntington Municipal Airport",
+		"state": "IN",
+		"lat": 40.8529,
+		"lon": -85.4571
 	},
 	"KHLB": {
 		"id": "KHLB",
@@ -4973,7 +4749,7 @@
 		"id": "KMCX",
 		"city": "Monticello White County Airport",
 		"state": "IN",
-		"lat": 40.7087999,
+		"lat": 40.7088,
 		"lon": -86.7668
 	},
 	"KMGC": {
@@ -5057,7 +4833,7 @@
 		"id": "KSBN",
 		"city": "South Bend International Airport",
 		"state": "IN",
-		"lat": 41.7088899,
+		"lat": 41.70889,
 		"lon": -86.31861
 	},
 	"KSMD": {
@@ -5072,7 +4848,7 @@
 		"city": "INDIANAPOLIS",
 		"state": "IN",
 		"lat": 40.03066,
-		"lon": -86.2514999
+		"lon": -86.2515
 	},
 	"KUMP": {
 		"id": "KUMP",
@@ -5080,13 +4856,6 @@
 		"state": "IN",
 		"lat": 39.9354,
 		"lon": -86.04507
-	},
-	"KUWL": {
-		"id": "KUWL",
-		"city": "New Castle Henry County Airport",
-		"state": "IN",
-		"lat": 39.87672,
-		"lon": -85.32527
 	},
 	"KVPZ": {
 		"id": "KVPZ",
@@ -5121,7 +4890,7 @@
 		"city": "Ames, Ames Municipal Airport",
 		"state": "IA",
 		"lat": 41.99056,
-		"lon": -93.6188899
+		"lon": -93.61889
 	},
 	"KAWG": {
 		"id": "KAWG",
@@ -5134,7 +4903,7 @@
 		"id": "KAXA",
 		"city": "Algona",
 		"state": "IA",
-		"lat": 43.0833299,
+		"lat": 43.08333,
 		"lon": -94.26667
 	},
 	"KBNW": {
@@ -5162,7 +4931,7 @@
 		"id": "KCBF",
 		"city": "Council Bluffs",
 		"state": "IA",
-		"lat": 41.2612499,
+		"lat": 41.26125,
 		"lon": -95.7604
 	},
 	"KCCY": {
@@ -5204,7 +4973,7 @@
 		"id": "KCSQ",
 		"city": "Creston Municipal Airport",
 		"state": "IA",
-		"lat": 41.0188599,
+		"lat": 41.01886,
 		"lon": -94.361
 	},
 	"KCWI": {
@@ -5255,13 +5024,6 @@
 		"state": "IA",
 		"lat": 42.43724,
 		"lon": -93.87237
-	},
-	"KEOK": {
-		"id": "KEOK",
-		"city": "Keokuk Municipal Airport",
-		"state": "IA",
-		"lat": 40.46149,
-		"lon": -91.42739
 	},
 	"KEST": {
 		"id": "KEST",
@@ -5330,7 +5092,7 @@
 		"id": "KIFA",
 		"city": "Iowa Falls Municipal Airport",
 		"state": "IA",
-		"lat": 42.4709999,
+		"lat": 42.471,
 		"lon": -93.27
 	},
 	"KIIB": {
@@ -5351,7 +5113,7 @@
 		"id": "KIOW",
 		"city": "Iowa City Municipal Airport",
 		"state": "IA",
-		"lat": 41.6394499,
+		"lat": 41.63945,
 		"lon": -91.5445
 	},
 	"KLRJ": {
@@ -5417,13 +5179,6 @@
 		"lat": 41.22611,
 		"lon": -92.49361
 	},
-	"KOTM": {
-		"id": "KOTM",
-		"city": "Ottumwa Regional Airport",
-		"state": "IA",
-		"lat": 41.10082,
-		"lon": -92.4445099
-	},
 	"KOXV": {
 		"id": "KOXV",
 		"city": "Knoxville",
@@ -5443,7 +5198,7 @@
 		"city": "Perry Municipal Airport",
 		"state": "IA",
 		"lat": 41.828,
-		"lon": -94.1598999
+		"lon": -94.1599
 	},
 	"KRDK": {
 		"id": "KRDK",
@@ -5592,18 +5347,11 @@
 		"lat": 41.93381,
 		"lon": -88.70657
 	},
-	"KDNV": {
-		"id": "KDNV",
-		"city": "Danville, Vermilion County Airport",
-		"state": "IL",
-		"lat": 40.19944,
-		"lon": -87.59556
-	},
 	"KDPA": {
 		"id": "KDPA",
 		"city": "Chicago / West Chicago, Dupage Airport",
 		"state": "IL",
-		"lat": 41.8963899,
+		"lat": 41.89639,
 		"lon": -88.25111
 	},
 	"KENL": {
@@ -5625,7 +5373,7 @@
 		"city": "Flora Municipal Airport",
 		"state": "IL",
 		"lat": 38.66726,
-		"lon": -88.4526999
+		"lon": -88.4527
 	},
 	"KFWC": {
 		"id": "KFWC",
@@ -5638,7 +5386,7 @@
 		"id": "KGBG",
 		"city": "Galesburg Municipal Airport",
 		"state": "IL",
-		"lat": 40.9328999,
+		"lat": 40.9329,
 		"lon": -90.43339
 	},
 	"KHSB": {
@@ -5659,7 +5407,7 @@
 		"id": "KIJX",
 		"city": "Jacksonville Municipal Airport",
 		"state": "IL",
-		"lat": 39.7740099,
+		"lat": 39.77401,
 		"lon": -90.24187
 	},
 	"KIKK": {
@@ -5715,7 +5463,7 @@
 		"id": "KMQB",
 		"city": "Macomb Municipal Airport",
 		"state": "IL",
-		"lat": 40.5176299,
+		"lat": 40.51763,
 		"lon": -90.64807
 	},
 	"KMTO": {
@@ -5723,7 +5471,7 @@
 		"city": "Mattoon / Charleston, Coles County Memorial Airport",
 		"state": "IL",
 		"lat": 39.47806,
-		"lon": -88.2791699
+		"lon": -88.27917
 	},
 	"KMVN": {
 		"id": "KMVN",
@@ -5751,13 +5499,13 @@
 		"city": "Chicago, Chicago-O'Hare International Airport",
 		"state": "IL",
 		"lat": 41.97972,
-		"lon": -87.9044399
+		"lon": -87.90444
 	},
 	"KPIA": {
 		"id": "KPIA",
 		"city": "Peoria - General Downing-Peoria International Airport",
 		"state": "IL",
-		"lat": 40.6674999,
+		"lat": 40.6675,
 		"lon": -89.68389
 	},
 	"KPNT": {
@@ -5799,8 +5547,15 @@
 		"id": "KRPJ",
 		"city": "Rochelle, Rochelle Municipal-Koritz Field Airport",
 		"state": "IL",
-		"lat": 41.8905699,
+		"lat": 41.89057,
 		"lon": -89.08175
+	},
+	"KRSV": {
+		"id": "KRSV",
+		"city": "Robinson Municipal Airport",
+		"state": "IL",
+		"lat": 39.01361,
+		"lon": -87.64846
 	},
 	"KSAR": {
 		"id": "KSAR",
@@ -5808,6 +5563,13 @@
 		"state": "IL",
 		"lat": 38.14624,
 		"lon": -89.70243
+	},
+	"KSFY": {
+		"id": "KSFY",
+		"city": "Tri-Township Airport",
+		"state": "IL",
+		"lat": 42.04544,
+		"lon": -90.11009
 	},
 	"KSLO": {
 		"id": "KSLO",
@@ -5829,13 +5591,6 @@
 		"state": "IL",
 		"lat": 41.7432,
 		"lon": -89.66547
-	},
-	"KTAZ": {
-		"id": "KTAZ",
-		"city": "Taylorville, Taylorville Municipal Airport",
-		"state": "IL",
-		"lat": 39.53417,
-		"lon": -89.32778
 	},
 	"KTIP": {
 		"id": "KTIP",
@@ -5890,8 +5645,8 @@
 		"id": "KBYL",
 		"city": "Williamsburg-Whitley County Airport",
 		"state": "KY",
-		"lat": 36.7954099,
-		"lon": -84.2012699
+		"lat": 36.79541,
+		"lon": -84.20127
 	},
 	"KCEY": {
 		"id": "KCEY",
@@ -5968,7 +5723,7 @@
 		"city": "Fort Knox",
 		"state": "KY",
 		"lat": 37.9,
-		"lon": -85.9666699
+		"lon": -85.96667
 	},
 	"KGDA": {
 		"id": "KGDA",
@@ -5995,7 +5750,7 @@
 		"id": "KHVC",
 		"city": "Hopkinsville-Christian County Airport",
 		"state": "KY",
-		"lat": 36.8569699,
+		"lat": 36.85697,
 		"lon": -87.45508
 	},
 	"KIOB": {
@@ -6009,7 +5764,7 @@
 		"id": "KJKL",
 		"city": "Jackson, Carroll Airport",
 		"state": "KY",
-		"lat": 37.5913899,
+		"lat": 37.59139,
 		"lon": -83.31444
 	},
 	"KLEX": {
@@ -6017,7 +5772,7 @@
 		"city": "Lexington Blue Grass Airport",
 		"state": "KY",
 		"lat": 38.0339,
-		"lon": -84.6114599
+		"lon": -84.61146
 	},
 	"KLOU": {
 		"id": "KLOU",
@@ -6094,294 +5849,7 @@
 		"city": "Sturgis, Sturgis Municipal Airport",
 		"state": "KY",
 		"lat": 37.54083,
-		"lon": -87.9516699
-	},
-	"KACP": {
-		"id": "KACP",
-		"city": "Oakdale, Allen Parish Airport",
-		"state": "LA",
-		"lat": 30.75056,
-		"lon": -92.68861
-	},
-	"KAEX": {
-		"id": "KAEX",
-		"city": "Alexandria, Alexandria International Airport",
-		"state": "LA",
-		"lat": 31.33472,
-		"lon": -92.55861
-	},
-	"KAPS": {
-		"id": "KAPS",
-		"city": "Port of South Louisiana Executive Regional Airport",
-		"state": "LA",
-		"lat": 30.08747,
-		"lon": -90.58283
-	},
-	"KAQV": {
-		"id": "KAQV",
-		"city": "Ft. Polk - Peason Ridge",
-		"state": "LA",
-		"lat": 31.4,
-		"lon": -93.2833
-	},
-	"KARA": {
-		"id": "KARA",
-		"city": "Acadiana Regional Airport",
-		"state": "LA",
-		"lat": 30.02918,
-		"lon": -91.88451
-	},
-	"KASD": {
-		"id": "KASD",
-		"city": "Slidell, Slidell Airport",
-		"state": "LA",
-		"lat": 30.34306,
-		"lon": -89.82194
-	},
-	"KATP": {
-		"id": "KATP",
-		"city": "Green Canyon 787 Atlantis",
-		"state": "LA",
-		"lat": 27.195,
-		"lon": -90.027
-	},
-	"KBAD": {
-		"id": "KBAD",
-		"city": "Barksdale Air Force Base",
-		"state": "LA",
-		"lat": 32.5,
-		"lon": -93.66667
-	},
-	"KBKB": {
-		"id": "KBKB",
-		"city": "Ft. Polk - Fullerton Landing Strip",
-		"state": "LA",
-		"lat": 31.0217,
-		"lon": -92.9107
-	},
-	"KBQP": {
-		"id": "KBQP",
-		"city": "Bastrop, Morehouse Memorial Airport",
-		"state": "LA",
-		"lat": 32.75583,
-		"lon": -91.88056
-	},
-	"KBTR": {
-		"id": "KBTR",
-		"city": "Baton Rouge, Baton Rouge Metropolitan, Ryan Field",
-		"state": "LA",
-		"lat": 30.53722,
-		"lon": -91.14694
-	},
-	"KBXA": {
-		"id": "KBXA",
-		"city": "Bogalusa, George R Carr Memorial Air Field",
-		"state": "LA",
-		"lat": 30.81361,
-		"lon": -89.86472
-	},
-	"KCWF": {
-		"id": "KCWF",
-		"city": "Chenault Airpark",
-		"state": "LA",
-		"lat": 30.21667,
-		"lon": -93.15
-	},
-	"KDRI": {
-		"id": "KDRI",
-		"city": "De Ridder, Beauregard Parish Airport",
-		"state": "LA",
-		"lat": 30.83167,
-		"lon": -93.33972
-	},
-	"KDSF": {
-		"id": "KDSF",
-		"city": "Mississippi Canyon",
-		"state": "LA",
-		"lat": 28.35,
-		"lon": -88.26667
-	},
-	"KDTN": {
-		"id": "KDTN",
-		"city": "Shreveport, Shreveport Downtown Airport",
-		"state": "LA",
-		"lat": 32.5424999,
-		"lon": -93.74472
-	},
-	"KGAO": {
-		"id": "KGAO",
-		"city": "Galliano, South Lafourche Airport",
-		"state": "LA",
-		"lat": 29.44472,
-		"lon": -90.26111
-	},
-	"KGBK": {
-		"id": "KGBK",
-		"city": "MAGNOLIA OIL PLATFORM",
-		"state": "LA",
-		"lat": 27.2,
-		"lon": -92.2
-	},
-	"KGHB": {
-		"id": "KGHB",
-		"city": "GB172/Salsa (Shell E-P)",
-		"state": "LA",
-		"lat": 27.84,
-		"lon": -91.988
-	},
-	"KGRY": {
-		"id": "KGRY",
-		"city": "Green Canyon 338 Front Runner",
-		"state": "LA",
-		"lat": 27.625,
-		"lon": -90.441
-	},
-	"KHDC": {
-		"id": "KHDC",
-		"city": "Hammond, Hammond Municipal Airport",
-		"state": "LA",
-		"lat": 30.52083,
-		"lon": -90.4175
-	},
-	"KHUM": {
-		"id": "KHUM",
-		"city": "Houma-Terrebonne Airport",
-		"state": "LA",
-		"lat": 29.56341,
-		"lon": -90.66283
-	},
-	"KHZR": {
-		"id": "KHZR",
-		"city": "New Roads False River Regional Airport",
-		"state": "LA",
-		"lat": 30.7183,
-		"lon": -91.4787
-	},
-	"KIER": {
-		"id": "KIER",
-		"city": "Natchitoches, Natchitoches Regional Airport",
-		"state": "LA",
-		"lat": 31.73583,
-		"lon": -93.09917
-	},
-	"KIYA": {
-		"id": "KIYA",
-		"city": "Abbeville Chris Crusta Memorial Airport",
-		"state": "LA",
-		"lat": 29.97578,
-		"lon": -92.08422
-	},
-	"KLCH": {
-		"id": "KLCH",
-		"city": "Lake Charles Regional Airport",
-		"state": "LA",
-		"lat": 30.12556,
-		"lon": -93.22767
-	},
-	"KLFT": {
-		"id": "KLFT",
-		"city": "Lafayette, Lafayette Regional Airport",
-		"state": "LA",
-		"lat": 30.20222,
-		"lon": -91.99306
-	},
-	"KMLU": {
-		"id": "KMLU",
-		"city": "Monroe Regional Airport",
-		"state": "LA",
-		"lat": 32.5155699,
-		"lon": -92.02995
-	},
-	"KMNE": {
-		"id": "KMNE",
-		"city": "Minden Airport",
-		"state": "LA",
-		"lat": 32.64603,
-		"lon": -93.29808
-	},
-	"KMSY": {
-		"id": "KMSY",
-		"city": "New Orleans, New Orleans International Airport",
-		"state": "LA",
-		"lat": 29.99278,
-		"lon": -90.2508299
-	},
-	"KNBG": {
-		"id": "KNBG",
-		"city": "New Orleans Naval Air Station - Alvin Callender Field",
-		"state": "LA",
-		"lat": 29.83736,
-		"lon": -90.02445
-	},
-	"KNEW": {
-		"id": "KNEW",
-		"city": "New Orleans, New Orleans Lakefront Airport",
-		"state": "LA",
-		"lat": 30.04944,
-		"lon": -90.02889
-	},
-	"KOPL": {
-		"id": "KOPL",
-		"city": "Opelousas St Landry Parish Airport",
-		"state": "LA",
-		"lat": 30.5584,
-		"lon": -92.0994
-	},
-	"KPOE": {
-		"id": "KPOE",
-		"city": "Fort Polk, Polk AAF Ft Polk",
-		"state": "LA",
-		"lat": 31.05,
-		"lon": -93.19389
-	},
-	"KPTN": {
-		"id": "KPTN",
-		"city": "Patterson Memorial",
-		"state": "LA",
-		"lat": 29.71667,
-		"lon": -91.33333
-	},
-	"KREG": {
-		"id": "KREG",
-		"city": "Louisiana Regional Airport",
-		"state": "LA",
-		"lat": 30.1714,
-		"lon": -90.9404
-	},
-	"KRSN": {
-		"id": "KRSN",
-		"city": "Ruston, Ruston Regional Airport",
-		"state": "LA",
-		"lat": 32.51444,
-		"lon": -92.58833
-	},
-	"KSHV": {
-		"id": "KSHV",
-		"city": "Shreveport, Shreveport Regional Airport",
-		"state": "LA",
-		"lat": 32.44694,
-		"lon": -93.82417
-	},
-	"KTVR": {
-		"id": "KTVR",
-		"city": "Vicksburg, Vicksburg / Tallulah Regional Airport",
-		"state": "LA",
-		"lat": 32.3480599,
-		"lon": -91.03
-	},
-	"KUXL": {
-		"id": "KUXL",
-		"city": "Southland Field",
-		"state": "LA",
-		"lat": 30.1314,
-		"lon": -93.3760999
-	},
-	"KVOA": {
-		"id": "KVOA",
-		"city": "VK 786/Petronius (Chevron)",
-		"state": "LA",
-		"lat": 29.229,
-		"lon": -87.781
+		"lon": -87.95167
 	},
 	"KAAO": {
 		"id": "KAAO",
@@ -6396,13 +5864,6 @@
 		"state": "KS",
 		"lat": 39.84034,
 		"lon": -101.04248
-	},
-	"KBEC": {
-		"id": "KBEC",
-		"city": "Beech Factory Airport",
-		"state": "KS",
-		"lat": 37.69392,
-		"lon": -97.21492
 	},
 	"KCBK": {
 		"id": "KCBK",
@@ -6516,13 +5977,6 @@
 		"lat": 39.3675,
 		"lon": -101.69306
 	},
-	"KHLC": {
-		"id": "KHLC",
-		"city": "Hill City, Hill City Municipal Airport",
-		"state": "KS",
-		"lat": 39.37472,
-		"lon": -99.82972
-	},
 	"KHQG": {
 		"id": "KHQG",
 		"city": "Hugoton Municipal Airport",
@@ -6558,6 +6012,307 @@
 		"lat": 37.64722,
 		"lon": -97.42944
 	},
+	"KACP": {
+		"id": "KACP",
+		"city": "Oakdale, Allen Parish Airport",
+		"state": "LA",
+		"lat": 30.75056,
+		"lon": -92.68861
+	},
+	"KAEX": {
+		"id": "KAEX",
+		"city": "Alexandria, Alexandria International Airport",
+		"state": "LA",
+		"lat": 31.33472,
+		"lon": -92.55861
+	},
+	"KAPS": {
+		"id": "KAPS",
+		"city": "Port of South Louisiana Executive Regional Airport",
+		"state": "LA",
+		"lat": 30.08747,
+		"lon": -90.58283
+	},
+	"KAQV": {
+		"id": "KAQV",
+		"city": "Ft. Polk - Peason Ridge",
+		"state": "LA",
+		"lat": 31.4,
+		"lon": -93.2833
+	},
+	"KARA": {
+		"id": "KARA",
+		"city": "Acadiana Regional Airport",
+		"state": "LA",
+		"lat": 30.02918,
+		"lon": -91.88451
+	},
+	"KASD": {
+		"id": "KASD",
+		"city": "Slidell, Slidell Airport",
+		"state": "LA",
+		"lat": 30.34306,
+		"lon": -89.82194
+	},
+	"KATP": {
+		"id": "KATP",
+		"city": "Green Canyon 787 Atlantis",
+		"state": "LA",
+		"lat": 27.195,
+		"lon": -90.027
+	},
+	"KBAD": {
+		"id": "KBAD",
+		"city": "Barksdale Air Force Base",
+		"state": "LA",
+		"lat": 32.5,
+		"lon": -93.66667
+	},
+	"KBKB": {
+		"id": "KBKB",
+		"city": "Ft. Polk - Fullerton Landing Strip",
+		"state": "LA",
+		"lat": 31.0217,
+		"lon": -92.9107
+	},
+	"KBQP": {
+		"id": "KBQP",
+		"city": "Bastrop, Morehouse Memorial Airport",
+		"state": "LA",
+		"lat": 32.75583,
+		"lon": -91.88056
+	},
+	"KBTR": {
+		"id": "KBTR",
+		"city": "Baton Rouge, Baton Rouge Metropolitan, Ryan Field",
+		"state": "LA",
+		"lat": 30.53722,
+		"lon": -91.14694
+	},
+	"KBXA": {
+		"id": "KBXA",
+		"city": "Bogalusa, George R Carr Memorial Air Field",
+		"state": "LA",
+		"lat": 30.81361,
+		"lon": -89.86472
+	},
+	"KCWF": {
+		"id": "KCWF",
+		"city": "Chenault Airpark",
+		"state": "LA",
+		"lat": 30.21667,
+		"lon": -93.15
+	},
+	"KCYD": {
+		"id": "KCYD",
+		"city": "MISS CANYAN 807",
+		"state": "LA",
+		"lat": 28.17,
+		"lon": -89.22
+	},
+	"KDRI": {
+		"id": "KDRI",
+		"city": "De Ridder, Beauregard Parish Airport",
+		"state": "LA",
+		"lat": 30.83167,
+		"lon": -93.33972
+	},
+	"KDSF": {
+		"id": "KDSF",
+		"city": "Mississippi Canyon",
+		"state": "LA",
+		"lat": 28.35,
+		"lon": -88.26667
+	},
+	"KDTN": {
+		"id": "KDTN",
+		"city": "Shreveport, Shreveport Downtown Airport",
+		"state": "LA",
+		"lat": 32.5425,
+		"lon": -93.74472
+	},
+	"KESF": {
+		"id": "KESF",
+		"city": "Alexandria Esler Regional Airport",
+		"state": "LA",
+		"lat": 31.39634,
+		"lon": -92.28273
+	},
+	"KGAO": {
+		"id": "KGAO",
+		"city": "Galliano, South Lafourche Airport",
+		"state": "LA",
+		"lat": 29.44472,
+		"lon": -90.26111
+	},
+	"KGBK": {
+		"id": "KGBK",
+		"city": "MAGNOLIA OIL PLATFORM",
+		"state": "LA",
+		"lat": 27.2,
+		"lon": -92.2
+	},
+	"KGHB": {
+		"id": "KGHB",
+		"city": "GB172/Salsa (Shell E-P)",
+		"state": "LA",
+		"lat": 27.84,
+		"lon": -91.988
+	},
+	"KGRY": {
+		"id": "KGRY",
+		"city": "Green Canyon 338 Front Runner",
+		"state": "LA",
+		"lat": 27.625,
+		"lon": -90.441
+	},
+	"KHDC": {
+		"id": "KHDC",
+		"city": "Hammond, Hammond Municipal Airport",
+		"state": "LA",
+		"lat": 30.52083,
+		"lon": -90.4175
+	},
+	"KHUM": {
+		"id": "KHUM",
+		"city": "Houma-Terrebonne Airport",
+		"state": "LA",
+		"lat": 29.56341,
+		"lon": -90.66283
+	},
+	"KHZR": {
+		"id": "KHZR",
+		"city": "New Roads False River Regional Airport",
+		"state": "LA",
+		"lat": 30.7183,
+		"lon": -91.4787
+	},
+	"KIER": {
+		"id": "KIER",
+		"city": "Natchitoches, Natchitoches Regional Airport",
+		"state": "LA",
+		"lat": 31.73583,
+		"lon": -93.09917
+	},
+	"KLCH": {
+		"id": "KLCH",
+		"city": "Lake Charles Regional Airport",
+		"state": "LA",
+		"lat": 30.12556,
+		"lon": -93.22767
+	},
+	"KLFT": {
+		"id": "KLFT",
+		"city": "Lafayette, Lafayette Regional Airport",
+		"state": "LA",
+		"lat": 30.20222,
+		"lon": -91.99306
+	},
+	"KMLU": {
+		"id": "KMLU",
+		"city": "Monroe Regional Airport",
+		"state": "LA",
+		"lat": 32.51557,
+		"lon": -92.02995
+	},
+	"KMNE": {
+		"id": "KMNE",
+		"city": "Minden Airport",
+		"state": "LA",
+		"lat": 32.64603,
+		"lon": -93.29808
+	},
+	"KMSY": {
+		"id": "KMSY",
+		"city": "New Orleans, New Orleans International Airport",
+		"state": "LA",
+		"lat": 29.99278,
+		"lon": -90.25083
+	},
+	"KNBG": {
+		"id": "KNBG",
+		"city": "New Orleans Naval Air Station - Alvin Callender Field",
+		"state": "LA",
+		"lat": 29.83736,
+		"lon": -90.02445
+	},
+	"KNEW": {
+		"id": "KNEW",
+		"city": "New Orleans, New Orleans Lakefront Airport",
+		"state": "LA",
+		"lat": 30.04944,
+		"lon": -90.02889
+	},
+	"KOPL": {
+		"id": "KOPL",
+		"city": "Opelousas St Landry Parish Airport",
+		"state": "LA",
+		"lat": 30.5584,
+		"lon": -92.0994
+	},
+	"KPOE": {
+		"id": "KPOE",
+		"city": "Fort Polk, Polk AAF Ft Polk",
+		"state": "LA",
+		"lat": 31.05,
+		"lon": -93.19389
+	},
+	"KPTN": {
+		"id": "KPTN",
+		"city": "Patterson Memorial",
+		"state": "LA",
+		"lat": 29.71667,
+		"lon": -91.33333
+	},
+	"KREG": {
+		"id": "KREG",
+		"city": "Louisiana Regional Airport",
+		"state": "LA",
+		"lat": 30.1714,
+		"lon": -90.9404
+	},
+	"KRSN": {
+		"id": "KRSN",
+		"city": "Ruston, Ruston Regional Airport",
+		"state": "LA",
+		"lat": 32.51444,
+		"lon": -92.58833
+	},
+	"KSHV": {
+		"id": "KSHV",
+		"city": "Shreveport, Shreveport Regional Airport",
+		"state": "LA",
+		"lat": 32.44694,
+		"lon": -93.82417
+	},
+	"KSPR": {
+		"id": "KSPR",
+		"city": "SHIP SHOAL OIL PLATFORM",
+		"state": "LA",
+		"lat": 28.6,
+		"lon": -91.2
+	},
+	"KTVR": {
+		"id": "KTVR",
+		"city": "Vicksburg, Vicksburg / Tallulah Regional Airport",
+		"state": "LA",
+		"lat": 32.34806,
+		"lon": -91.03
+	},
+	"KUXL": {
+		"id": "KUXL",
+		"city": "Southland Field",
+		"state": "LA",
+		"lat": 30.1314,
+		"lon": -93.3761
+	},
+	"KVOA": {
+		"id": "KVOA",
+		"city": "VK 786/Petronius (Chevron)",
+		"state": "LA",
+		"lat": 29.229,
+		"lon": -87.781
+	},
 	"KIDP": {
 		"id": "KIDP",
 		"city": "INDEPENDENCE",
@@ -6584,7 +6339,7 @@
 		"city": "Liberal, Liberal Municipal Airport",
 		"state": "KS",
 		"lat": 37.05,
-		"lon": -100.9666699
+		"lon": -100.96667
 	},
 	"KLWC": {
 		"id": "KLWC",
@@ -6612,7 +6367,7 @@
 		"city": "MCPHERSON",
 		"state": "KS",
 		"lat": 38.35244,
-		"lon": -97.6913299
+		"lon": -97.69133
 	},
 	"KMYZ": {
 		"id": "KMYZ",
@@ -6640,7 +6395,7 @@
 		"city": "Oberlin Municipal Airport",
 		"state": "KS",
 		"lat": 39.83489,
-		"lon": -100.5397799
+		"lon": -100.53978
 	},
 	"KOJC": {
 		"id": "KOJC",
@@ -6689,7 +6444,7 @@
 		"city": "Russell, Russell Municipal Airport",
 		"state": "KS",
 		"lat": 38.87278,
-		"lon": -98.8130599
+		"lon": -98.81306
 	},
 	"KSLN": {
 		"id": "KSLN",
@@ -6710,7 +6465,7 @@
 		"city": "Topeka, Philip Billard Municipal Airport",
 		"state": "KS",
 		"lat": 39.0725,
-		"lon": -95.6258299
+		"lon": -95.62583
 	},
 	"KTQK": {
 		"id": "KTQK",
@@ -6737,127 +6492,155 @@
 		"id": "KWLD",
 		"city": "Winfield / Arkansas City, Strother Field",
 		"state": "KS",
-		"lat": 37.1680599,
+		"lat": 37.16806,
 		"lon": -97.03694
 	},
-	"KAUG": {
-		"id": "KAUG",
-		"city": "Augusta, Augusta State Airport",
-		"state": "ME",
-		"lat": 44.32056,
-		"lon": -69.79722
+	"KADW": {
+		"id": "KADW",
+		"city": "Camp Springs / Andrews Air Force Base",
+		"state": "MD",
+		"lat": 38.81667,
+		"lon": -76.85
 	},
-	"KBGR": {
-		"id": "KBGR",
-		"city": "Bangor, Bangor International Airport",
-		"state": "ME",
-		"lat": 44.79722,
-		"lon": -68.81861
+	"KAPG": {
+		"id": "KAPG",
+		"city": "Phillips Army Air Field / Aberdeen",
+		"state": "MD",
+		"lat": 39.46667,
+		"lon": -76.16667
 	},
-	"KBHB": {
-		"id": "KBHB",
-		"city": "Bar Harbor, Hancock County-Bar Harbor Airport",
-		"state": "ME",
-		"lat": 44.45,
-		"lon": -68.36667
+	"KBWI": {
+		"id": "KBWI",
+		"city": "Baltimore, Baltimore-Washington International Airport",
+		"state": "MD",
+		"lat": 39.17329,
+		"lon": -76.68404
 	},
-	"KBXM": {
-		"id": "KBXM",
-		"city": "BRUNSWICK",
-		"state": "ME",
-		"lat": 43.8923599,
-		"lon": -69.93883
+	"KCGE": {
+		"id": "KCGE",
+		"city": "Cambridge-Dorchester Airport",
+		"state": "MD",
+		"lat": 38.5393,
+		"lon": -76.0304
 	},
-	"KCAR": {
-		"id": "KCAR",
-		"city": "Caribou, Caribou Municipal Airport",
-		"state": "ME",
-		"lat": 46.86722,
-		"lon": -68.01333
+	"KCGS": {
+		"id": "KCGS",
+		"city": "College Park Airport",
+		"state": "MD",
+		"lat": 38.9806,
+		"lon": -76.9223
 	},
-	"KFVE": {
-		"id": "KFVE",
-		"city": "Frenchville, Northern Aroostook Regional Airport",
-		"state": "ME",
-		"lat": 47.2849999,
-		"lon": -68.30722
+	"KDMH": {
+		"id": "KDMH",
+		"city": "Baltimore, Inner Harbor",
+		"state": "MD",
+		"lat": 39.28333,
+		"lon": -76.61667
 	},
-	"KGNR": {
-		"id": "KGNR",
-		"city": "Greenville",
-		"state": "ME",
-		"lat": 45.4646199,
-		"lon": -69.5538
+	"KDMW": {
+		"id": "KDMW",
+		"city": "Carroll County Regional Jack B Poage Field",
+		"state": "MD",
+		"lat": 39.6083,
+		"lon": -77.0077
 	},
-	"KHUL": {
-		"id": "KHUL",
-		"city": "Houlton, Houlton International Airport",
-		"state": "ME",
-		"lat": 46.12306,
-		"lon": -67.79194
+	"KEDG": {
+		"id": "KEDG",
+		"city": "WEIDE",
+		"state": "MD",
+		"lat": 39.39205,
+		"lon": -76.29106
 	},
-	"KIWI": {
-		"id": "KIWI",
-		"city": "Wiscasset Airport",
-		"state": "ME",
-		"lat": 43.96401,
-		"lon": -69.7107599
+	"KESN": {
+		"id": "KESN",
+		"city": "Easton Airport",
+		"state": "MD",
+		"lat": 38.8,
+		"lon": -76.06667
 	},
-	"KIZG": {
-		"id": "KIZG",
-		"city": "Fryeburg, Eastern Slopes Regional Airport",
-		"state": "ME",
-		"lat": 43.98917,
-		"lon": -70.95028
+	"KFDK": {
+		"id": "KFDK",
+		"city": "Frederick Municipal Airport",
+		"state": "MD",
+		"lat": 39.41775,
+		"lon": -77.36982
 	},
-	"KLEW": {
-		"id": "KLEW",
-		"city": "Auburn-Lewiston",
-		"state": "ME",
-		"lat": 44.05,
-		"lon": -70.28333
+	"KFME": {
+		"id": "KFME",
+		"city": "Fort Meade / Tipton",
+		"state": "MD",
+		"lat": 39.08333,
+		"lon": -76.76667
 	},
-	"KMLT": {
-		"id": "KMLT",
-		"city": "Millinocket, Millinocket Municipal Airport",
-		"state": "ME",
-		"lat": 45.64778,
-		"lon": -68.69194
+	"KGAI": {
+		"id": "KGAI",
+		"city": "Gaithersburg - Montgomery County Airport",
+		"state": "MD",
+		"lat": 39.16957,
+		"lon": -77.16551
 	},
-	"KPQI": {
-		"id": "KPQI",
-		"city": "Presque Isle",
-		"state": "ME",
-		"lat": 46.68333,
-		"lon": -68.05
+	"KHGR": {
+		"id": "KHGR",
+		"city": "Hagerstown, Washington County Regional Airport",
+		"state": "MD",
+		"lat": 39.70583,
+		"lon": -77.73
 	},
-	"KPWM": {
-		"id": "KPWM",
-		"city": "Portland, Portland International Jetport",
-		"state": "ME",
-		"lat": 43.64222,
-		"lon": -70.30444
+	"KMTN": {
+		"id": "KMTN",
+		"city": "Baltimore / Martin",
+		"state": "MD",
+		"lat": 39.33333,
+		"lon": -76.41667
 	},
-	"KRKD": {
-		"id": "KRKD",
-		"city": "Rockland, Knox County Regional Airport",
-		"state": "ME",
-		"lat": 44.06667,
-		"lon": -69.1
+	"KNAK": {
+		"id": "KNAK",
+		"city": "Annapolis, United States Naval Academy",
+		"state": "MD",
+		"lat": 38.99125,
+		"lon": -76.48907
 	},
-	"KSFM": {
-		"id": "KSFM",
-		"city": "Sanford, Sanford Regional Airport",
-		"state": "ME",
-		"lat": 43.4,
-		"lon": -70.7166699
+	"KNHK": {
+		"id": "KNHK",
+		"city": "Patuxent River, Naval Air Station",
+		"state": "MD",
+		"lat": 38.27861,
+		"lon": -76.41389
 	},
-	"KWVL": {
-		"id": "KWVL",
-		"city": "Waterville, Waterville Robert LaFleur Airport",
-		"state": "ME",
-		"lat": 44.53333,
-		"lon": -69.68333
+	"KNUI": {
+		"id": "KNUI",
+		"city": "St. Inigoes, Webster Field, Naval Electronic Systems Engineering Activity",
+		"state": "MD",
+		"lat": 38.14889,
+		"lon": -76.42
+	},
+	"KOXB": {
+		"id": "KOXB",
+		"city": "Ocean City, Ocean City Municipal Airport",
+		"state": "MD",
+		"lat": 38.31056,
+		"lon": -75.12389
+	},
+	"KRSP": {
+		"id": "KRSP",
+		"city": "Camp David",
+		"state": "MD",
+		"lat": 39.645,
+		"lon": -77.468
+	},
+	"KSBY": {
+		"id": "KSBY",
+		"city": "Salisbury, Salisbury-Ocean City Wicomico County Regional Airport",
+		"state": "MD",
+		"lat": 38.34056,
+		"lon": -75.51028
+	},
+	"KVKX": {
+		"id": "KVKX",
+		"city": "POTOMAC",
+		"state": "MD",
+		"lat": 38.74761,
+		"lon": -76.95719
 	},
 	"KACK": {
 		"id": "KACK",
@@ -7011,448 +6794,126 @@
 		"city": "Taunton, Taunton Municipal Airport",
 		"state": "MA",
 		"lat": 41.87556,
-		"lon": -71.0211099
+		"lon": -71.02111
 	},
-	"KADW": {
-		"id": "KADW",
-		"city": "Camp Springs / Andrews Air Force Base",
-		"state": "MD",
-		"lat": 38.81667,
-		"lon": -76.85
+	"KAUG": {
+		"id": "KAUG",
+		"city": "Augusta, Augusta State Airport",
+		"state": "ME",
+		"lat": 44.32056,
+		"lon": -69.79722
 	},
-	"KANP": {
-		"id": "KANP",
-		"city": "LEEAIRPORT",
-		"state": "MD",
-		"lat": 38.94287,
-		"lon": -76.5683899
+	"KBGR": {
+		"id": "KBGR",
+		"city": "Bangor, Bangor International Airport",
+		"state": "ME",
+		"lat": 44.79722,
+		"lon": -68.81861
 	},
-	"KAPG": {
-		"id": "KAPG",
-		"city": "Phillips Army Air Field / Aberdeen",
-		"state": "MD",
-		"lat": 39.46667,
-		"lon": -76.16667
+	"KBHB": {
+		"id": "KBHB",
+		"city": "Bar Harbor, Hancock County-Bar Harbor Airport",
+		"state": "ME",
+		"lat": 44.45,
+		"lon": -68.36667
 	},
-	"KBWI": {
-		"id": "KBWI",
-		"city": "Baltimore, Baltimore-Washington International Airport",
-		"state": "MD",
-		"lat": 39.17329,
-		"lon": -76.68404
+	"KBXM": {
+		"id": "KBXM",
+		"city": "BRUNSWICK                         ME USTG",
+		"state": "ME",
+		"lat": 43.89236,
+		"lon": -69.93883
 	},
-	"KCGE": {
-		"id": "KCGE",
-		"city": "Cambridge-Dorchester Airport",
-		"state": "MD",
-		"lat": 38.5393,
-		"lon": -76.0304
+	"KCAR": {
+		"id": "KCAR",
+		"city": "Caribou, Caribou Municipal Airport",
+		"state": "ME",
+		"lat": 46.86722,
+		"lon": -68.01333
 	},
-	"KCGS": {
-		"id": "KCGS",
-		"city": "College Park Airport",
-		"state": "MD",
-		"lat": 38.9806,
-		"lon": -76.9223
+	"KFVE": {
+		"id": "KFVE",
+		"city": "Frenchville, Northern Aroostook Regional Airport",
+		"state": "ME",
+		"lat": 47.285,
+		"lon": -68.30722
 	},
-	"KDMH": {
-		"id": "KDMH",
-		"city": "Baltimore, Inner Harbor",
-		"state": "MD",
-		"lat": 39.28333,
-		"lon": -76.61667
+	"KGNR": {
+		"id": "KGNR",
+		"city": "Greenville",
+		"state": "ME",
+		"lat": 45.46462,
+		"lon": -69.5538
 	},
-	"KDMW": {
-		"id": "KDMW",
-		"city": "Carroll County Regional Jack B Poage Field",
-		"state": "MD",
-		"lat": 39.6083,
-		"lon": -77.0077
+	"KHUL": {
+		"id": "KHUL",
+		"city": "Houlton, Houlton International Airport",
+		"state": "ME",
+		"lat": 46.12306,
+		"lon": -67.79194
 	},
-	"KEDG": {
-		"id": "KEDG",
-		"city": "WEIDE",
-		"state": "MD",
-		"lat": 39.39205,
-		"lon": -76.29106
+	"KIWI": {
+		"id": "KIWI",
+		"city": "Wiscasset Airport",
+		"state": "ME",
+		"lat": 43.96401,
+		"lon": -69.71076
 	},
-	"KESN": {
-		"id": "KESN",
-		"city": "Easton Airport",
-		"state": "MD",
-		"lat": 38.8,
-		"lon": -76.06667
+	"KIZG": {
+		"id": "KIZG",
+		"city": "White Mountain Regional Airport",
+		"state": "ME",
+		"lat": 43.98917,
+		"lon": -70.95028
 	},
-	"KFDK": {
-		"id": "KFDK",
-		"city": "Frederick Municipal Airport",
-		"state": "MD",
-		"lat": 39.41775,
-		"lon": -77.36982
+	"KLEW": {
+		"id": "KLEW",
+		"city": "Auburn-Lewiston",
+		"state": "ME",
+		"lat": 44.05,
+		"lon": -70.28333
 	},
-	"KFME": {
-		"id": "KFME",
-		"city": "Fort Meade / Tipton",
-		"state": "MD",
-		"lat": 39.0833299,
-		"lon": -76.76667
+	"KMLT": {
+		"id": "KMLT",
+		"city": "Millinocket, Millinocket Municipal Airport",
+		"state": "ME",
+		"lat": 45.64778,
+		"lon": -68.69194
 	},
-	"KGAI": {
-		"id": "KGAI",
-		"city": "Gaithersburg - Montgomery County Airport",
-		"state": "MD",
-		"lat": 39.16957,
-		"lon": -77.16551
+	"KPQI": {
+		"id": "KPQI",
+		"city": "Presque Isle",
+		"state": "ME",
+		"lat": 46.68333,
+		"lon": -68.05
 	},
-	"KHGR": {
-		"id": "KHGR",
-		"city": "Hagerstown, Washington County Regional Airport",
-		"state": "MD",
-		"lat": 39.70583,
-		"lon": -77.73
+	"KPWM": {
+		"id": "KPWM",
+		"city": "Portland, Portland International Jetport",
+		"state": "ME",
+		"lat": 43.64222,
+		"lon": -70.30444
 	},
-	"KMTN": {
-		"id": "KMTN",
-		"city": "Baltimore / Martin",
-		"state": "MD",
-		"lat": 39.3333299,
-		"lon": -76.41667
+	"KRKD": {
+		"id": "KRKD",
+		"city": "Rockland, Knox County Regional Airport",
+		"state": "ME",
+		"lat": 44.06667,
+		"lon": -69.1
 	},
-	"KNAK": {
-		"id": "KNAK",
-		"city": "Annapolis, United States Naval Academy",
-		"state": "MD",
-		"lat": 38.99125,
-		"lon": -76.48907
+	"KSFM": {
+		"id": "KSFM",
+		"city": "Sanford, Sanford Regional Airport",
+		"state": "ME",
+		"lat": 43.4,
+		"lon": -70.71667
 	},
-	"KNHK": {
-		"id": "KNHK",
-		"city": "Patuxent River, Naval Air Station",
-		"state": "MD",
-		"lat": 38.27861,
-		"lon": -76.41389
-	},
-	"KNUI": {
-		"id": "KNUI",
-		"city": "St. Inigoes, Webster Field, Naval Electronic Systems Engineering Activity",
-		"state": "MD",
-		"lat": 38.14889,
-		"lon": -76.42
-	},
-	"KOXB": {
-		"id": "KOXB",
-		"city": "Ocean City, Ocean City Municipal Airport",
-		"state": "MD",
-		"lat": 38.31056,
-		"lon": -75.12389
-	},
-	"KRSP": {
-		"id": "KRSP",
-		"city": "Camp David",
-		"state": "MD",
-		"lat": 39.645,
-		"lon": -77.468
-	},
-	"KSBY": {
-		"id": "KSBY",
-		"city": "Salisbury, Salisbury-Ocean City Wicomico County Regional Airport",
-		"state": "MD",
-		"lat": 38.34056,
-		"lon": -75.51028
-	},
-	"KVKX": {
-		"id": "KVKX",
-		"city": "POTOMAC",
-		"state": "MD",
-		"lat": 38.74761,
-		"lon": -76.95719
-	},
-	"KBIX": {
-		"id": "KBIX",
-		"city": "Keesler Air Force Base / Biloxi",
-		"state": "MS",
-		"lat": 30.41667,
-		"lon": -88.91667
-	},
-	"KCBM": {
-		"id": "KCBM",
-		"city": "Columbus Air Force Base",
-		"state": "MS",
-		"lat": 33.65,
-		"lon": -88.45
-	},
-	"KCKM": {
-		"id": "KCKM",
-		"city": "Fletcher Field, Clarksdale",
-		"state": "MS",
-		"lat": 34.2997,
-		"lon": -90.5123
-	},
-	"KCRX": {
-		"id": "KCRX",
-		"city": "Corinth",
-		"state": "MS",
-		"lat": 34.915,
-		"lon": -88.6035
-	},
-	"KGLH": {
-		"id": "KGLH",
-		"city": "Greenville, Mid Delta Regional Airport",
-		"state": "MS",
-		"lat": 33.48278,
-		"lon": -90.98556
-	},
-	"KGPT": {
-		"id": "KGPT",
-		"city": "Gulfport - Gulfport-Biloxi International Airport",
-		"state": "MS",
-		"lat": 30.41194,
-		"lon": -89.08083
-	},
-	"KGTR": {
-		"id": "KGTR",
-		"city": "Columbus/West Point/Starkville, Golden Triangle Regional Airport",
-		"state": "MS",
-		"lat": 33.45,
-		"lon": -88.58333
-	},
-	"KGWO": {
-		"id": "KGWO",
-		"city": "Greenwood, Greenwood-LeFlore Airport",
-		"state": "MS",
-		"lat": 33.4925,
-		"lon": -90.0836099
-	},
-	"KHBG": {
-		"id": "KHBG",
-		"city": "Hattiesburg, Bobby L Chain Municipal Airport",
-		"state": "MS",
-		"lat": 31.26945,
-		"lon": -89.25613
-	},
-	"KHEZ": {
-		"id": "KHEZ",
-		"city": "Natchez, Hardy-Anders Field Natchez-Adams County Airport",
-		"state": "MS",
-		"lat": 31.61593,
-		"lon": -91.29724
-	},
-	"KHKS": {
-		"id": "KHKS",
-		"city": "Jackson, Hawkins Field Airport",
-		"state": "MS",
-		"lat": 32.33472,
-		"lon": -90.2225
-	},
-	"KHSA": {
-		"id": "KHSA",
-		"city": "Bay St. Louis, Stennis International Airport",
-		"state": "MS",
-		"lat": 30.36778,
-		"lon": -89.45472
-	},
-	"KIKT": {
-		"id": "KIKT",
-		"city": "Nakika Subsea Development Platform",
-		"state": "MS",
-		"lat": 28.5208,
-		"lon": -88.2889
-	},
-	"KJAN": {
-		"id": "KJAN",
-		"city": "Jackson, Jackson International Airport",
-		"state": "MS",
-		"lat": 32.3197199,
-		"lon": -90.0775
-	},
-	"KJVW": {
-		"id": "KJVW",
-		"city": "JB Williams Airport",
-		"state": "MS",
-		"lat": 32.30447,
-		"lon": -90.41053
-	},
-	"KLMS": {
-		"id": "KLMS",
-		"city": "Louisville/Winston County Airport",
-		"state": "MS",
-		"lat": 33.14599,
-		"lon": -89.06245
-	},
-	"KLUL": {
-		"id": "KLUL",
-		"city": "LAUREL/NOBLE FIELD",
-		"state": "MS",
-		"lat": 31.67,
-		"lon": -89.17
-	},
-	"KMBO": {
-		"id": "KMBO",
-		"city": "Madison Bruce Campbell Field Airport",
-		"state": "MS",
-		"lat": 32.4384,
-		"lon": -90.1014
-	},
-	"KMCB": {
-		"id": "KMCB",
-		"city": "McComb, McComb / Pike County / John E Lewis Field Airport",
-		"state": "MS",
-		"lat": 31.17833,
-		"lon": -90.47194
-	},
-	"KMEI": {
-		"id": "KMEI",
-		"city": "Meridian, Key Field",
-		"state": "MS",
-		"lat": 32.33806,
-		"lon": -88.74778
-	},
-	"KMPE": {
-		"id": "KMPE",
-		"city": "Philadelphia Municipal Airport",
-		"state": "MS",
-		"lat": 32.79921,
-		"lon": -89.12599
-	},
-	"KNJW": {
-		"id": "KNJW",
-		"city": "Meridian, Joe Williams Naval Outlying Field",
-		"state": "MS",
-		"lat": 32.79611,
-		"lon": -88.83167
-	},
-	"KNMM": {
-		"id": "KNMM",
-		"city": "Meridian, Meridian Naval Air Station - McCain Field",
-		"state": "MS",
-		"lat": 32.55194,
-		"lon": -88.55528
-	},
-	"KOLV": {
-		"id": "KOLV",
-		"city": "Olive Branch, Olive Branch Airport",
-		"state": "MS",
-		"lat": 34.97889,
-		"lon": -89.78694
-	},
-	"KPIB": {
-		"id": "KPIB",
-		"city": "Hattiesburg/Laurel, Hattiesburg-Laurel Regional Airport",
-		"state": "MS",
-		"lat": 31.46667,
-		"lon": -89.33333
-	},
-	"KPMU": {
-		"id": "KPMU",
-		"city": "Batesville Panola County",
-		"state": "MS",
-		"lat": 34.3635,
-		"lon": -89.8929
-	},
-	"KPQL": {
-		"id": "KPQL",
-		"city": "Moss Point - Trent Lott International Airport",
-		"state": "MS",
-		"lat": 30.46305,
-		"lon": -88.53155
-	},
-	"KRNV": {
-		"id": "KRNV",
-		"city": "Cleveland Municipal Airport",
-		"state": "MS",
-		"lat": 33.7611,
-		"lon": -90.7579
-	},
-	"KSTF": {
-		"id": "KSTF",
-		"city": "George M Bryan Airport, Starkville",
-		"state": "MS",
-		"lat": 33.4331,
-		"lon": -88.8486
-	},
-	"KTUP": {
-		"id": "KTUP",
-		"city": "Tupelo, Tupelo Regional Airport",
-		"state": "MS",
-		"lat": 34.26806,
-		"lon": -88.77
-	},
-	"KUOX": {
-		"id": "KUOX",
-		"city": "Oxford, University-Oxford Airport",
-		"state": "MS",
-		"lat": 34.38444,
-		"lon": -89.53556
-	},
-	"KUTA": {
-		"id": "KUTA",
-		"city": "Tunica, Tunica Municipal Airport",
-		"state": "MS",
-		"lat": 34.68083,
-		"lon": -90.34639
-	},
-	"KVKS": {
-		"id": "KVKS",
-		"city": "Vicksburg Municipal",
-		"state": "MS",
-		"lat": 32.23333,
-		"lon": -90.93333
-	},
-	"KACB": {
-		"id": "KACB",
-		"city": "Bellaire, Antrim County Airport",
-		"state": "MI",
-		"lat": 44.98833,
-		"lon": -85.19833
-	},
-	"KADG": {
-		"id": "KADG",
-		"city": "Adrian, Lenawee County Airport",
-		"state": "MI",
-		"lat": 41.86778,
-		"lon": -84.07944
-	},
-	"KAMN": {
-		"id": "KAMN",
-		"city": "Alma, Gratiot Community Airport",
-		"state": "MI",
-		"lat": 43.32194,
-		"lon": -84.68778
-	},
-	"KANJ": {
-		"id": "KANJ",
-		"city": "Sault Ste. Marie",
-		"state": "MI",
-		"lat": 46.4794399,
-		"lon": -84.35722
-	},
-	"KAPN": {
-		"id": "KAPN",
-		"city": "Alpena, Alpena County Regional Airport",
-		"state": "MI",
-		"lat": 45.07167,
-		"lon": -83.56444
-	},
-	"KARB": {
-		"id": "KARB",
-		"city": "Ann Arbor, Ann Arbor Municipal Airport",
-		"state": "MI",
-		"lat": 42.22389,
-		"lon": -83.74
-	},
-	"KAZO": {
-		"id": "KAZO",
-		"city": "Kalamazoo/Battle Creek International Airport",
-		"state": "MI",
-		"lat": 42.2283,
-		"lon": -85.54595
-	},
-	"KBAX": {
-		"id": "KBAX",
-		"city": "Huron County Memorial Airport",
-		"state": "MI",
-		"lat": 43.77741,
-		"lon": -82.98271
+	"KWVL": {
+		"id": "KWVL",
+		"city": "Waterville, Waterville Robert LaFleur Airport",
+		"state": "ME",
+		"lat": 44.53333,
+		"lon": -69.68333
 	},
 	"KACQ": {
 		"id": "KACQ",
@@ -7507,14 +6968,14 @@
 		"id": "KAXN",
 		"city": "Alexandria, Chandler Field",
 		"state": "MN",
-		"lat": 45.8686099,
+		"lat": 45.86861,
 		"lon": -95.39417
 	},
 	"KBBB": {
 		"id": "KBBB",
 		"city": "Benson Municipal Airport",
 		"state": "MN",
-		"lat": 45.3309799,
+		"lat": 45.33098,
 		"lon": -95.64692
 	},
 	"KBDE": {
@@ -7529,7 +6990,7 @@
 		"city": "Willmar Municipal Airport - John L. Rice Field",
 		"state": "MN",
 		"lat": 45.11113,
-		"lon": -95.1258299
+		"lon": -95.12583
 	},
 	"KBJI": {
 		"id": "KBJI",
@@ -7571,14 +7032,14 @@
 		"city": "Grand Marais/Cook County Airport",
 		"state": "MN",
 		"lat": 47.83665,
-		"lon": -90.3864399
+		"lon": -90.38644
 	},
 	"KCKN": {
 		"id": "KCKN",
 		"city": "Crookston Municipal Field",
 		"state": "MN",
 		"lat": 47.84042,
-		"lon": -96.6200999
+		"lon": -96.6201
 	},
 	"KCNB": {
 		"id": "KCNB",
@@ -7612,7 +7073,7 @@
 		"id": "KDTL",
 		"city": "Detroit Lakes Airport-Wething Field",
 		"state": "MN",
-		"lat": 46.8285399,
+		"lat": 46.82854,
 		"lon": -95.88567
 	},
 	"KDVP": {
@@ -7626,15 +7087,15 @@
 		"id": "KDXX",
 		"city": "Madison, Madison-Lac Qui Parle County Airport",
 		"state": "MN",
-		"lat": 44.9839399,
-		"lon": -96.1788399
+		"lat": 44.98394,
+		"lon": -96.17884
 	},
 	"KDYT": {
 		"id": "KDYT",
 		"city": "Duluth - Sky Harbor Airport",
 		"state": "MN",
 		"lat": 46.72452,
-		"lon": -92.0444799
+		"lon": -92.04448
 	},
 	"KELO": {
 		"id": "KELO",
@@ -7732,7 +7193,7 @@
 		"city": "Grand Marais, The Bay of Grand Marais",
 		"state": "MN",
 		"lat": 47.7472,
-		"lon": -90.3443999
+		"lon": -90.3444
 	},
 	"KGPZ": {
 		"id": "KGPZ",
@@ -7830,13 +7291,13 @@
 		"city": "Quentin Aanenson Field Airport",
 		"state": "MN",
 		"lat": 43.62166,
-		"lon": -96.2139399
+		"lon": -96.21394
 	},
 	"KMGG": {
 		"id": "KMGG",
 		"city": "Maple Lake, Maple Lake Municipal Airport",
 		"state": "MN",
-		"lat": 45.2353499,
+		"lat": 45.23535,
 		"lon": -93.98959
 	},
 	"KMIC": {
@@ -7872,7 +7333,7 @@
 		"city": "Morris, Morris Municipal Airport",
 		"state": "MN",
 		"lat": 45.56667,
-		"lon": -95.9666699
+		"lon": -95.96667
 	},
 	"KMSP": {
 		"id": "KMSP",
@@ -7906,14 +7367,14 @@
 		"id": "KONA",
 		"city": "Winona, Winona Municipal Airport-Max Conrad Field",
 		"state": "MN",
-		"lat": 44.0833299,
+		"lat": 44.08333,
 		"lon": -91.7
 	},
 	"KORB": {
 		"id": "KORB",
 		"city": "Orr Regional Airport",
 		"state": "MN",
-		"lat": 48.0170699,
+		"lat": 48.01707,
 		"lon": -92.85376
 	},
 	"KOTG": {
@@ -7948,7 +7409,7 @@
 		"id": "KPKD",
 		"city": "Park Rapids Municipal Airport",
 		"state": "MN",
-		"lat": 46.8996799,
+		"lat": 46.89968,
 		"lon": -95.06681
 	},
 	"KPNM": {
@@ -7956,7 +7417,14 @@
 		"city": "Princeton",
 		"state": "MN",
 		"lat": 45.56425,
-		"lon": -93.6080099
+		"lon": -93.60801
+	},
+	"KPQN": {
+		"id": "KPQN",
+		"city": "Pipestone Municipal Airport",
+		"state": "MN",
+		"lat": 43.98542,
+		"lon": -96.29764
 	},
 	"KPWC": {
 		"id": "KPWC",
@@ -7984,7 +7452,7 @@
 		"city": "Warroad International Memorial Airport",
 		"state": "MN",
 		"lat": 48.93183,
-		"lon": -95.3404599
+		"lon": -95.34046
 	},
 	"KRST": {
 		"id": "KRST",
@@ -7999,6 +7467,13 @@
 		"state": "MN",
 		"lat": 44.54828,
 		"lon": -95.08042
+	},
+	"KRYM": {
+		"id": "KRYM",
+		"city": "Ray S Miller Army Airfield",
+		"state": "MN",
+		"lat": 46.08997,
+		"lon": -94.35986
 	},
 	"KSAZ": {
 		"id": "KSAZ",
@@ -8032,7 +7507,7 @@
 		"id": "KSYN",
 		"city": "Stanton Airfield",
 		"state": "MN",
-		"lat": 44.4736199,
+		"lat": 44.47362,
 		"lon": -93.01448
 	},
 	"KTKC": {
@@ -8091,19 +7566,68 @@
 		"lat": 46.99028,
 		"lon": -94.20389
 	},
+	"KACB": {
+		"id": "KACB",
+		"city": "Bellaire, Antrim County Airport",
+		"state": "MI",
+		"lat": 44.98833,
+		"lon": -85.19833
+	},
+	"KADG": {
+		"id": "KADG",
+		"city": "Adrian, Lenawee County Airport",
+		"state": "MI",
+		"lat": 41.86778,
+		"lon": -84.07944
+	},
+	"KAMN": {
+		"id": "KAMN",
+		"city": "Alma, Gratiot Community Airport",
+		"state": "MI",
+		"lat": 43.32194,
+		"lon": -84.68778
+	},
+	"KANJ": {
+		"id": "KANJ",
+		"city": "Sault Ste. Marie",
+		"state": "MI",
+		"lat": 46.47944,
+		"lon": -84.35722
+	},
+	"KAPN": {
+		"id": "KAPN",
+		"city": "Alpena, Alpena County Regional Airport",
+		"state": "MI",
+		"lat": 45.07167,
+		"lon": -83.56444
+	},
+	"KARB": {
+		"id": "KARB",
+		"city": "Ann Arbor, Ann Arbor Municipal Airport",
+		"state": "MI",
+		"lat": 42.22389,
+		"lon": -83.74
+	},
+	"KAZO": {
+		"id": "KAZO",
+		"city": "Kalamazoo/Battle Creek International Airport",
+		"state": "MI",
+		"lat": 42.2283,
+		"lon": -85.54595
+	},
+	"KBAX": {
+		"id": "KBAX",
+		"city": "Huron County Memorial Airport",
+		"state": "MI",
+		"lat": 43.77741,
+		"lon": -82.98271
+	},
 	"KBEH": {
 		"id": "KBEH",
 		"city": "Southwest Michigan Regional Airport",
 		"state": "MI",
 		"lat": 42.12896,
 		"lon": -86.41515
-	},
-	"KBFA": {
-		"id": "KBFA",
-		"city": "Boyne Mountain Airport",
-		"state": "MI",
-		"lat": 45.16584,
-		"lon": -84.92411
 	},
 	"KBIV": {
 		"id": "KBIV",
@@ -8124,7 +7648,7 @@
 		"city": "Wexford County Airport",
 		"state": "MI",
 		"lat": 44.27847,
-		"lon": -85.4206899
+		"lon": -85.42069
 	},
 	"KCFS": {
 		"id": "KCFS",
@@ -8138,7 +7662,7 @@
 		"city": "Sault Ste Marie, Chippewa County International Airport",
 		"state": "MI",
 		"lat": 46.25,
-		"lon": -84.4666699
+		"lon": -84.46667
 	},
 	"KCMX": {
 		"id": "KCMX",
@@ -8193,7 +7717,7 @@
 		"id": "KESC",
 		"city": "Delta County Airport",
 		"state": "MI",
-		"lat": 45.7226799,
+		"lat": 45.72268,
 		"lon": -87.09372
 	},
 	"KFFX": {
@@ -8201,7 +7725,7 @@
 		"city": "Fremont Municipal Airport",
 		"state": "MI",
 		"lat": 43.43933,
-		"lon": -85.9948299
+		"lon": -85.99483
 	},
 	"KFKS": {
 		"id": "KFKS",
@@ -8223,6 +7747,13 @@
 		"state": "MI",
 		"lat": 42.57444,
 		"lon": -84.81139
+	},
+	"KGDW": {
+		"id": "KGDW",
+		"city": "GLADWIN: MI                 US         TG",
+		"state": "MI",
+		"lat": 43.97,
+		"lon": -84.48
 	},
 	"KGLR": {
 		"id": "KGLR",
@@ -8284,7 +7815,7 @@
 		"id": "KIRS",
 		"city": "Sturgis, Kirsch Municipal Airport",
 		"state": "MI",
-		"lat": 41.8127799,
+		"lat": 41.81278,
 		"lon": -85.43917
 	},
 	"KISQ": {
@@ -8335,13 +7866,6 @@
 		"state": "MI",
 		"lat": 42.35083,
 		"lon": -86.25611
-	},
-	"KMBL": {
-		"id": "KMBL",
-		"city": "Manistee County - Blacker Airport",
-		"state": "MI",
-		"lat": 44.27142,
-		"lon": -86.23773
 	},
 	"KMBS": {
 		"id": "KMBS",
@@ -8404,7 +7928,7 @@
 		"city": "Detroit/Grosse Ile, Grosse Ile Airport",
 		"state": "MI",
 		"lat": 42.09861,
-		"lon": -83.1611099
+		"lon": -83.16111
 	},
 	"KOSC": {
 		"id": "KOSC",
@@ -8426,13 +7950,6 @@
 		"state": "MI",
 		"lat": 42.91031,
 		"lon": -82.53315
-	},
-	"KPLN": {
-		"id": "KPLN",
-		"city": "Pellston Regional Airport of Emmet County",
-		"state": "MI",
-		"lat": 45.56443,
-		"lon": -84.7928699
 	},
 	"KPTK": {
 		"id": "KPTK",
@@ -8466,12 +7983,12 @@
 		"id": "KRQB",
 		"city": "Big Rapids, Roben-Hood Airport",
 		"state": "MI",
-		"lat": 43.7224999,
+		"lat": 43.7225,
 		"lon": -85.50417
 	},
 	"KSAW": {
 		"id": "KSAW",
-		"city": "Marquette, Sawyer International Airport",
+		"city": "Marquette Sawyer Regional Airport",
 		"state": "MI",
 		"lat": 46.35361,
 		"lon": -87.39528
@@ -8522,8 +8039,225 @@
 		"id": "KYIP",
 		"city": "Detroit, Willow Run Airport",
 		"state": "MI",
-		"lat": 42.2366699,
+		"lat": 42.23667,
 		"lon": -83.52611
+	},
+	"KBIX": {
+		"id": "KBIX",
+		"city": "Keesler Air Force Base / Biloxi",
+		"state": "MS",
+		"lat": 30.41667,
+		"lon": -88.91667
+	},
+	"KCBM": {
+		"id": "KCBM",
+		"city": "Columbus Air Force Base",
+		"state": "MS",
+		"lat": 33.65,
+		"lon": -88.45
+	},
+	"KCKM": {
+		"id": "KCKM",
+		"city": "Fletcher Field, Clarksdale",
+		"state": "MS",
+		"lat": 34.2997,
+		"lon": -90.5123
+	},
+	"KCRX": {
+		"id": "KCRX",
+		"city": "Corinth",
+		"state": "MS",
+		"lat": 34.915,
+		"lon": -88.6035
+	},
+	"KGLH": {
+		"id": "KGLH",
+		"city": "Greenville, Mid Delta Regional Airport",
+		"state": "MS",
+		"lat": 33.48278,
+		"lon": -90.98556
+	},
+	"KGPT": {
+		"id": "KGPT",
+		"city": "Gulfport - Gulfport-Biloxi International Airport",
+		"state": "MS",
+		"lat": 30.41194,
+		"lon": -89.08083
+	},
+	"KGTR": {
+		"id": "KGTR",
+		"city": "Columbus/West Point/Starkville, Golden Triangle Regional Airport",
+		"state": "MS",
+		"lat": 33.45,
+		"lon": -88.58333
+	},
+	"KGWO": {
+		"id": "KGWO",
+		"city": "Greenwood, Greenwood-LeFlore Airport",
+		"state": "MS",
+		"lat": 33.4925,
+		"lon": -90.08361
+	},
+	"KHBG": {
+		"id": "KHBG",
+		"city": "Hattiesburg, Bobby L Chain Municipal Airport",
+		"state": "MS",
+		"lat": 31.26945,
+		"lon": -89.25613
+	},
+	"KHEZ": {
+		"id": "KHEZ",
+		"city": "Natchez, Hardy-Anders Field Natchez-Adams County Airport",
+		"state": "MS",
+		"lat": 31.61593,
+		"lon": -91.29724
+	},
+	"KHKS": {
+		"id": "KHKS",
+		"city": "Jackson, Hawkins Field Airport",
+		"state": "MS",
+		"lat": 32.33472,
+		"lon": -90.2225
+	},
+	"KHSA": {
+		"id": "KHSA",
+		"city": "Bay St. Louis, Stennis International Airport",
+		"state": "MS",
+		"lat": 30.36778,
+		"lon": -89.45472
+	},
+	"KJAN": {
+		"id": "KJAN",
+		"city": "Jackson, Jackson International Airport",
+		"state": "MS",
+		"lat": 32.31972,
+		"lon": -90.0775
+	},
+	"KJVW": {
+		"id": "KJVW",
+		"city": "JB Williams Airport",
+		"state": "MS",
+		"lat": 32.30447,
+		"lon": -90.41053
+	},
+	"KLMS": {
+		"id": "KLMS",
+		"city": "Louisville/Winston County Airport",
+		"state": "MS",
+		"lat": 33.14599,
+		"lon": -89.06245
+	},
+	"KLUL": {
+		"id": "KLUL",
+		"city": "LAUREL/NOBLE FIELD",
+		"state": "MS",
+		"lat": 31.67,
+		"lon": -89.17
+	},
+	"KMBO": {
+		"id": "KMBO",
+		"city": "Madison Bruce Campbell Field Airport",
+		"state": "MS",
+		"lat": 32.4384,
+		"lon": -90.1014
+	},
+	"KMCB": {
+		"id": "KMCB",
+		"city": "McComb, McComb / Pike County / John E Lewis Field Airport",
+		"state": "MS",
+		"lat": 31.17833,
+		"lon": -90.47194
+	},
+	"KMEI": {
+		"id": "KMEI",
+		"city": "Meridian, Key Field",
+		"state": "MS",
+		"lat": 32.33806,
+		"lon": -88.74778
+	},
+	"KNJW": {
+		"id": "KNJW",
+		"city": "Meridian, Joe Williams Naval Outlying Field",
+		"state": "MS",
+		"lat": 32.79611,
+		"lon": -88.83167
+	},
+	"KNMM": {
+		"id": "KNMM",
+		"city": "Meridian, Meridian Naval Air Station - McCain Field",
+		"state": "MS",
+		"lat": 32.55194,
+		"lon": -88.55528
+	},
+	"KOLV": {
+		"id": "KOLV",
+		"city": "Olive Branch, Olive Branch Airport",
+		"state": "MS",
+		"lat": 34.97889,
+		"lon": -89.78694
+	},
+	"KPIB": {
+		"id": "KPIB",
+		"city": "Hattiesburg/Laurel, Hattiesburg-Laurel Regional Airport",
+		"state": "MS",
+		"lat": 31.46667,
+		"lon": -89.33333
+	},
+	"KPMU": {
+		"id": "KPMU",
+		"city": "Batesville Panola County",
+		"state": "MS",
+		"lat": 34.3635,
+		"lon": -89.8929
+	},
+	"KPQL": {
+		"id": "KPQL",
+		"city": "Moss Point - Trent Lott International Airport",
+		"state": "MS",
+		"lat": 30.46305,
+		"lon": -88.53155
+	},
+	"KRNV": {
+		"id": "KRNV",
+		"city": "Cleveland Municipal Airport",
+		"state": "MS",
+		"lat": 33.7611,
+		"lon": -90.7579
+	},
+	"KSTF": {
+		"id": "KSTF",
+		"city": "George M Bryan Airport, Starkville",
+		"state": "MS",
+		"lat": 33.4331,
+		"lon": -88.8486
+	},
+	"KTUP": {
+		"id": "KTUP",
+		"city": "Tupelo, Tupelo Regional Airport",
+		"state": "MS",
+		"lat": 34.26806,
+		"lon": -88.77
+	},
+	"KUOX": {
+		"id": "KUOX",
+		"city": "Oxford, University-Oxford Airport",
+		"state": "MS",
+		"lat": 34.38444,
+		"lon": -89.53556
+	},
+	"KUTA": {
+		"id": "KUTA",
+		"city": "Tunica, Tunica Municipal Airport",
+		"state": "MS",
+		"lat": 34.68083,
+		"lon": -90.34639
+	},
+	"KVKS": {
+		"id": "KVKS",
+		"city": "Vicksburg Municipal",
+		"state": "MS",
+		"lat": 32.23333,
+		"lon": -90.93333
 	},
 	"KAIZ": {
 		"id": "KAIZ",
@@ -8551,7 +8285,7 @@
 		"city": "Cape Girardeau, Cape Girardeau Regional Airport",
 		"state": "MO",
 		"lat": 37.22556,
-		"lon": -89.5783299
+		"lon": -89.57833
 	},
 	"KCOU": {
 		"id": "KCOU",
@@ -8567,13 +8301,6 @@
 		"lat": 38.71222,
 		"lon": -93.17444
 	},
-	"KEOS": {
-		"id": "KEOS",
-		"city": "NEOSHOAIRPORT",
-		"state": "MO",
-		"lat": 36.8108,
-		"lon": -94.39169
-	},
 	"KEVU": {
 		"id": "KEVU",
 		"city": "Maryville Northwest Missouri Regional Airport",
@@ -8585,7 +8312,7 @@
 		"id": "KEZZ",
 		"city": "Cameron Memorial Airport",
 		"state": "MO",
-		"lat": 39.7275599,
+		"lat": 39.72756,
 		"lon": -94.27639
 	},
 	"KFAM": {
@@ -8600,14 +8327,14 @@
 		"city": "Branson West Muni - Emerson Field",
 		"state": "MO",
 		"lat": 36.6985,
-		"lon": -93.4021999
+		"lon": -93.4022
 	},
 	"KFYG": {
 		"id": "KFYG",
 		"city": "Washington Regional Airport",
 		"state": "MO",
 		"lat": 38.5876,
-		"lon": -90.9937999
+		"lon": -90.9938
 	},
 	"KGLY": {
 		"id": "KGLY",
@@ -8656,7 +8383,7 @@
 		"city": "Joplin, Joplin Regional Airport",
 		"state": "MO",
 		"lat": 37.15611,
-		"lon": -94.5005599
+		"lon": -94.50056
 	},
 	"KLBO": {
 		"id": "KLBO",
@@ -8671,6 +8398,13 @@
 		"state": "MO",
 		"lat": 38.611,
 		"lon": -94.3421
+	},
+	"KLXT": {
+		"id": "KLXT",
+		"city": "Kansas City - Lee's Summit Regional Airport",
+		"state": "MO",
+		"lat": 38.95972,
+		"lon": -94.37167
 	},
 	"KAFK": {
 		"id": "KAFK",
@@ -8749,13 +8483,6 @@
 		"lat": 42.8375,
 		"lon": -103.09528
 	},
-	"KCSB": {
-		"id": "KCSB",
-		"city": "Cambridge Municipal Airport",
-		"state": "NE",
-		"lat": 40.3065799,
-		"lon": -100.16207
-	},
 	"KEAR": {
 		"id": "KEAR",
 		"city": "Kearney, Kearney Municipal Airport",
@@ -8775,7 +8502,7 @@
 		"city": "Falls City, Brenner Field Airport",
 		"state": "NE",
 		"lat": 40.07889,
-		"lon": -95.5919399
+		"lon": -95.59194
 	},
 	"KGGF": {
 		"id": "KGGF",
@@ -8788,7 +8515,7 @@
 		"id": "KGRI",
 		"city": "Grand Island, Central Nebraska Regional Airport",
 		"state": "NE",
-		"lat": 40.9583299,
+		"lat": 40.95833,
 		"lon": -98.3125
 	},
 	"KGRN": {
@@ -8859,7 +8586,7 @@
 		"city": "Lincoln, Lincoln Municipal Airport",
 		"state": "NE",
 		"lat": 40.83111,
-		"lon": -96.7644399
+		"lon": -96.76444
 	},
 	"KLXN": {
 		"id": "KLXN",
@@ -8880,7 +8607,7 @@
 		"city": "Omaha, Millard Airport",
 		"state": "NE",
 		"lat": 41.19583,
-		"lon": -96.1122199
+		"lon": -96.11222
 	},
 	"KODX": {
 		"id": "KODX",
@@ -8900,7 +8627,7 @@
 		"id": "KOFK",
 		"city": "Norfolk, Stefan Memorial Airport",
 		"state": "NE",
-		"lat": 41.9805599,
+		"lat": 41.98056,
 		"lon": -97.43694
 	},
 	"KOGA": {
@@ -8936,7 +8663,7 @@
 		"city": "Plattsmouth, Plattsmouth Municipal Airport",
 		"state": "NE",
 		"lat": 40.95,
-		"lon": -95.9177799
+		"lon": -95.91778
 	},
 	"KSNY": {
 		"id": "KSNY",
@@ -8952,13 +8679,6 @@
 		"lat": 41.96194,
 		"lon": -100.56889
 	},
-	"KTQE": {
-		"id": "KTQE",
-		"city": "Tekamah, Tekamah Municipal Airport",
-		"state": "NE",
-		"lat": 41.76694,
-		"lon": -96.17778
-	},
 	"KVTN": {
 		"id": "KVTN",
 		"city": "Valentine, Miller Field",
@@ -8966,18 +8686,11 @@
 		"lat": 42.85861,
 		"lon": -100.55139
 	},
-	"KLXT": {
-		"id": "KLXT",
-		"city": "Lee's Summit, Lee's Summit Municipal Airport",
-		"state": "MO",
-		"lat": 38.95972,
-		"lon": -94.37167
-	},
 	"KMAW": {
 		"id": "KMAW",
 		"city": "Malden Municipal Airport",
 		"state": "MO",
-		"lat": 36.6004999,
+		"lat": 36.6005,
 		"lon": -89.9922
 	},
 	"KMBY": {
@@ -9013,13 +8726,13 @@
 		"city": "Mexico Memorial Airport",
 		"state": "MO",
 		"lat": 39.1575,
-		"lon": -91.8182999
+		"lon": -91.8183
 	},
 	"KOZS": {
 		"id": "KOZS",
 		"city": "Camdenton Memorial Airport",
 		"state": "MO",
-		"lat": 37.9739999,
+		"lat": 37.974,
 		"lon": -92.6912
 	},
 	"KPCD": {
@@ -9048,7 +8761,7 @@
 		"city": "Skyhaven Airport",
 		"state": "MO",
 		"lat": 38.7842,
-		"lon": -93.8028999
+		"lon": -93.8029
 	},
 	"KSET": {
 		"id": "KSET",
@@ -9146,7 +8859,7 @@
 		"city": "Baker, Baker Municipal Airport",
 		"state": "MT",
 		"lat": 46.34778,
-		"lon": -104.2574999
+		"lon": -104.2575
 	},
 	"KBIL": {
 		"id": "KBIL",
@@ -9260,13 +8973,6 @@
 		"lat": 45.69944,
 		"lon": -110.44833
 	},
-	"KLWT": {
-		"id": "KLWT",
-		"city": "Lewistown, Lewistown Municipal Airport",
-		"state": "MT",
-		"lat": 47.0491699,
-		"lon": -109.46639
-	},
 	"KMLP": {
 		"id": "KMLP",
 		"city": "Mullan Pass, Mullan Pass Vor",
@@ -9341,7 +9047,7 @@
 		"id": "KAFN",
 		"city": "Jaffrey Airport-Silver Ranch",
 		"state": "NH",
-		"lat": 42.8066699,
+		"lat": 42.80667,
 		"lon": -72.00127
 	},
 	"KASH": {
@@ -9418,14 +9124,14 @@
 		"id": "KPSM",
 		"city": "Pease Air Force Base / Portsmouth",
 		"state": "NH",
-		"lat": 43.0833299,
+		"lat": 43.08333,
 		"lon": -70.81667
 	},
 	"KBAM": {
 		"id": "KBAM",
 		"city": "Battle Mountain - Lander County Airport",
 		"state": "NV",
-		"lat": 40.5989999,
+		"lat": 40.599,
 		"lon": -116.8743
 	},
 	"KBVU": {
@@ -9453,7 +9159,7 @@
 		"id": "KEKO",
 		"city": "Elko, Elko Regional Airport",
 		"state": "NV",
-		"lat": 40.8240399,
+		"lat": 40.82404,
 		"lon": -115.78635
 	},
 	"KELY": {
@@ -9495,7 +9201,7 @@
 		"id": "KLOL",
 		"city": "Lovelock, Derby Field Airport",
 		"state": "NV",
-		"lat": 40.0683999,
+		"lat": 40.0684,
 		"lon": -118.57017
 	},
 	"KLSV": {
@@ -9504,13 +9210,6 @@
 		"state": "NV",
 		"lat": 36.23333,
 		"lon": -115.03333
-	},
-	"KMEV": {
-		"id": "KMEV",
-		"city": "Minden-Tahoe Airport",
-		"state": "NV",
-		"lat": 38.9963,
-		"lon": -119.75
 	},
 	"KNFL": {
 		"id": "KNFL",
@@ -9624,13 +9323,6 @@
 		"lat": 40.8,
 		"lon": -74.41667
 	},
-	"KNEL": {
-		"id": "KNEL",
-		"city": "Lakehurst Naval Air Station",
-		"state": "NJ",
-		"lat": 40.03661,
-		"lon": -74.35251
-	},
 	"KOBI": {
 		"id": "KOBI",
 		"city": "CAPE MAY",
@@ -9642,7 +9334,7 @@
 		"id": "KSMQ",
 		"city": "Somerville, Somerset Airport",
 		"state": "NJ",
-		"lat": 40.6240499,
+		"lat": 40.62405,
 		"lon": -74.66898
 	},
 	"KTEB": {
@@ -9736,6 +9428,13 @@
 		"lat": 32.3375,
 		"lon": -104.26333
 	},
+	"KCQC": {
+		"id": "KCQC",
+		"city": "Clines Corners",
+		"state": "NM",
+		"lat": 35,
+		"lon": -105.66667
+	},
 	"KCVN": {
 		"id": "KCVN",
 		"city": "Clovis Municipal Airport",
@@ -9768,7 +9467,7 @@
 		"id": "KFMN",
 		"city": "Farmington, Four Corners Regional Airport",
 		"state": "NM",
-		"lat": 36.7436099,
+		"lat": 36.74361,
 		"lon": -108.22917
 	},
 	"KGNT": {
@@ -9797,13 +9496,13 @@
 		"city": "Hobbs / Lea County",
 		"state": "NM",
 		"lat": 32.68333,
-		"lon": -103.2166699
+		"lon": -103.21667
 	},
 	"KLAM": {
 		"id": "KLAM",
 		"city": "Los Alamos Airport",
 		"state": "NM",
-		"lat": 35.8796899,
+		"lat": 35.87969,
 		"lon": -106.26869
 	},
 	"KLRU": {
@@ -9859,7 +9558,7 @@
 		"id": "KSRR",
 		"city": "Sierra Blanca Regional Airport",
 		"state": "NM",
-		"lat": 33.4667699,
+		"lat": 33.46677,
 		"lon": -105.52778
 	},
 	"KSVC": {
@@ -9887,15 +9586,512 @@
 		"id": "KTCS",
 		"city": "Truth Or Consequences, Truth Or Consequences Municipal Airport",
 		"state": "NM",
-		"lat": 33.2366699,
+		"lat": 33.23667,
 		"lon": -107.26806
 	},
-	"KXNI": {
-		"id": "KXNI",
-		"city": "Andrew Othole Memorial Airport",
-		"state": "NM",
-		"lat": 35.06068,
-		"lon": -108.93759
+	"KACZ": {
+		"id": "KACZ",
+		"city": "Henderson Field Airport",
+		"state": "NC",
+		"lat": 34.71786,
+		"lon": -78.00389
+	},
+	"KAFP": {
+		"id": "KAFP",
+		"city": "Anson County Airport",
+		"state": "NC",
+		"lat": 35.01944,
+		"lon": -80.07836
+	},
+	"KAKH": {
+		"id": "KAKH",
+		"city": "Gastonia Municipal Airport",
+		"state": "NC",
+		"lat": 35.19687,
+		"lon": -81.15545
+	},
+	"KASJ": {
+		"id": "KASJ",
+		"city": "Ahoskie, Tri-County Airport",
+		"state": "NC",
+		"lat": 36.2975,
+		"lon": -77.17083
+	},
+	"KAVL": {
+		"id": "KAVL",
+		"city": "Asheville, Asheville Regional Airport",
+		"state": "NC",
+		"lat": 35.43194,
+		"lon": -82.5375
+	},
+	"KBUY": {
+		"id": "KBUY",
+		"city": "Burlington Alamance Regional Airport",
+		"state": "NC",
+		"lat": 36.04753,
+		"lon": -79.47375
+	},
+	"KCLT": {
+		"id": "KCLT",
+		"city": "Charlotte/Douglas International Airport",
+		"state": "NC",
+		"lat": 35.20833,
+		"lon": -80.96139
+	},
+	"KCPC": {
+		"id": "KCPC",
+		"city": "Whiteville, Columbus County Municipal Airport",
+		"state": "NC",
+		"lat": 34.27278,
+		"lon": -78.715
+	},
+	"KCTZ": {
+		"id": "KCTZ",
+		"city": "Sampson County Airport",
+		"state": "NC",
+		"lat": 34.97522,
+		"lon": -78.36276
+	},
+	"KDPL": {
+		"id": "KDPL",
+		"city": "Duplin County Airport",
+		"state": "NC",
+		"lat": 34.99942,
+		"lon": -77.97995
+	},
+	"KECG": {
+		"id": "KECG",
+		"city": "Elizabeth City C/G Regional Airport",
+		"state": "NC",
+		"lat": 36.25771,
+		"lon": -76.1716
+	},
+	"KEDE": {
+		"id": "KEDE",
+		"city": "Edenton, Northeastern Regional Airport",
+		"state": "NC",
+		"lat": 36.02778,
+		"lon": -76.56722
+	},
+	"KEHO": {
+		"id": "KEHO",
+		"city": "Shelby Municipal Airport",
+		"state": "NC",
+		"lat": 35.25563,
+		"lon": -81.59858
+	},
+	"KEQY": {
+		"id": "KEQY",
+		"city": "Monroe, Monroe Airport",
+		"state": "NC",
+		"lat": 35.01694,
+		"lon": -80.62056
+	},
+	"KETC": {
+		"id": "KETC",
+		"city": "Tarboro-Edgecombe Airport",
+		"state": "NC",
+		"lat": 35.9373,
+		"lon": -77.54648
+	},
+	"KEWN": {
+		"id": "KEWN",
+		"city": "New Bern, Craven County Regional Airport",
+		"state": "NC",
+		"lat": 35.0675,
+		"lon": -77.04722
+	},
+	"KEXX": {
+		"id": "KEXX",
+		"city": "Lexington, Davidson County Airport",
+		"state": "NC",
+		"lat": 35.78111,
+		"lon": -80.30389
+	},
+	"KEYF": {
+		"id": "KEYF",
+		"city": "Curtis L Brown Jr. Field Airport",
+		"state": "NC",
+		"lat": 34.60418,
+		"lon": -78.57902
+	},
+	"KFAY": {
+		"id": "KFAY",
+		"city": "Fayetteville, Fayetteville Regional Airport",
+		"state": "NC",
+		"lat": 34.98944,
+		"lon": -78.88
+	},
+	"KFBG": {
+		"id": "KFBG",
+		"city": "Fort Bragg / Simmons Army Airfield",
+		"state": "NC",
+		"lat": 35.1314,
+		"lon": -78.93158
+	},
+	"KFFA": {
+		"id": "KFFA",
+		"city": "Kill Devil Hills, First Flight Airport",
+		"state": "NC",
+		"lat": 36.01667,
+		"lon": -75.66667
+	},
+	"KFQD": {
+		"id": "KFQD",
+		"city": "Rutherfordton, Rutherford County-Marchman Field Airport",
+		"state": "NC",
+		"lat": 35.42833,
+		"lon": -81.935
+	},
+	"KGEV": {
+		"id": "KGEV",
+		"city": "Jefferson - Ashe County Airport",
+		"state": "NC",
+		"lat": 36.43333,
+		"lon": -81.41667
+	},
+	"KGSB": {
+		"id": "KGSB",
+		"city": "Seymour Johnson Air Force Base",
+		"state": "NC",
+		"lat": 35.34457,
+		"lon": -77.94583
+	},
+	"KGSO": {
+		"id": "KGSO",
+		"city": "Greensboro, Piedmont Triad International Airport",
+		"state": "NC",
+		"lat": 36.0975,
+		"lon": -79.94361
+	},
+	"KGWW": {
+		"id": "KGWW",
+		"city": "Goldsboro, Goldsboro-Wayne Municipal Airport",
+		"state": "NC",
+		"lat": 35.46056,
+		"lon": -77.965
+	},
+	"KHBI": {
+		"id": "KHBI",
+		"city": "Asheboro, Asheboro Municipal Airport",
+		"state": "NC",
+		"lat": 35.65389,
+		"lon": -79.895
+	},
+	"KHFF": {
+		"id": "KHFF",
+		"city": "Mackall U. S. Army Airfield",
+		"state": "NC",
+		"lat": 35.03333,
+		"lon": -79.5
+	},
+	"KHKY": {
+		"id": "KHKY",
+		"city": "Hickory, Hickory Regional Airport",
+		"state": "NC",
+		"lat": 35.74222,
+		"lon": -81.38222
+	},
+	"KHNZ": {
+		"id": "KHNZ",
+		"city": "Henderson-Oxford Airport",
+		"state": "NC",
+		"lat": 36.36352,
+		"lon": -78.52889
+	},
+	"KHRJ": {
+		"id": "KHRJ",
+		"city": "Erwin, Harnett County Airport",
+		"state": "NC",
+		"lat": 35.37861,
+		"lon": -78.73361
+	},
+	"KHSE": {
+		"id": "KHSE",
+		"city": "Hatteras, Mitchell Field",
+		"state": "NC",
+		"lat": 35.23222,
+		"lon": -75.6225
+	},
+	"KILM": {
+		"id": "KILM",
+		"city": "Wilmington International Airport",
+		"state": "NC",
+		"lat": 34.26681,
+		"lon": -77.89987
+	},
+	"KINT": {
+		"id": "KINT",
+		"city": "Winston Salem, Smith Reynolds Airport",
+		"state": "NC",
+		"lat": 36.13333,
+		"lon": -80.22472
+	},
+	"KIPJ": {
+		"id": "KIPJ",
+		"city": "Lincolnton, Lincolnton-Lincoln County Regional Airport",
+		"state": "NC",
+		"lat": 35.48306,
+		"lon": -81.16139
+	},
+	"KISO": {
+		"id": "KISO",
+		"city": "Kinston, Kinston Regional Jetport at Stallings Field",
+		"state": "NC",
+		"lat": 35.33333,
+		"lon": -77.61667
+	},
+	"KIXA": {
+		"id": "KIXA",
+		"city": "Halifax-Northampton Regional Airport",
+		"state": "NC",
+		"lat": 36.33,
+		"lon": -77.635
+	},
+	"KJNX": {
+		"id": "KJNX",
+		"city": "Smithfield, Johnston County Airport",
+		"state": "NC",
+		"lat": 35.54083,
+		"lon": -78.39028
+	},
+	"KJQF": {
+		"id": "KJQF",
+		"city": "Concord Regional Airport",
+		"state": "NC",
+		"lat": 35.38963,
+		"lon": -80.70735
+	},
+	"KLBT": {
+		"id": "KLBT",
+		"city": "Lumberton Municipal Airport",
+		"state": "NC",
+		"lat": 34.60817,
+		"lon": -79.059
+	},
+	"KLHZ": {
+		"id": "KLHZ",
+		"city": "Franklin County Airport",
+		"state": "NC",
+		"lat": 36.02288,
+		"lon": -78.33405
+	},
+	"KMCZ": {
+		"id": "KMCZ",
+		"city": "Martin County Airport",
+		"state": "NC",
+		"lat": 35.86219,
+		"lon": -77.1782
+	},
+	"KMEB": {
+		"id": "KMEB",
+		"city": "Laurinburg Maxton Airport",
+		"state": "NC",
+		"lat": 34.79132,
+		"lon": -79.3683
+	},
+	"KMQI": {
+		"id": "KMQI",
+		"city": "Manteo / Dare County Regional",
+		"state": "NC",
+		"lat": 35.91667,
+		"lon": -75.7
+	},
+	"KMRH": {
+		"id": "KMRH",
+		"city": "Beaufort Smith Field",
+		"state": "NC",
+		"lat": 34.73259,
+		"lon": -76.6566
+	},
+	"KMRN": {
+		"id": "KMRN",
+		"city": "Morganton-Lenoir Airport",
+		"state": "NC",
+		"lat": 35.81922,
+		"lon": -81.60971
+	},
+	"KMWK": {
+		"id": "KMWK",
+		"city": "Mount Airy/Surry County Airport",
+		"state": "NC",
+		"lat": 36.45675,
+		"lon": -80.55483
+	},
+	"KNBT": {
+		"id": "KNBT",
+		"city": "Piney Island, Bt-11 Bombing Range",
+		"state": "NC",
+		"lat": 35.02222,
+		"lon": -76.4625
+	},
+	"KNCA": {
+		"id": "KNCA",
+		"city": "MCAS New River",
+		"state": "NC",
+		"lat": 34.70627,
+		"lon": -77.44066
+	},
+	"KNJM": {
+		"id": "KNJM",
+		"city": "Bogue Field Marine Corps Auxiliary Field",
+		"state": "NC",
+		"lat": 34.69403,
+		"lon": -77.02945
+	},
+	"KNKT": {
+		"id": "KNKT",
+		"city": "Cherry Point Marine Corps Air Station",
+		"state": "NC",
+		"lat": 34.89719,
+		"lon": -76.88135
+	},
+	"KOAJ": {
+		"id": "KOAJ",
+		"city": "Jacksonville, Albert J Ellis Airport",
+		"state": "NC",
+		"lat": 34.83333,
+		"lon": -77.61667
+	},
+	"KOCW": {
+		"id": "KOCW",
+		"city": "Washington, Warren Field Airport",
+		"state": "NC",
+		"lat": 35.57056,
+		"lon": -77.04972
+	},
+	"KONX": {
+		"id": "KONX",
+		"city": "Currituck, Currituck County Airport",
+		"state": "NC",
+		"lat": 36.39889,
+		"lon": -76.01611
+	},
+	"KPGV": {
+		"id": "KPGV",
+		"city": "Pitt-Greenville Airport",
+		"state": "NC",
+		"lat": 35.63742,
+		"lon": -77.38506
+	},
+	"KPOB": {
+		"id": "KPOB",
+		"city": "Pope Army Airfield",
+		"state": "NC",
+		"lat": 35.17531,
+		"lon": -79.00771
+	},
+	"KRCZ": {
+		"id": "KRCZ",
+		"city": "Rockingham-Hamlet Airport",
+		"state": "NC",
+		"lat": 34.89545,
+		"lon": -79.75755
+	},
+	"KRDU": {
+		"id": "KRDU",
+		"city": "Raleigh / Durham, Raleigh-Durham International Airport",
+		"state": "NC",
+		"lat": 35.89223,
+		"lon": -78.78185
+	},
+	"KRHP": {
+		"id": "KRHP",
+		"city": "Andrews-Murphy Airport",
+		"state": "NC",
+		"lat": 35.19394,
+		"lon": -83.86182
+	},
+	"KRUQ": {
+		"id": "KRUQ",
+		"city": "Rowan County Airport",
+		"state": "NC",
+		"lat": 35.64417,
+		"lon": -80.52359
+	},
+	"KRWI": {
+		"id": "KRWI",
+		"city": "Rocky Mount, Rocky Mount-Wilson Regional Airport",
+		"state": "NC",
+		"lat": 35.855,
+		"lon": -77.89306
+	},
+	"KSCR": {
+		"id": "KSCR",
+		"city": "Siler City Municipal Airport",
+		"state": "NC",
+		"lat": 35.7043,
+		"lon": -79.5043
+	},
+	"KSIF": {
+		"id": "KSIF",
+		"city": "Reidsville, Rockingham County NC Shiloh Airport",
+		"state": "NC",
+		"lat": 36.43722,
+		"lon": -79.85083
+	},
+	"KSOP": {
+		"id": "KSOP",
+		"city": "Pinehurst/Southern Pines, Moore County Airport",
+		"state": "NC",
+		"lat": 35.23333,
+		"lon": -79.4
+	},
+	"KSUT": {
+		"id": "KSUT",
+		"city": "Brunswick County Airport",
+		"state": "NC",
+		"lat": 33.92921,
+		"lon": -78.07223
+	},
+	"KSVH": {
+		"id": "KSVH",
+		"city": "Statesville Municipal Airport",
+		"state": "NC",
+		"lat": 35.76362,
+		"lon": -80.9473
+	},
+	"KTDF": {
+		"id": "KTDF",
+		"city": "Roxboro, Person County Airport",
+		"state": "NC",
+		"lat": 36.285,
+		"lon": -78.98417
+	},
+	"KTNB": {
+		"id": "KTNB",
+		"city": "Watauga County Hospital Heliport",
+		"state": "NC",
+		"lat": 36.19856,
+		"lon": -81.65171
+	},
+	"KTQV": {
+		"id": "KTQV",
+		"city": "DURHAM/DUKE",
+		"state": "NC",
+		"lat": 36,
+		"lon": -78.9333
+	},
+	"KTTA": {
+		"id": "KTTA",
+		"city": "Sanford, Sanford-Lee County Regional Airport",
+		"state": "NC",
+		"lat": 35.5825,
+		"lon": -79.10139
+	},
+	"KUKF": {
+		"id": "KUKF",
+		"city": "North Wilkesboro, Wilkes County Airport",
+		"state": "NC",
+		"lat": 36.21667,
+		"lon": -81.08333
+	},
+	"KVUJ": {
+		"id": "KVUJ",
+		"city": "Albemarle, Stanly County Airport",
+		"state": "NC",
+		"lat": 35.41667,
+		"lon": -80.15083
 	},
 	"KALB": {
 		"id": "KALB",
@@ -10021,13 +10217,13 @@
 		"city": "Shirley, Brookhaven Airport",
 		"state": "NY",
 		"lat": 40.82167,
-		"lon": -72.8688899
+		"lon": -72.86889
 	},
 	"KIAG": {
 		"id": "KIAG",
 		"city": "Niagara Falls, Niagara Falls International Airport",
 		"state": "NY",
-		"lat": 43.1082899,
+		"lat": 43.10829,
 		"lon": -78.93818
 	},
 	"KISP": {
@@ -10086,13 +10282,6 @@
 		"lat": 40.77917,
 		"lon": -73.88
 	},
-	"KLKP": {
-		"id": "KLKP",
-		"city": "Lake Placid Airport",
-		"state": "NY",
-		"lat": 44.26448,
-		"lon": -73.96187
-	},
 	"KMGJ": {
 		"id": "KMGJ",
 		"city": "Montgomery, Orange County Airport",
@@ -10107,6 +10296,13 @@
 		"lat": 44.93583,
 		"lon": -74.84556
 	},
+	"KMSV": {
+		"id": "KMSV",
+		"city": "Monticello, Sullivan County International Airport",
+		"state": "NY",
+		"lat": 41.7,
+		"lon": -74.8
+	},
 	"KMTP": {
 		"id": "KMTP",
 		"city": "Montauk, Montauk Airport",
@@ -10119,7 +10315,7 @@
 		"city": "New York City, Central Park",
 		"state": "NY",
 		"lat": 40.78333,
-		"lon": -73.9666699
+		"lon": -73.96667
 	},
 	"KOGS": {
 		"id": "KOGS",
@@ -10147,7 +10343,7 @@
 		"city": "Plattsburgh International Airport ",
 		"state": "NY",
 		"lat": 44.65,
-		"lon": -73.4666699
+		"lon": -73.46667
 	},
 	"KPEO": {
 		"id": "KPEO",
@@ -10225,510 +10421,6 @@
 		"state": "NY",
 		"lat": 42.84344,
 		"lon": -75.56119
-	},
-	"KACZ": {
-		"id": "KACZ",
-		"city": "Henderson Field Airport",
-		"state": "NC",
-		"lat": 34.71786,
-		"lon": -78.00389
-	},
-	"KAFP": {
-		"id": "KAFP",
-		"city": "Anson County Airport",
-		"state": "NC",
-		"lat": 35.01944,
-		"lon": -80.07836
-	},
-	"KAKH": {
-		"id": "KAKH",
-		"city": "Gastonia Municipal Airport",
-		"state": "NC",
-		"lat": 35.1968699,
-		"lon": -81.15545
-	},
-	"KASJ": {
-		"id": "KASJ",
-		"city": "Ahoskie, Tri-County Airport",
-		"state": "NC",
-		"lat": 36.2975,
-		"lon": -77.17083
-	},
-	"KAVL": {
-		"id": "KAVL",
-		"city": "Asheville, Asheville Regional Airport",
-		"state": "NC",
-		"lat": 35.43194,
-		"lon": -82.5375
-	},
-	"KBUY": {
-		"id": "KBUY",
-		"city": "Burlington Alamance Regional Airport",
-		"state": "NC",
-		"lat": 36.04753,
-		"lon": -79.47375
-	},
-	"KCLT": {
-		"id": "KCLT",
-		"city": "Charlotte/Douglas International Airport",
-		"state": "NC",
-		"lat": 35.2083299,
-		"lon": -80.96139
-	},
-	"KCPC": {
-		"id": "KCPC",
-		"city": "Whiteville, Columbus County Municipal Airport",
-		"state": "NC",
-		"lat": 34.27278,
-		"lon": -78.715
-	},
-	"KCTZ": {
-		"id": "KCTZ",
-		"city": "Sampson County Airport",
-		"state": "NC",
-		"lat": 34.97522,
-		"lon": -78.36276
-	},
-	"KDPL": {
-		"id": "KDPL",
-		"city": "Duplin County Airport",
-		"state": "NC",
-		"lat": 34.99942,
-		"lon": -77.97995
-	},
-	"KECG": {
-		"id": "KECG",
-		"city": "Elizabeth City C/G Regional Airport",
-		"state": "NC",
-		"lat": 36.25771,
-		"lon": -76.1716
-	},
-	"KEDE": {
-		"id": "KEDE",
-		"city": "Edenton, Northeastern Regional Airport",
-		"state": "NC",
-		"lat": 36.02778,
-		"lon": -76.56722
-	},
-	"KEHO": {
-		"id": "KEHO",
-		"city": "Shelby Municipal Airport",
-		"state": "NC",
-		"lat": 35.2556299,
-		"lon": -81.59858
-	},
-	"KEQY": {
-		"id": "KEQY",
-		"city": "Monroe, Monroe Airport",
-		"state": "NC",
-		"lat": 35.01694,
-		"lon": -80.62056
-	},
-	"KETC": {
-		"id": "KETC",
-		"city": "Tarboro-Edgecombe Airport",
-		"state": "NC",
-		"lat": 35.9373,
-		"lon": -77.54648
-	},
-	"KEWN": {
-		"id": "KEWN",
-		"city": "New Bern, Craven County Regional Airport",
-		"state": "NC",
-		"lat": 35.0675,
-		"lon": -77.04722
-	},
-	"KEXX": {
-		"id": "KEXX",
-		"city": "Lexington, Davidson County Airport",
-		"state": "NC",
-		"lat": 35.78111,
-		"lon": -80.30389
-	},
-	"KEYF": {
-		"id": "KEYF",
-		"city": "Curtis L Brown Jr. Field Airport",
-		"state": "NC",
-		"lat": 34.60418,
-		"lon": -78.57902
-	},
-	"KFAY": {
-		"id": "KFAY",
-		"city": "Fayetteville, Fayetteville Regional Airport",
-		"state": "NC",
-		"lat": 34.98944,
-		"lon": -78.88
-	},
-	"KFBG": {
-		"id": "KFBG",
-		"city": "Fort Bragg / Simmons Army Airfield",
-		"state": "NC",
-		"lat": 35.1314,
-		"lon": -78.93158
-	},
-	"KFFA": {
-		"id": "KFFA",
-		"city": "Kill Devil Hills, First Flight Airport",
-		"state": "NC",
-		"lat": 36.01667,
-		"lon": -75.66667
-	},
-	"KFQD": {
-		"id": "KFQD",
-		"city": "Rutherfordton, Rutherford County-Marchman Field Airport",
-		"state": "NC",
-		"lat": 35.42833,
-		"lon": -81.935
-	},
-	"KGEV": {
-		"id": "KGEV",
-		"city": "Jefferson - Ashe County Airport",
-		"state": "NC",
-		"lat": 36.43333,
-		"lon": -81.41667
-	},
-	"KGSB": {
-		"id": "KGSB",
-		"city": "Seymour-Johnson Air Force Base",
-		"state": "NC",
-		"lat": 35.34457,
-		"lon": -77.94583
-	},
-	"KGSO": {
-		"id": "KGSO",
-		"city": "Greensboro, Piedmont Triad International Airport",
-		"state": "NC",
-		"lat": 36.0974999,
-		"lon": -79.94361
-	},
-	"KGWW": {
-		"id": "KGWW",
-		"city": "Goldsboro, Goldsboro-Wayne Municipal Airport",
-		"state": "NC",
-		"lat": 35.46056,
-		"lon": -77.965
-	},
-	"KHBI": {
-		"id": "KHBI",
-		"city": "Asheboro, Asheboro Municipal Airport",
-		"state": "NC",
-		"lat": 35.6538899,
-		"lon": -79.895
-	},
-	"KHFF": {
-		"id": "KHFF",
-		"city": "Mackall U. S. Army Airfield",
-		"state": "NC",
-		"lat": 35.03333,
-		"lon": -79.5
-	},
-	"KHKY": {
-		"id": "KHKY",
-		"city": "Hickory, Hickory Regional Airport",
-		"state": "NC",
-		"lat": 35.74222,
-		"lon": -81.38222
-	},
-	"KHNZ": {
-		"id": "KHNZ",
-		"city": "Henderson-Oxford Airport",
-		"state": "NC",
-		"lat": 36.36352,
-		"lon": -78.52889
-	},
-	"KHRJ": {
-		"id": "KHRJ",
-		"city": "Erwin, Harnett County Airport",
-		"state": "NC",
-		"lat": 35.37861,
-		"lon": -78.73361
-	},
-	"KHSE": {
-		"id": "KHSE",
-		"city": "Hatteras, Mitchell Field",
-		"state": "NC",
-		"lat": 35.23222,
-		"lon": -75.6225
-	},
-	"KILM": {
-		"id": "KILM",
-		"city": "Wilmington International Airport",
-		"state": "NC",
-		"lat": 34.26681,
-		"lon": -77.89987
-	},
-	"KINT": {
-		"id": "KINT",
-		"city": "Winston Salem, Smith Reynolds Airport",
-		"state": "NC",
-		"lat": 36.13333,
-		"lon": -80.22472
-	},
-	"KIPJ": {
-		"id": "KIPJ",
-		"city": "Lincolnton, Lincolnton-Lincoln County Regional Airport",
-		"state": "NC",
-		"lat": 35.48306,
-		"lon": -81.16139
-	},
-	"KISO": {
-		"id": "KISO",
-		"city": "Kinston, Kinston Regional Jetport at Stallings Field",
-		"state": "NC",
-		"lat": 35.3333299,
-		"lon": -77.61667
-	},
-	"KIXA": {
-		"id": "KIXA",
-		"city": "Halifax-Northampton Regional Airport",
-		"state": "NC",
-		"lat": 36.33,
-		"lon": -77.635
-	},
-	"KJNX": {
-		"id": "KJNX",
-		"city": "Smithfield, Johnston County Airport",
-		"state": "NC",
-		"lat": 35.54083,
-		"lon": -78.39028
-	},
-	"KJQF": {
-		"id": "KJQF",
-		"city": "Concord Regional Airport",
-		"state": "NC",
-		"lat": 35.3896299,
-		"lon": -80.70735
-	},
-	"KLBT": {
-		"id": "KLBT",
-		"city": "Lumberton Municipal Airport",
-		"state": "NC",
-		"lat": 34.60817,
-		"lon": -79.059
-	},
-	"KLHZ": {
-		"id": "KLHZ",
-		"city": "Franklin County Airport",
-		"state": "NC",
-		"lat": 36.02288,
-		"lon": -78.33405
-	},
-	"KMCZ": {
-		"id": "KMCZ",
-		"city": "Martin County Airport",
-		"state": "NC",
-		"lat": 35.86219,
-		"lon": -77.1782
-	},
-	"KMEB": {
-		"id": "KMEB",
-		"city": "Laurinburg Maxton Airport",
-		"state": "NC",
-		"lat": 34.79132,
-		"lon": -79.3683
-	},
-	"KMQI": {
-		"id": "KMQI",
-		"city": "Manteo / Dare County Regional",
-		"state": "NC",
-		"lat": 35.91667,
-		"lon": -75.7
-	},
-	"KMRH": {
-		"id": "KMRH",
-		"city": "Beaufort Smith Field",
-		"state": "NC",
-		"lat": 34.73259,
-		"lon": -76.6566
-	},
-	"KMRN": {
-		"id": "KMRN",
-		"city": "Morganton-Lenoir Airport",
-		"state": "NC",
-		"lat": 35.81922,
-		"lon": -81.60971
-	},
-	"KMWK": {
-		"id": "KMWK",
-		"city": "Mount Airy/Surry County Airport",
-		"state": "NC",
-		"lat": 36.45675,
-		"lon": -80.55483
-	},
-	"KNBT": {
-		"id": "KNBT",
-		"city": "Piney Island, Bt-11 Bombing Range",
-		"state": "NC",
-		"lat": 35.02222,
-		"lon": -76.4625
-	},
-	"KNCA": {
-		"id": "KNCA",
-		"city": "MCAS New River",
-		"state": "NC",
-		"lat": 34.70627,
-		"lon": -77.44066
-	},
-	"KNJM": {
-		"id": "KNJM",
-		"city": "Bogue Field Marine Corps Auxiliary Field",
-		"state": "NC",
-		"lat": 34.69403,
-		"lon": -77.02945
-	},
-	"KNKT": {
-		"id": "KNKT",
-		"city": "Cherry Point Marine Corps Air Station",
-		"state": "NC",
-		"lat": 34.89719,
-		"lon": -76.88135
-	},
-	"KOAJ": {
-		"id": "KOAJ",
-		"city": "Jacksonville, Albert J Ellis Airport",
-		"state": "NC",
-		"lat": 34.8333299,
-		"lon": -77.61667
-	},
-	"KOCW": {
-		"id": "KOCW",
-		"city": "Washington, Warren Field Airport",
-		"state": "NC",
-		"lat": 35.57056,
-		"lon": -77.0497199
-	},
-	"KONX": {
-		"id": "KONX",
-		"city": "Currituck, Currituck County Airport",
-		"state": "NC",
-		"lat": 36.39889,
-		"lon": -76.01611
-	},
-	"KPGV": {
-		"id": "KPGV",
-		"city": "Pitt-Greenville Airport",
-		"state": "NC",
-		"lat": 35.63742,
-		"lon": -77.38506
-	},
-	"KPOB": {
-		"id": "KPOB",
-		"city": "Pope Air Force Base",
-		"state": "NC",
-		"lat": 35.17531,
-		"lon": -79.00771
-	},
-	"KRCZ": {
-		"id": "KRCZ",
-		"city": "Rockingham-Hamlet Airport",
-		"state": "NC",
-		"lat": 34.8954499,
-		"lon": -79.75755
-	},
-	"KRDU": {
-		"id": "KRDU",
-		"city": "Raleigh / Durham, Raleigh-Durham International Airport",
-		"state": "NC",
-		"lat": 35.89223,
-		"lon": -78.78185
-	},
-	"KRHP": {
-		"id": "KRHP",
-		"city": "Andrews-Murphy Airport",
-		"state": "NC",
-		"lat": 35.19394,
-		"lon": -83.86182
-	},
-	"KRUQ": {
-		"id": "KRUQ",
-		"city": "Rowan County Airport",
-		"state": "NC",
-		"lat": 35.64417,
-		"lon": -80.52359
-	},
-	"KRWI": {
-		"id": "KRWI",
-		"city": "Rocky Mount, Rocky Mount-Wilson Regional Airport",
-		"state": "NC",
-		"lat": 35.8549999,
-		"lon": -77.89306
-	},
-	"KSCR": {
-		"id": "KSCR",
-		"city": "Siler City Municipal Airport",
-		"state": "NC",
-		"lat": 35.7043,
-		"lon": -79.5043
-	},
-	"KSIF": {
-		"id": "KSIF",
-		"city": "Reidsville, Rockingham County NC Shiloh Airport",
-		"state": "NC",
-		"lat": 36.43722,
-		"lon": -79.85083
-	},
-	"KSOP": {
-		"id": "KSOP",
-		"city": "Pinehurst/Southern Pines, Moore County Airport",
-		"state": "NC",
-		"lat": 35.23333,
-		"lon": -79.4
-	},
-	"KSUT": {
-		"id": "KSUT",
-		"city": "Brunswick County Airport",
-		"state": "NC",
-		"lat": 33.92921,
-		"lon": -78.07223
-	},
-	"KSVH": {
-		"id": "KSVH",
-		"city": "Statesville Municipal Airport",
-		"state": "NC",
-		"lat": 35.76362,
-		"lon": -80.9473
-	},
-	"KTDF": {
-		"id": "KTDF",
-		"city": "Roxboro, Person County Airport",
-		"state": "NC",
-		"lat": 36.2849999,
-		"lon": -78.98417
-	},
-	"KTNB": {
-		"id": "KTNB",
-		"city": "Watauga County Hospital Heliport",
-		"state": "NC",
-		"lat": 36.19856,
-		"lon": -81.65171
-	},
-	"KTQV": {
-		"id": "KTQV",
-		"city": "DURHAM/DUKE",
-		"state": "NC",
-		"lat": 36,
-		"lon": -78.9333
-	},
-	"KTTA": {
-		"id": "KTTA",
-		"city": "Sanford, Sanford-Lee County Regional Airport",
-		"state": "NC",
-		"lat": 35.5825,
-		"lon": -79.10139
-	},
-	"KUKF": {
-		"id": "KUKF",
-		"city": "North Wilkesboro, Wilkes County Airport",
-		"state": "NC",
-		"lat": 36.21667,
-		"lon": -81.08333
-	},
-	"KVUJ": {
-		"id": "KVUJ",
-		"city": "Albemarle, Stanly County Airport",
-		"state": "NC",
-		"lat": 35.41667,
-		"lon": -80.15083
 	},
 	"KBAC": {
 		"id": "KBAC",
@@ -10884,13 +10576,6 @@
 		"lat": 34.69861,
 		"lon": -99.33806
 	},
-	"KBKN": {
-		"id": "KBKN",
-		"city": "Blackwell-Tonkawa Municipal Airport",
-		"state": "OK",
-		"lat": 36.7451099,
-		"lon": -97.34958
-	},
 	"KBVO": {
 		"id": "KBVO",
 		"city": "Bartlesville, Bartlesville Municipal Airport",
@@ -10945,7 +10630,7 @@
 		"city": "Duncan, Halliburton Field Airport",
 		"state": "OK",
 		"lat": 34.47083,
-		"lon": -97.9599999
+		"lon": -97.96
 	},
 	"KELK": {
 		"id": "KELK",
@@ -10958,7 +10643,7 @@
 		"id": "KEND",
 		"city": "Vance Air Force Base / Enid",
 		"state": "OK",
-		"lat": 36.3333299,
+		"lat": 36.33333,
 		"lon": -97.91667
 	},
 	"KFDR": {
@@ -11007,7 +10692,7 @@
 		"id": "KGUY",
 		"city": "Guymon / Guymon Municipal Airport",
 		"state": "OK",
-		"lat": 36.6816699,
+		"lat": 36.68167,
 		"lon": -101.50528
 	},
 	"KGZL": {
@@ -11091,7 +10776,7 @@
 		"id": "KMLC",
 		"city": "McAlester, McAlester Regional Airport",
 		"state": "OK",
-		"lat": 34.8822199,
+		"lat": 34.88222,
 		"lon": -95.78306
 	},
 	"KOJA": {
@@ -11112,7 +10797,7 @@
 		"id": "KOKM",
 		"city": "Okmulgee, Okmulgee Municipal Airport",
 		"state": "OK",
-		"lat": 35.6680599,
+		"lat": 35.66806,
 		"lon": -95.94861
 	},
 	"KOUN": {
@@ -11133,7 +10818,7 @@
 		"id": "KPNC",
 		"city": "Ponca City, Ponca City Municipal Airport",
 		"state": "OK",
-		"lat": 36.7305599,
+		"lat": 36.73056,
 		"lon": -97.09972
 	},
 	"KPVJ": {
@@ -11154,7 +10839,7 @@
 		"id": "KRCE",
 		"city": "Clarence E Page Municipal Airport",
 		"state": "OK",
-		"lat": 35.4880799,
+		"lat": 35.48808,
 		"lon": -97.82356
 	},
 	"KRKR": {
@@ -11168,7 +10853,7 @@
 		"id": "KRQO",
 		"city": "El Reno, El Reno Regional Airport",
 		"state": "OK",
-		"lat": 35.4724999,
+		"lat": 35.4725,
 		"lon": -98.00556
 	},
 	"KRVS": {
@@ -11206,13 +10891,6 @@
 		"lat": 35.41667,
 		"lon": -97.38333
 	},
-	"KTQH": {
-		"id": "KTQH",
-		"city": "Tahlequah, Tahlequah Municipal Airport",
-		"state": "OK",
-		"lat": 35.92889,
-		"lon": -95.00444
-	},
 	"KTUL": {
 		"id": "KTUL",
 		"city": "Tulsa, Tulsa International Airport",
@@ -11232,7 +10910,7 @@
 		"city": "Woodward, West Woodward Airport",
 		"state": "OK",
 		"lat": 36.43667,
-		"lon": -99.5211099
+		"lon": -99.52111
 	},
 	"KAKR": {
 		"id": "KAKR",
@@ -11281,7 +10959,7 @@
 		"city": "Cambridge Municipal Airport",
 		"state": "OH",
 		"lat": 39.97393,
-		"lon": -81.5807899
+		"lon": -81.58079
 	},
 	"KCGF": {
 		"id": "KCGF",
@@ -11301,7 +10979,7 @@
 		"id": "KCMH",
 		"city": "John Glenn Columbus International Airport",
 		"state": "OH",
-		"lat": 39.9906999,
+		"lat": 39.9907,
 		"lon": -82.87691
 	},
 	"KDAY": {
@@ -11343,15 +11021,8 @@
 		"id": "KFFO",
 		"city": "Dayton / Wright-Patterson Air Force Base",
 		"state": "OH",
-		"lat": 39.8333299,
+		"lat": 39.83333,
 		"lon": -84.05
-	},
-	"KGDK": {
-		"id": "KGDK",
-		"city": "Greene County - Lewis A Jackson Regional Airport",
-		"state": "OH",
-		"lat": 39.69072,
-		"lon": -83.99278
 	},
 	"KHAO": {
 		"id": "KHAO",
@@ -11359,13 +11030,6 @@
 		"state": "OH",
 		"lat": 39.36121,
 		"lon": -84.52061
-	},
-	"KHOC": {
-		"id": "KHOC",
-		"city": "HILLSBORO",
-		"state": "OH",
-		"lat": 39.18876,
-		"lon": -83.53879
 	},
 	"KHZY": {
 		"id": "KHZY",
@@ -11379,7 +11043,7 @@
 		"city": "Wilmington, Airborne Airpark Airport",
 		"state": "OH",
 		"lat": 39.42833,
-		"lon": -83.7791699
+		"lon": -83.77917
 	},
 	"KJRO": {
 		"id": "KJRO",
@@ -11399,7 +11063,7 @@
 		"id": "KLHQ",
 		"city": "Lancaster, Fairfield County Airport",
 		"state": "OH",
-		"lat": 39.7572199,
+		"lat": 39.75722,
 		"lon": -82.66333
 	},
 	"KLNN": {
@@ -11427,7 +11091,7 @@
 		"id": "KMFD",
 		"city": "Mansfield - Mansfield Lahm Regional Airport",
 		"state": "OH",
-		"lat": 40.8202799,
+		"lat": 40.82028,
 		"lon": -82.51778
 	},
 	"KMGY": {
@@ -11463,7 +11127,7 @@
 		"city": "Columbus, Ohio State University Airport",
 		"state": "OH",
 		"lat": 40.07806,
-		"lon": -83.0780599
+		"lon": -83.07806
 	},
 	"KOWX": {
 		"id": "KOWX",
@@ -11476,7 +11140,7 @@
 		"id": "KOXD",
 		"city": "Miami University Airport",
 		"state": "OH",
-		"lat": 39.5022499,
+		"lat": 39.50225,
 		"lon": -84.78436
 	},
 	"KPCW": {
@@ -11498,7 +11162,7 @@
 		"city": "Greater Portsmouth Regional Airport",
 		"state": "OH",
 		"lat": 38.84047,
-		"lon": -82.8473099
+		"lon": -82.84731
 	},
 	"KPOV": {
 		"id": "KPOV",
@@ -11511,7 +11175,7 @@
 		"id": "KRZT",
 		"city": "Chillicothe Ross County Airport",
 		"state": "OH",
-		"lat": 39.4403999,
+		"lat": 39.4404,
 		"lon": -83.0231
 	},
 	"KSGH": {
@@ -11560,7 +11224,7 @@
 		"id": "KUYF",
 		"city": "London Madison County Airport",
 		"state": "OH",
-		"lat": 39.9326999,
+		"lat": 39.9327,
 		"lon": -83.462
 	},
 	"KVES": {
@@ -11568,7 +11232,7 @@
 		"city": "Versailles Darke County Airport",
 		"state": "OH",
 		"lat": 40.2044,
-		"lon": -84.5318999
+		"lon": -84.5319
 	},
 	"KVNW": {
 		"id": "KVNW",
@@ -11602,8 +11266,8 @@
 		"id": "KBID",
 		"city": "Block Island State Airport",
 		"state": "RI",
-		"lat": 41.1694699,
-		"lon": -71.5787299
+		"lat": 41.16947,
+		"lon": -71.57873
 	},
 	"KOQU": {
 		"id": "KOQU",
@@ -11617,7 +11281,7 @@
 		"city": "Rhode Island TF Green International Airport",
 		"state": "RI",
 		"lat": 41.72233,
-		"lon": -71.4277199
+		"lon": -71.42772
 	},
 	"KSFZ": {
 		"id": "KSFZ",
@@ -11626,229 +11290,12 @@
 		"lat": 41.91667,
 		"lon": -71.5
 	},
-	"KUUU": {
-		"id": "KUUU",
-		"city": "Newport, Newport State Airport",
-		"state": "RI",
-		"lat": 41.53,
-		"lon": -71.28361
-	},
 	"KWST": {
 		"id": "KWST",
 		"city": "Westerly, Westerly State Airport",
 		"state": "RI",
 		"lat": 41.34972,
 		"lon": -71.79889
-	},
-	"KAST": {
-		"id": "KAST",
-		"city": "Astoria, Astoria Regional Airport",
-		"state": "OR",
-		"lat": 46.15694,
-		"lon": -123.8825
-	},
-	"KBDN": {
-		"id": "KBDN",
-		"city": "Bend Airport AWOS",
-		"state": "OR",
-		"lat": 44.0948,
-		"lon": -121.2006
-	},
-	"KBKE": {
-		"id": "KBKE",
-		"city": "Baker Municipal Airport",
-		"state": "OR",
-		"lat": 44.84302,
-		"lon": -117.80987
-	},
-	"KBNO": {
-		"id": "KBNO",
-		"city": "Burns Municipal Airport",
-		"state": "OR",
-		"lat": 43.59488,
-		"lon": -118.95791
-	},
-	"KBOK": {
-		"id": "KBOK",
-		"city": "Brookings, Brookings Airport",
-		"state": "OR",
-		"lat": 42.07444,
-		"lon": -124.29
-	},
-	"KCVO": {
-		"id": "KCVO",
-		"city": "Corvallis, Corvallis Municipal Airport",
-		"state": "OR",
-		"lat": 44.5,
-		"lon": -123.28333
-	},
-	"KEUG": {
-		"id": "KEUG",
-		"city": "Eugene, Mahlon Sweet Field",
-		"state": "OR",
-		"lat": 44.13333,
-		"lon": -123.21444
-	},
-	"KGCD": {
-		"id": "KGCD",
-		"city": "Grant County Regional Airport",
-		"state": "OR",
-		"lat": 44.40287,
-		"lon": -118.96715
-	},
-	"KHIO": {
-		"id": "KHIO",
-		"city": "Portland-Hillsboro Airport",
-		"state": "OR",
-		"lat": 45.54765,
-		"lon": -122.95568
-	},
-	"KHRI": {
-		"id": "KHRI",
-		"city": "Hermiston, Hermiston Municipal Airport",
-		"state": "OR",
-		"lat": 45.82583,
-		"lon": -119.26111
-	},
-	"KJSY": {
-		"id": "KJSY",
-		"city": "Joseph State Airport AWOS",
-		"state": "OR",
-		"lat": 45.355889,
-		"lon": -117.254083
-	},
-	"KLGD": {
-		"id": "KLGD",
-		"city": "La Grande/Union County Airport",
-		"state": "OR",
-		"lat": 45.29066,
-		"lon": -118.00884
-	},
-	"KLKV": {
-		"id": "KLKV",
-		"city": "Lake County Airport",
-		"state": "OR",
-		"lat": 42.15664,
-		"lon": -120.39721
-	},
-	"KLMT": {
-		"id": "KLMT",
-		"city": "Klamath Falls International Airport",
-		"state": "OR",
-		"lat": 42.14703,
-		"lon": -121.72548
-	},
-	"KMFR": {
-		"id": "KMFR",
-		"city": "Rogue Valley International Airport",
-		"state": "OR",
-		"lat": 42.37503,
-		"lon": -122.87696
-	},
-	"KMMV": {
-		"id": "KMMV",
-		"city": "McMinnville, McMinnville Municipal Airport",
-		"state": "OR",
-		"lat": 45.19611,
-		"lon": -123.13222
-	},
-	"KONO": {
-		"id": "KONO",
-		"city": "Ontario Municipal Airport",
-		"state": "OR",
-		"lat": 44.01424,
-		"lon": -117.00808
-	},
-	"KONP": {
-		"id": "KONP",
-		"city": "Newport, Newport Municipal Airport",
-		"state": "OR",
-		"lat": 44.58028,
-		"lon": -124.05806
-	},
-	"KOTH": {
-		"id": "KOTH",
-		"city": "Southwest Oregon Regional Airport",
-		"state": "OR",
-		"lat": 43.41948,
-		"lon": -124.2437
-	},
-	"KPDT": {
-		"id": "KPDT",
-		"city": "Eastern Oregon Regional Airport at Pendleton",
-		"state": "OR",
-		"lat": 45.69757,
-		"lon": -118.83444
-	},
-	"KPDX": {
-		"id": "KPDX",
-		"city": "Portland, Portland International Airport",
-		"state": "OR",
-		"lat": 45.59578,
-		"lon": -122.60917
-	},
-	"KRBG": {
-		"id": "KRBG",
-		"city": "Roseburg Regional Airport",
-		"state": "OR",
-		"lat": 43.23368,
-		"lon": -123.3577
-	},
-	"KRDM": {
-		"id": "KRDM",
-		"city": "Redmond Roberts Field",
-		"state": "OR",
-		"lat": 44.25588,
-		"lon": -121.14059
-	},
-	"KREO": {
-		"id": "KREO",
-		"city": "Rome State Airport",
-		"state": "OR",
-		"lat": 42.57766,
-		"lon": -117.88543
-	},
-	"KSLE": {
-		"id": "KSLE",
-		"city": "Salem - McNary Field",
-		"state": "OR",
-		"lat": 44.90493,
-		"lon": -123.00096
-	},
-	"KSPB": {
-		"id": "KSPB",
-		"city": "Scappoose Industrial Airpark",
-		"state": "OR",
-		"lat": 45.7691,
-		"lon": -122.86365
-	},
-	"KSXT": {
-		"id": "KSXT",
-		"city": "Sexton Summit",
-		"state": "OR",
-		"lat": 42.6,
-		"lon": -123.3656
-	},
-	"KTMK": {
-		"id": "KTMK",
-		"city": "Tillamook, Tillamook Airport",
-		"state": "OR",
-		"lat": 45.4180599,
-		"lon": -123.81444
-	},
-	"KTTD": {
-		"id": "KTTD",
-		"city": "Portland, Portland-Troutdale Airport",
-		"state": "OR",
-		"lat": 45.55111,
-		"lon": -122.40889
-	},
-	"KUAO": {
-		"id": "KUAO",
-		"city": "Aurora State Airport",
-		"state": "OR",
-		"lat": 45.24658,
-		"lon": -122.77095
 	},
 	"KABE": {
 		"id": "KABE",
@@ -11959,7 +11406,7 @@
 		"id": "KGKJ",
 		"city": "Port Meadville Airport",
 		"state": "PA",
-		"lat": 41.6258399,
+		"lat": 41.62584,
 		"lon": -80.21231
 	},
 	"KHMZ": {
@@ -11980,7 +11427,7 @@
 		"id": "KIDI",
 		"city": "Indiana County Airport - Jimmy Stewart Field",
 		"state": "PA",
-		"lat": 40.6337199,
+		"lat": 40.63372,
 		"lon": -79.10362
 	},
 	"KIPT": {
@@ -12001,22 +11448,15 @@
 		"id": "KLBE",
 		"city": "Arnold Palmer Regional Airport",
 		"state": "PA",
-		"lat": 40.2767399,
+		"lat": 40.27674,
 		"lon": -79.40393
 	},
 	"KLNS": {
 		"id": "KLNS",
 		"city": "Lancaster, Lancaster Airport",
 		"state": "PA",
-		"lat": 40.1205799,
+		"lat": 40.12058,
 		"lon": -76.29446
-	},
-	"KLOM": {
-		"id": "KLOM",
-		"city": "Philadelphia - Wings Field Airport",
-		"state": "PA",
-		"lat": 40.13758,
-		"lon": -75.2684
 	},
 	"KMDT": {
 		"id": "KMDT",
@@ -12053,13 +11493,6 @@
 		"lat": 39.99011,
 		"lon": -75.5819
 	},
-	"KOYM": {
-		"id": "KOYM",
-		"city": "St Marys Municipal Airport",
-		"state": "PA",
-		"lat": 41.41248,
-		"lon": -78.50263
-	},
 	"KPHL": {
 		"id": "KPHL",
 		"city": "Philadelphia, Philadelphia International Airport",
@@ -12093,7 +11526,7 @@
 		"city": "Pottstown, Pottstown Limerick Airport",
 		"state": "PA",
 		"lat": 40.23802,
-		"lon": -75.5548699
+		"lon": -75.55487
 	},
 	"KRDG": {
 		"id": "KRDG",
@@ -12142,7 +11575,7 @@
 		"city": "State College Regional Airport",
 		"state": "PA",
 		"lat": 40.85,
-		"lon": -77.8475799
+		"lon": -77.84758
 	},
 	"KVVS": {
 		"id": "KVVS",
@@ -12165,6 +11598,223 @@
 		"lat": 40.70675,
 		"lon": -76.37375
 	},
+	"KAST": {
+		"id": "KAST",
+		"city": "Astoria, Astoria Regional Airport",
+		"state": "OR",
+		"lat": 46.15694,
+		"lon": -123.8825
+	},
+	"KBDN": {
+		"id": "KBDN",
+		"city": "Bend Airport AWOS",
+		"state": "OR",
+		"lat": 44.0948,
+		"lon": -121.2006
+	},
+	"KBKE": {
+		"id": "KBKE",
+		"city": "Baker Municipal Airport",
+		"state": "OR",
+		"lat": 44.84302,
+		"lon": -117.80987
+	},
+	"KBNO": {
+		"id": "KBNO",
+		"city": "Burns Municipal Airport",
+		"state": "OR",
+		"lat": 43.59488,
+		"lon": -118.95791
+	},
+	"KBOK": {
+		"id": "KBOK",
+		"city": "Brookings, Brookings Airport",
+		"state": "OR",
+		"lat": 42.07444,
+		"lon": -124.29
+	},
+	"KCVO": {
+		"id": "KCVO",
+		"city": "Corvallis, Corvallis Municipal Airport",
+		"state": "OR",
+		"lat": 44.5,
+		"lon": -123.28333
+	},
+	"KEUG": {
+		"id": "KEUG",
+		"city": "Eugene, Mahlon Sweet Field",
+		"state": "OR",
+		"lat": 44.13333,
+		"lon": -123.21444
+	},
+	"KGCD": {
+		"id": "KGCD",
+		"city": "Grant County Regional Airport",
+		"state": "OR",
+		"lat": 44.40287,
+		"lon": -118.96715
+	},
+	"KHIO": {
+		"id": "KHIO",
+		"city": "Portland-Hillsboro Airport",
+		"state": "OR",
+		"lat": 45.54765,
+		"lon": -122.95568
+	},
+	"KHRI": {
+		"id": "KHRI",
+		"city": "Hermiston, Hermiston Municipal Airport",
+		"state": "OR",
+		"lat": 45.82583,
+		"lon": -119.26111
+	},
+	"KJSY": {
+		"id": "KJSY",
+		"city": "Joseph State Airport AWOS",
+		"state": "OR",
+		"lat": 45.355889,
+		"lon": -117.254083
+	},
+	"KLGD": {
+		"id": "KLGD",
+		"city": "La Grande/Union County Airport",
+		"state": "OR",
+		"lat": 45.29066,
+		"lon": -118.00884
+	},
+	"KLKV": {
+		"id": "KLKV",
+		"city": "Lake County Airport",
+		"state": "OR",
+		"lat": 42.15664,
+		"lon": -120.39721
+	},
+	"KLMT": {
+		"id": "KLMT",
+		"city": "Klamath Falls International Airport",
+		"state": "OR",
+		"lat": 42.14703,
+		"lon": -121.72548
+	},
+	"KMEH": {
+		"id": "KMEH",
+		"city": "Meacham",
+		"state": "OR",
+		"lat": 45.51176,
+		"lon": -118.42466
+	},
+	"KMFR": {
+		"id": "KMFR",
+		"city": "Rogue Valley International Airport",
+		"state": "OR",
+		"lat": 42.37503,
+		"lon": -122.87696
+	},
+	"KMMV": {
+		"id": "KMMV",
+		"city": "McMinnville, McMinnville Municipal Airport",
+		"state": "OR",
+		"lat": 45.19611,
+		"lon": -123.13222
+	},
+	"KONO": {
+		"id": "KONO",
+		"city": "Ontario Municipal Airport",
+		"state": "OR",
+		"lat": 44.01424,
+		"lon": -117.00808
+	},
+	"KONP": {
+		"id": "KONP",
+		"city": "Newport, Newport Municipal Airport",
+		"state": "OR",
+		"lat": 44.58028,
+		"lon": -124.05806
+	},
+	"KOTH": {
+		"id": "KOTH",
+		"city": "Southwest Oregon Regional Airport",
+		"state": "OR",
+		"lat": 43.41948,
+		"lon": -124.2437
+	},
+	"KPDT": {
+		"id": "KPDT",
+		"city": "Eastern Oregon Regional Airport at Pendleton",
+		"state": "OR",
+		"lat": 45.69757,
+		"lon": -118.83444
+	},
+	"KPDX": {
+		"id": "KPDX",
+		"city": "Portland, Portland International Airport",
+		"state": "OR",
+		"lat": 45.59578,
+		"lon": -122.60917
+	},
+	"KRBG": {
+		"id": "KRBG",
+		"city": "Roseburg Regional Airport",
+		"state": "OR",
+		"lat": 43.23368,
+		"lon": -123.3577
+	},
+	"KRDM": {
+		"id": "KRDM",
+		"city": "Redmond Roberts Field",
+		"state": "OR",
+		"lat": 44.25588,
+		"lon": -121.14059
+	},
+	"KREO": {
+		"id": "KREO",
+		"city": "Rome State Airport",
+		"state": "OR",
+		"lat": 42.57766,
+		"lon": -117.88543
+	},
+	"KSLE": {
+		"id": "KSLE",
+		"city": "Salem - McNary Field",
+		"state": "OR",
+		"lat": 44.90493,
+		"lon": -123.00096
+	},
+	"KSPB": {
+		"id": "KSPB",
+		"city": "Scappoose Industrial Airpark",
+		"state": "OR",
+		"lat": 45.7691,
+		"lon": -122.86365
+	},
+	"KSXT": {
+		"id": "KSXT",
+		"city": "Sexton Summit",
+		"state": "OR",
+		"lat": 42.6,
+		"lon": -123.3656
+	},
+	"KTMK": {
+		"id": "KTMK",
+		"city": "Tillamook, Tillamook Airport",
+		"state": "OR",
+		"lat": 45.41806,
+		"lon": -123.81444
+	},
+	"KTTD": {
+		"id": "KTTD",
+		"city": "Portland, Portland-Troutdale Airport",
+		"state": "OR",
+		"lat": 45.55111,
+		"lon": -122.40889
+	},
+	"KUAO": {
+		"id": "KUAO",
+		"city": "Aurora State Airport",
+		"state": "OR",
+		"lat": 45.24658,
+		"lon": -122.77095
+	},
 	"PARO": {
 		"id": "PARO",
 		"city": "PARKDALE",
@@ -12178,20 +11828,6 @@
 		"state": "OR",
 		"lat": 44.44083,
 		"lon": -118.62778
-	},
-	"PDTO": {
-		"id": "PDTO",
-		"city": "Umatilla River at Pendleton, OR",
-		"state": "OR",
-		"lat": 45.6722222,
-		"lon": -118.7916666
-	},
-	"PILO": {
-		"id": "PILO",
-		"city": "Pilot Rock 11E, OR",
-		"state": "OR",
-		"lat": 45.5019444,
-		"lon": -118.6205555
 	},
 	"PNGO": {
 		"id": "PNGO",
@@ -12207,40 +11843,19 @@
 		"lat": 44.24833,
 		"lon": -120.94972
 	},
-	"PRHO": {
-		"id": "PRHO",
-		"city": "Powder River at Hudspeth Lane near Sumpter, OR",
-		"state": "OR",
-		"lat": 44.6861111,
-		"lon": -118.1
-	},
-	"PRIO": {
-		"id": "PRIO",
-		"city": "Prineville 4NW, OR",
-		"state": "OR",
-		"lat": 44.3691666,
-		"lon": -120.9377777
-	},
-	"PRVO": {
-		"id": "PRVO",
-		"city": "Crooked River near Prineville, OR",
-		"state": "OR",
-		"lat": 44.1138888,
-		"lon": -120.7944444
-	},
-	"PWDO": {
-		"id": "PWDO",
-		"city": "Powder River at Baker, OR",
-		"state": "OR",
-		"lat": 44.7683333,
-		"lon": -117.8305555
-	},
 	"KABR": {
 		"id": "KABR",
 		"city": "Aberdeen, Aberdeen Regional Airport",
 		"state": "SD",
 		"lat": 45.44333,
 		"lon": -98.41306
+	},
+	"KAGZ": {
+		"id": "KAGZ",
+		"city": "WAGNERMUNC",
+		"state": "SD",
+		"lat": 43.06332,
+		"lon": -98.29618
 	},
 	"KATY": {
 		"id": "KATY",
@@ -12260,8 +11875,8 @@
 		"id": "KBTN",
 		"city": "BRITTON",
 		"state": "SD",
-		"lat": 45.8152199,
-		"lon": -97.7431299
+		"lat": 45.81522,
+		"lon": -97.74313
 	},
 	"KCUT": {
 		"id": "KCUT",
@@ -12269,13 +11884,6 @@
 		"state": "SD",
 		"lat": 43.73306,
 		"lon": -103.6175
-	},
-	"KEFC": {
-		"id": "KEFC",
-		"city": "BELLEFCHE",
-		"state": "SD",
-		"lat": 44.7342,
-		"lon": -103.86199
 	},
 	"KFSD": {
 		"id": "KFSD",
@@ -12291,26 +11899,12 @@
 		"lat": 44.38806,
 		"lon": -98.22833
 	},
-	"KHSR": {
-		"id": "KHSR",
-		"city": "HOTSPRINGS",
-		"state": "SD",
-		"lat": 43.36824,
-		"lon": -103.38813
-	},
 	"KICR": {
 		"id": "KICR",
 		"city": "Winner, Bob Wiley Field Airport",
 		"state": "SD",
 		"lat": 43.39056,
 		"lon": -99.8425
-	},
-	"KIEN": {
-		"id": "KIEN",
-		"city": "Pine Ridge, Pine Ridge Airport",
-		"state": "SD",
-		"lat": 43.02556,
-		"lon": -102.52306
 	},
 	"KLEM": {
 		"id": "KLEM",
@@ -12340,13 +11934,6 @@
 		"lat": 43.76667,
 		"lon": -98.03333
 	},
-	"KMKA": {
-		"id": "KMKA",
-		"city": "MILLERMUNC",
-		"state": "SD",
-		"lat": 44.5252399,
-		"lon": -98.95811
-	},
 	"KPHP": {
 		"id": "KPHP",
 		"city": "Philip, Philip Airport",
@@ -12358,7 +11945,7 @@
 		"id": "KPIR",
 		"city": "Pierre, Pierre Regional Airport",
 		"state": "SD",
-		"lat": 44.3827799,
+		"lat": 44.38278,
 		"lon": -100.28583
 	},
 	"KRAP": {
@@ -12382,13 +11969,6 @@
 		"lat": 44.48333,
 		"lon": -103.78333
 	},
-	"KSUO": {
-		"id": "KSUO",
-		"city": "Rosebud Sioux Tribal Airport",
-		"state": "SD",
-		"lat": 43.25846,
-		"lon": -100.8594899
-	},
 	"KVMR": {
 		"id": "KVMR",
 		"city": "VERMILLION",
@@ -12402,6 +11982,174 @@
 		"state": "SD",
 		"lat": 42.91667,
 		"lon": -97.38333
+	},
+	"KBGF": {
+		"id": "KBGF",
+		"city": "Winchester Municipal Airport",
+		"state": "TN",
+		"lat": 35.1775,
+		"lon": -86.0662
+	},
+	"KBNA": {
+		"id": "KBNA",
+		"city": "Nashville, Nashville International Airport",
+		"state": "TN",
+		"lat": 36.11889,
+		"lon": -86.68917
+	},
+	"KCHA": {
+		"id": "KCHA",
+		"city": "Chattanooga, Lovell Field",
+		"state": "TN",
+		"lat": 35.03333,
+		"lon": -85.2
+	},
+	"KCKV": {
+		"id": "KCKV",
+		"city": "Clarksville Outlaw Field",
+		"state": "TN",
+		"lat": 36.61689,
+		"lon": -87.41174
+	},
+	"KCSV": {
+		"id": "KCSV",
+		"city": "Crossville, Crossville Memorial-Whitson Field Airport",
+		"state": "TN",
+		"lat": 35.95139,
+		"lon": -85.085
+	},
+	"KDKX": {
+		"id": "KDKX",
+		"city": "Knoxville Downtown Airport",
+		"state": "TN",
+		"lat": 35.96581,
+		"lon": -83.87169
+	},
+	"KDYR": {
+		"id": "KDYR",
+		"city": "Dyersburg, Dyersburg Municipal Airport",
+		"state": "TN",
+		"lat": 36,
+		"lon": -89.4
+	},
+	"KFYE": {
+		"id": "KFYE",
+		"city": "Somerville - Fayette County Airport",
+		"state": "TN",
+		"lat": 35.2061,
+		"lon": -89.3929
+	},
+	"KGCY": {
+		"id": "KGCY",
+		"city": "Greeneville-Greene County Municipal Airport",
+		"state": "TN",
+		"lat": 36.19601,
+		"lon": -82.81099
+	},
+	"KGKT": {
+		"id": "KGKT",
+		"city": "Sevierville Gatlinburg - Pigeon Forge Airport",
+		"state": "TN",
+		"lat": 35.85681,
+		"lon": -83.53334
+	},
+	"KGZS": {
+		"id": "KGZS",
+		"city": "Pulaski Abernathy Field Airport",
+		"state": "TN",
+		"lat": 35.1537,
+		"lon": -87.0568
+	},
+	"KHZD": {
+		"id": "KHZD",
+		"city": "Huntingdon Carroll County Airport",
+		"state": "TN",
+		"lat": 36.08896,
+		"lon": -88.46538
+	},
+	"KJAU": {
+		"id": "KJAU",
+		"city": "Jacksboro Campbell County Airport",
+		"state": "TN",
+		"lat": 36.3341,
+		"lon": -84.163
+	},
+	"KJWN": {
+		"id": "KJWN",
+		"city": "John C Tune Airport",
+		"state": "TN",
+		"lat": 36.18521,
+		"lon": -86.88331
+	},
+	"KLUG": {
+		"id": "KLUG",
+		"city": "Ellington Airport",
+		"state": "TN",
+		"lat": 35.50697,
+		"lon": -86.80389
+	},
+	"KMBT": {
+		"id": "KMBT",
+		"city": "Murfreesboro Municipal Airport",
+		"state": "TN",
+		"lat": 35.87866,
+		"lon": -86.37749
+	},
+	"KMEM": {
+		"id": "KMEM",
+		"city": "Memphis International Airport",
+		"state": "TN",
+		"lat": 35.05644,
+		"lon": -89.98634
+	},
+	"KMKL": {
+		"id": "KMKL",
+		"city": "Jackson, McKellar-Sipes Regional Airport",
+		"state": "TN",
+		"lat": 35.59306,
+		"lon": -88.91667
+	},
+	"KMMI": {
+		"id": "KMMI",
+		"city": "Athens McMinn County Airport",
+		"state": "TN",
+		"lat": 35.3973,
+		"lon": -84.5626
+	},
+	"KMNV": {
+		"id": "KMNV",
+		"city": "Monroe County Airport",
+		"state": "TN",
+		"lat": 35.54522,
+		"lon": -84.38039
+	},
+	"KMOR": {
+		"id": "KMOR",
+		"city": "Morristown Moore-Murrell Airport",
+		"state": "TN",
+		"lat": 36.1794,
+		"lon": -83.3754
+	},
+	"KMQY": {
+		"id": "KMQY",
+		"city": "Smyrna, Smyrna Airport",
+		"state": "TN",
+		"lat": 36.00889,
+		"lon": -86.52
+	},
+	"KMRC": {
+		"id": "KMRC",
+		"city": "Columbia / Maury County",
+		"state": "TN",
+		"lat": 35.55,
+		"lon": -87.18333
+	},
+	"KNQA": {
+		"id": "KNQA",
+		"city": "Millington, Millington Municipal Airport",
+		"state": "TN",
+		"lat": 35.35667,
+		"lon": -89.87028
 	},
 	"KAIK": {
 		"id": "KAIK",
@@ -12423,13 +12171,6 @@
 		"state": "SC",
 		"lat": 32.9951,
 		"lon": -81.2703
-	},
-	"KARW": {
-		"id": "KARW",
-		"city": "Beaufort County Airport",
-		"state": "SC",
-		"lat": 32.412,
-		"lon": -80.634
 	},
 	"KBBP": {
 		"id": "KBBP",
@@ -12485,14 +12226,14 @@
 		"city": "Cheraw Municipal Lynch Bellinger Field",
 		"state": "SC",
 		"lat": 34.713,
-		"lon": -79.9569999
+		"lon": -79.957
 	},
 	"KCRE": {
 		"id": "KCRE",
 		"city": "North Myrtle Beach Grand Strand Airport",
 		"state": "SC",
 		"lat": 33.81619,
-		"lon": -78.7204299
+		"lon": -78.72043
 	},
 	"KCUB": {
 		"id": "KCUB",
@@ -12533,7 +12274,7 @@
 		"id": "KFLO",
 		"city": "Florence - Florence Regional Airport",
 		"state": "SC",
-		"lat": 34.1877799,
+		"lat": 34.18778,
 		"lon": -79.73083
 	},
 	"KGGE": {
@@ -12550,19 +12291,12 @@
 		"lat": 34.84873,
 		"lon": -82.35004
 	},
-	"KGRD": {
-		"id": "KGRD",
-		"city": "Greenwood, Greenwood County Airport",
-		"state": "SC",
-		"lat": 34.24722,
-		"lon": -82.15472
-	},
 	"KGSP": {
 		"id": "KGSP",
 		"city": "Greenville Spartanburg International Airport",
 		"state": "SC",
 		"lat": 34.90611,
-		"lon": -82.2125499
+		"lon": -82.21255
 	},
 	"KGYH": {
 		"id": "KGYH",
@@ -12632,14 +12366,14 @@
 		"city": "Marion County Airport",
 		"state": "SC",
 		"lat": 34.181,
-		"lon": -79.3349999
+		"lon": -79.335
 	},
 	"KMKS": {
 		"id": "KMKS",
 		"city": "Moncks Corner Berkeley County",
 		"state": "SC",
 		"lat": 33.1855,
-		"lon": -80.0361999
+		"lon": -80.0362
 	},
 	"KMMT": {
 		"id": "KMMT",
@@ -12652,8 +12386,8 @@
 		"id": "KMNI",
 		"city": "Manning / Cooper Regional",
 		"state": "SC",
-		"lat": 33.5833299,
-		"lon": -80.2166699
+		"lat": 33.58333,
+		"lon": -80.21667
 	},
 	"KMYR": {
 		"id": "KMYR",
@@ -12666,8 +12400,8 @@
 		"id": "KNBC",
 		"city": "Beaufort, Marine Corps Air Station",
 		"state": "SC",
-		"lat": 32.4936099,
-		"lon": -80.7030599
+		"lat": 32.49361,
+		"lon": -80.70306
 	},
 	"KOGB": {
 		"id": "KOGB",
@@ -12725,167 +12459,6 @@
 		"lat": 33.60949,
 		"lon": -81.08118
 	},
-	"KBGF": {
-		"id": "KBGF",
-		"city": "Winchester Municipal Airport",
-		"state": "TN",
-		"lat": 35.1775,
-		"lon": -86.0662
-	},
-	"KBNA": {
-		"id": "KBNA",
-		"city": "Nashville, Nashville International Airport",
-		"state": "TN",
-		"lat": 36.11889,
-		"lon": -86.68917
-	},
-	"KCHA": {
-		"id": "KCHA",
-		"city": "Chattanooga, Lovell Field",
-		"state": "TN",
-		"lat": 35.03333,
-		"lon": -85.2
-	},
-	"KCKV": {
-		"id": "KCKV",
-		"city": "Clarksville Outlaw Field",
-		"state": "TN",
-		"lat": 36.61689,
-		"lon": -87.41174
-	},
-	"KCSV": {
-		"id": "KCSV",
-		"city": "Crossville, Crossville Memorial-Whitson Field Airport",
-		"state": "TN",
-		"lat": 35.95139,
-		"lon": -85.0849999
-	},
-	"KDKX": {
-		"id": "KDKX",
-		"city": "Knoxville Downtown Airport",
-		"state": "TN",
-		"lat": 35.96581,
-		"lon": -83.87169
-	},
-	"KDYR": {
-		"id": "KDYR",
-		"city": "Dyersburg, Dyersburg Municipal Airport",
-		"state": "TN",
-		"lat": 36,
-		"lon": -89.4
-	},
-	"KFYE": {
-		"id": "KFYE",
-		"city": "Somerville - Fayette County Airport",
-		"state": "TN",
-		"lat": 35.2061,
-		"lon": -89.3929
-	},
-	"KFYM": {
-		"id": "KFYM",
-		"city": "Fayetteville Municipal Airport",
-		"state": "TN",
-		"lat": 35.0597,
-		"lon": -86.5639999
-	},
-	"KGCY": {
-		"id": "KGCY",
-		"city": "Greeneville-Greene County Municipal Airport",
-		"state": "TN",
-		"lat": 36.19601,
-		"lon": -82.81099
-	},
-	"KGKT": {
-		"id": "KGKT",
-		"city": "Sevierville Gatlinburg - Pigeon Forge Airport",
-		"state": "TN",
-		"lat": 35.85681,
-		"lon": -83.53334
-	},
-	"KGZS": {
-		"id": "KGZS",
-		"city": "Pulaski Abernathy Field Airport",
-		"state": "TN",
-		"lat": 35.1537,
-		"lon": -87.0568
-	},
-	"KHZD": {
-		"id": "KHZD",
-		"city": "Huntingdon Carroll County Airport",
-		"state": "TN",
-		"lat": 36.08896,
-		"lon": -88.46538
-	},
-	"KJWN": {
-		"id": "KJWN",
-		"city": "John C Tune Airport",
-		"state": "TN",
-		"lat": 36.18521,
-		"lon": -86.88331
-	},
-	"KLUG": {
-		"id": "KLUG",
-		"city": "Ellington Airport",
-		"state": "TN",
-		"lat": 35.50697,
-		"lon": -86.80389
-	},
-	"KMBT": {
-		"id": "KMBT",
-		"city": "Murfreesboro Municipal Airport",
-		"state": "TN",
-		"lat": 35.87866,
-		"lon": -86.37749
-	},
-	"KMEM": {
-		"id": "KMEM",
-		"city": "Memphis International Airport",
-		"state": "TN",
-		"lat": 35.05644,
-		"lon": -89.98634
-	},
-	"KMKL": {
-		"id": "KMKL",
-		"city": "Jackson, McKellar-Sipes Regional Airport",
-		"state": "TN",
-		"lat": 35.59306,
-		"lon": -88.91667
-	},
-	"KMMI": {
-		"id": "KMMI",
-		"city": "Athens McMinn County Airport",
-		"state": "TN",
-		"lat": 35.3973,
-		"lon": -84.5626
-	},
-	"KMNV": {
-		"id": "KMNV",
-		"city": "Monroe County Airport",
-		"state": "TN",
-		"lat": 35.54522,
-		"lon": -84.38039
-	},
-	"KMQY": {
-		"id": "KMQY",
-		"city": "Smyrna, Smyrna Airport",
-		"state": "TN",
-		"lat": 36.00889,
-		"lon": -86.52
-	},
-	"KMRC": {
-		"id": "KMRC",
-		"city": "Columbia / Maury County",
-		"state": "TN",
-		"lat": 35.55,
-		"lon": -87.18333
-	},
-	"KNQA": {
-		"id": "KNQA",
-		"city": "Millington, Millington Municipal Airport",
-		"state": "TN",
-		"lat": 35.35667,
-		"lon": -89.8702799
-	},
 	"KOQT": {
 		"id": "KOQT",
 		"city": "Oak Ridge",
@@ -12899,6 +12472,13 @@
 		"state": "TN",
 		"lat": 36.34,
 		"lon": -88.38
+	},
+	"KPVE": {
+		"id": "KPVE",
+		"city": "Lexington-Parsons Beech River Regional Airport",
+		"state": "TN",
+		"lat": 35.6564,
+		"lon": -88.1954
 	},
 	"KRKW": {
 		"id": "KRKW",
@@ -12946,8 +12526,15 @@
 		"id": "KSYI",
 		"city": "Shelbyville Bomar Field & Shelbyville Municipal Airport",
 		"state": "TN",
-		"lat": 35.5593999,
+		"lat": 35.5594,
 		"lon": -86.4425
+	},
+	"KSZY": {
+		"id": "KSZY",
+		"city": "SELMER/ROBERT SIBLEY",
+		"state": "TN",
+		"lat": 35.2,
+		"lon": -88.5
 	},
 	"KTHA": {
 		"id": "KTHA",
@@ -12981,7 +12568,7 @@
 		"id": "KXNX",
 		"city": "Music City Executive Airport",
 		"state": "TN",
-		"lat": 36.3750799,
+		"lat": 36.37508,
 		"lon": -86.40842
 	},
 	"KBTV": {
@@ -12998,13 +12585,6 @@
 		"lat": 44.5691142,
 		"lon": -72.0179789
 	},
-	"KDDH": {
-		"id": "KDDH",
-		"city": "Bennington Morse State Airport",
-		"state": "VT",
-		"lat": 42.89355,
-		"lon": -73.2486
-	},
 	"KEFK": {
 		"id": "KEFK",
 		"city": "Northeast Kingdom International Airport",
@@ -13016,7 +12596,7 @@
 		"id": "KFSO",
 		"city": "Franklin County State Airport",
 		"state": "VT",
-		"lat": 44.9402807,
+		"lat": 44.9402808,
 		"lon": -73.09746
 	},
 	"KMPV": {
@@ -13031,7 +12611,7 @@
 		"city": "Morrisville-Stowe State Airport",
 		"state": "VT",
 		"lat": 44.53589,
-		"lon": -72.6162499
+		"lon": -72.61625
 	},
 	"KRUT": {
 		"id": "KRUT",
@@ -13051,7 +12631,7 @@
 		"id": "KBCE",
 		"city": "Bryce Canyon Airport",
 		"state": "UT",
-		"lat": 37.7012799,
+		"lat": 37.70128,
 		"lon": -112.14897
 	},
 	"KBDG": {
@@ -13283,7 +12863,7 @@
 		"city": "Wharton, Wharton Regional Airport",
 		"state": "TX",
 		"lat": 29.25417,
-		"lon": -96.1541699
+		"lon": -96.15417
 	},
 	"KASL": {
 		"id": "KASL",
@@ -13292,19 +12872,26 @@
 		"lat": 32.5205,
 		"lon": -94.3078
 	},
+	"KATA": {
+		"id": "KATA",
+		"city": "Hall-Miller Municipal Airport",
+		"state": "TX",
+		"lat": 33.10253,
+		"lon": -94.19503
+	},
 	"KATT": {
 		"id": "KATT",
-		"city": "Austin City, Austin Camp Mabry",
+		"city": "Austin City Austin Camp Mabry",
 		"state": "TX",
-		"lat": 30.31667,
-		"lon": -97.76667
+		"lat": 30.32079,
+		"lon": -97.76048
 	},
 	"KAUS": {
 		"id": "KAUS",
 		"city": "Austin-Bergstrom International Airport",
 		"state": "TX",
 		"lat": 30.18304,
-		"lon": -97.6798699
+		"lon": -97.67987
 	},
 	"KAXH": {
 		"id": "KAXH",
@@ -13346,7 +12933,7 @@
 		"city": "Biggs Army Air Field - Fort Bliss",
 		"state": "TX",
 		"lat": 31.86119,
-		"lon": -106.3691599
+		"lon": -106.36916
 	},
 	"KBKD": {
 		"id": "KBKD",
@@ -13375,13 +12962,6 @@
 		"state": "TX",
 		"lat": 30.0702,
 		"lon": -94.2151
-	},
-	"KBPC": {
-		"id": "KBPC",
-		"city": "Mesa Vista Ranch AP",
-		"state": "TX",
-		"lat": 35.889,
-		"lon": -101.03
 	},
 	"KBPG": {
 		"id": "KBPG",
@@ -13500,7 +13080,7 @@
 		"city": "Kickapoo Downtown Airport",
 		"state": "TX",
 		"lat": 33.8606,
-		"lon": -98.4903999
+		"lon": -98.4904
 	},
 	"KCXO": {
 		"id": "KCXO",
@@ -13508,6 +13088,13 @@
 		"state": "TX",
 		"lat": 30.35667,
 		"lon": -95.41389
+	},
+	"KCZT": {
+		"id": "KCZT",
+		"city": "Carrizo Springs Dimmit County Airport",
+		"state": "TX",
+		"lat": 28.5222,
+		"lon": -99.8236
 	},
 	"KDAL": {
 		"id": "KDAL",
@@ -13529,13 +13116,6 @@
 		"state": "TX",
 		"lat": 36.02333,
 		"lon": -102.54722
-	},
-	"KDKR": {
-		"id": "KDKR",
-		"city": "Crockett, Houston County Airport",
-		"state": "TX",
-		"lat": 31.30694,
-		"lon": -95.40361
 	},
 	"KDLF": {
 		"id": "KDLF",
@@ -13626,7 +13206,7 @@
 		"city": "El Paso, El Paso International Airport",
 		"state": "TX",
 		"lat": 31.81111,
-		"lon": -106.3758299
+		"lon": -106.37583
 	},
 	"KERV": {
 		"id": "KERV",
@@ -13690,6 +13270,13 @@
 		"state": "TX",
 		"lat": 32.65829,
 		"lon": -97.09509
+	},
+	"KGLE": {
+		"id": "KGLE",
+		"city": "Gainesville, Gainesville Municipal Airport",
+		"state": "TX",
+		"lat": 33.65139,
+		"lon": -97.19694
 	},
 	"KGLS": {
 		"id": "KGLS",
@@ -13796,13 +13383,6 @@
 		"lat": 35.9,
 		"lon": -100.4
 	},
-	"KHHV": {
-		"id": "KHHV",
-		"city": "Alaminos Canyon 25/H-D (ExxonMobil)",
-		"state": "TX",
-		"lat": 26.939,
-		"lon": -94.6889999
-	},
 	"KHLR": {
 		"id": "KHLR",
 		"city": "Fort Hood, Hood AAF Ft Hood",
@@ -13870,15 +13450,22 @@
 		"id": "KINJ",
 		"city": "Hillsboro, Hillsboro Municipal Airport",
 		"state": "TX",
-		"lat": 32.0833299,
-		"lon": -97.0972199
+		"lat": 32.08333,
+		"lon": -97.09722
+	},
+	"KINK": {
+		"id": "KINK",
+		"city": "Wink, Winkler County Airport",
+		"state": "TX",
+		"lat": 31.77972,
+		"lon": -103.20139
 	},
 	"KJAS": {
 		"id": "KJAS",
 		"city": "Jasper, Jasper County-Bell Field Airport",
 		"state": "TX",
 		"lat": 30.88556,
-		"lon": -94.0347199
+		"lon": -94.03472
 	},
 	"KJCT": {
 		"id": "KJCT",
@@ -13919,15 +13506,8 @@
 		"id": "KLBB",
 		"city": "Lubbock, Lubbock International Airport",
 		"state": "TX",
-		"lat": 33.6674999,
-		"lon": -101.8213899
-	},
-	"KLBX": {
-		"id": "KLBX",
-		"city": "Angleton / Lake Jackson, Brazoria County Airport",
-		"state": "TX",
-		"lat": 29.11536,
-		"lon": -95.46323
+		"lat": 33.6675,
+		"lon": -101.82139
 	},
 	"KLFK": {
 		"id": "KLFK",
@@ -13949,13 +13529,6 @@
 		"state": "TX",
 		"lat": 33.55253,
 		"lon": -102.37253
-	},
-	"KLNC": {
-		"id": "KLNC",
-		"city": "Lancaster Airport",
-		"state": "TX",
-		"lat": 32.58323,
-		"lon": -96.72091
 	},
 	"KLRD": {
 		"id": "KLRD",
@@ -13992,12 +13565,19 @@
 		"lat": 31.6412,
 		"lon": -96.5145
 	},
+	"KLZZ": {
+		"id": "KLZZ",
+		"city": "Lampasas, Lampasas Airport",
+		"state": "TX",
+		"lat": 31.10611,
+		"lon": -98.19583
+	},
 	"KMAF": {
 		"id": "KMAF",
 		"city": "Midland, Midland International Airport",
 		"state": "TX",
 		"lat": 31.94778,
-		"lon": -102.2086099
+		"lon": -102.20861
 	},
 	"KMCJ": {
 		"id": "KMCJ",
@@ -14062,12 +13642,19 @@
 		"lat": 27.6925,
 		"lon": -97.29111
 	},
+	"KNMT": {
+		"id": "KNMT",
+		"city": "McMullen, McMullen Target Site",
+		"state": "TX",
+		"lat": 28.23611,
+		"lon": -98.72417
+	},
 	"KNOG": {
 		"id": "KNOG",
 		"city": "Orange Grove NALF",
 		"state": "TX",
 		"lat": 27.8947,
-		"lon": -98.0425099
+		"lon": -98.04251
 	},
 	"KNQI": {
 		"id": "KNQI",
@@ -14081,7 +13668,7 @@
 		"city": "Nacogdoches, A L Mangham Jr. Regional Airport",
 		"state": "TX",
 		"lat": 31.58333,
-		"lon": -94.7166699
+		"lon": -94.71667
 	},
 	"KODO": {
 		"id": "KODO",
@@ -14172,13 +13759,13 @@
 		"city": "Palacios Municipal Airport",
 		"state": "TX",
 		"lat": 28.72485,
-		"lon": -96.2534699
+		"lon": -96.25347
 	},
 	"KPVW": {
 		"id": "KPVW",
 		"city": "Plainview, Hale County Airport",
 		"state": "TX",
-		"lat": 34.1680599,
+		"lat": 34.16806,
 		"lon": -101.71722
 	},
 	"KPWG": {
@@ -14187,13 +13774,6 @@
 		"state": "TX",
 		"lat": 31.48333,
 		"lon": -97.31667
-	},
-	"KPYX": {
-		"id": "KPYX",
-		"city": "Perryton, Perryton Ochiltree County Airport",
-		"state": "TX",
-		"lat": 36.4,
-		"lon": -100.73333
 	},
 	"KRAS": {
 		"id": "KRAS",
@@ -14221,7 +13801,7 @@
 		"city": "Rusk County Airport",
 		"state": "TX",
 		"lat": 32.1417,
-		"lon": -94.8516999
+		"lon": -94.8517
 	},
 	"KRKP": {
 		"id": "KRKP",
@@ -14291,7 +13871,7 @@
 		"city": "San Angelo, Mathis Field",
 		"state": "TX",
 		"lat": 31.35139,
-		"lon": -100.4938899
+		"lon": -100.49389
 	},
 	"KSKF": {
 		"id": "KSKF",
@@ -14431,7 +14011,7 @@
 		"city": "Bridgeport, Bridgeport Municipal Airport",
 		"state": "TX",
 		"lat": 33.17528,
-		"lon": -97.8283299
+		"lon": -97.82833
 	},
 	"KBKW": {
 		"id": "KBKW",
@@ -14517,6 +14097,307 @@
 		"lat": 39.345,
 		"lon": -81.43917
 	},
+	"KALW": {
+		"id": "KALW",
+		"city": "Walla Walla Regional Airport",
+		"state": "WA",
+		"lat": 46.09462,
+		"lon": -118.2858
+	},
+	"KAWO": {
+		"id": "KAWO",
+		"city": "Arlington Municipal Airport",
+		"state": "WA",
+		"lat": 48.1585,
+		"lon": -122.15909
+	},
+	"KBFI": {
+		"id": "KBFI",
+		"city": "Boeing Field - King County International Airport",
+		"state": "WA",
+		"lat": 47.54548,
+		"lon": -122.3147
+	},
+	"KBLI": {
+		"id": "KBLI",
+		"city": "Bellingham, Bellingham International Airport",
+		"state": "WA",
+		"lat": 48.79911,
+		"lon": -122.54064
+	},
+	"KBVS": {
+		"id": "KBVS",
+		"city": "Burlington/Mount Vernon, Skagit Regional Airport",
+		"state": "WA",
+		"lat": 48.47083,
+		"lon": -122.42083
+	},
+	"KCLM": {
+		"id": "KCLM",
+		"city": "Port Angeles Fairchild International Airport",
+		"state": "WA",
+		"lat": 48.12194,
+		"lon": -123.50661
+	},
+	"KCLS": {
+		"id": "KCLS",
+		"city": "Chehalis-Centralia Airport",
+		"state": "WA",
+		"lat": 46.677,
+		"lon": -122.9827
+	},
+	"KDEW": {
+		"id": "KDEW",
+		"city": "Deer Park, Deer Park Airport",
+		"state": "WA",
+		"lat": 47.97417,
+		"lon": -117.42833
+	},
+	"KDLS": {
+		"id": "KDLS",
+		"city": "The Dalles Municipal Airport",
+		"state": "WA",
+		"lat": 45.61901,
+		"lon": -121.16572
+	},
+	"KEAT": {
+		"id": "KEAT",
+		"city": "Wenatchee - Pangborn Memorial Airport",
+		"state": "WA",
+		"lat": 47.39749,
+		"lon": -120.20121
+	},
+	"KELN": {
+		"id": "KELN",
+		"city": "Ellensburg, Ellensburg Bowers Field",
+		"state": "WA",
+		"lat": 47.03377,
+		"lon": -120.53132
+	},
+	"KEPH": {
+		"id": "KEPH",
+		"city": "Ephrata, Ephrata Municipal Airport",
+		"state": "WA",
+		"lat": 47.3075,
+		"lon": -119.51583
+	},
+	"KFHR": {
+		"id": "KFHR",
+		"city": "Friday Harbor Airport",
+		"state": "WA",
+		"lat": 48.52,
+		"lon": -123.02637
+	},
+	"KFLW": {
+		"id": "KFLW",
+		"city": "Kettle Falls",
+		"state": "WA",
+		"lat": 48.595,
+		"lon": -118.12417
+	},
+	"KGEG": {
+		"id": "KGEG",
+		"city": "Spokane, Spokane International Airport",
+		"state": "WA",
+		"lat": 47.62139,
+		"lon": -117.52778
+	},
+	"KGRF": {
+		"id": "KGRF",
+		"city": "Fort Lewis / Gray U. S. Army Airfield",
+		"state": "WA",
+		"lat": 47.11667,
+		"lon": -122.55
+	},
+	"KHQM": {
+		"id": "KHQM",
+		"city": "Hoquiam, Bowerman Airport",
+		"state": "WA",
+		"lat": 46.97111,
+		"lon": -123.92
+	},
+	"KKLS": {
+		"id": "KKLS",
+		"city": "Southwest Washington Regional Airport",
+		"state": "WA",
+		"lat": 46.11553,
+		"lon": -122.89273
+	},
+	"KMWH": {
+		"id": "KMWH",
+		"city": "Grant County Airport",
+		"state": "WA",
+		"lat": 47.19299,
+		"lon": -119.31451
+	},
+	"KNOW": {
+		"id": "KNOW",
+		"city": "Port Angeles Coast Guard Air Station",
+		"state": "WA",
+		"lat": 48.13333,
+		"lon": -123.4
+	},
+	"KNRA": {
+		"id": "KNRA",
+		"city": "Coupeville, Outlying Landing Field",
+		"state": "WA",
+		"lat": 48.19056,
+		"lon": -122.63056
+	},
+	"KNUW": {
+		"id": "KNUW",
+		"city": "Whidbey Island Naval Air Station - Ault Field",
+		"state": "WA",
+		"lat": 48.35525,
+		"lon": -122.66352
+	},
+	"KOKH": {
+		"id": "KOKH",
+		"city": "Oak Harbor Airpark",
+		"state": "WA",
+		"lat": 48.2515,
+		"lon": -122.6737
+	},
+	"KOLM": {
+		"id": "KOLM",
+		"city": "Olympia, Olympia Airport",
+		"state": "WA",
+		"lat": 46.97333,
+		"lon": -122.90333
+	},
+	"KOMK": {
+		"id": "KOMK",
+		"city": "Omak Airport",
+		"state": "WA",
+		"lat": 48.46116,
+		"lon": -119.52086
+	},
+	"KORS": {
+		"id": "KORS",
+		"city": "Eastsound, Orcas Island Airport",
+		"state": "WA",
+		"lat": 48.70806,
+		"lon": -122.91028
+	},
+	"KPAE": {
+		"id": "KPAE",
+		"city": "Everett Snohomish County",
+		"state": "WA",
+		"lat": 47.92331,
+		"lon": -122.28305
+	},
+	"KPLU": {
+		"id": "KPLU",
+		"city": "Pierce County-Thun Field",
+		"state": "WA",
+		"lat": 47.104,
+		"lon": -122.287
+	},
+	"KPSC": {
+		"id": "KPSC",
+		"city": "Tri-Cities Airport",
+		"state": "WA",
+		"lat": 46.26955,
+		"lon": -119.11813
+	},
+	"KPUW": {
+		"id": "KPUW",
+		"city": "Pullman / Moscow Regional Airport",
+		"state": "WA",
+		"lat": 46.74377,
+		"lon": -117.11579
+	},
+	"KPWT": {
+		"id": "KPWT",
+		"city": "Bremerton, Bremerton National Airport",
+		"state": "WA",
+		"lat": 47.5,
+		"lon": -122.75
+	},
+	"KRLD": {
+		"id": "KRLD",
+		"city": "Richland Airport",
+		"state": "WA",
+		"lat": 46.30859,
+		"lon": -119.3058
+	},
+	"KRNT": {
+		"id": "KRNT",
+		"city": "Renton Municipal Airport",
+		"state": "WA",
+		"lat": 47.49509,
+		"lon": -122.21437
+	},
+	"KSEA": {
+		"id": "KSEA",
+		"city": "Seattle, Seattle-Tacoma International Airport",
+		"state": "WA",
+		"lat": 47.44472,
+		"lon": -122.31361
+	},
+	"KSFF": {
+		"id": "KSFF",
+		"city": "Spokane, Felts Field",
+		"state": "WA",
+		"lat": 47.68556,
+		"lon": -117.32028
+	},
+	"KSHN": {
+		"id": "KSHN",
+		"city": "Shelton, Shelton Sanderson Field",
+		"state": "WA",
+		"lat": 47.23806,
+		"lon": -123.14083
+	},
+	"KSKA": {
+		"id": "KSKA",
+		"city": "Fairchild Air Force Base",
+		"state": "WA",
+		"lat": 47.61667,
+		"lon": -117.65
+	},
+	"KSMP": {
+		"id": "KSMP",
+		"city": "Stampede Pass",
+		"state": "WA",
+		"lat": 47.27648,
+		"lon": -121.33817
+	},
+	"KTCM": {
+		"id": "KTCM",
+		"city": "Tacoma / McChord Air Force Base",
+		"state": "WA",
+		"lat": 47.15,
+		"lon": -122.48333
+	},
+	"KTIW": {
+		"id": "KTIW",
+		"city": "Tacoma, Tacoma Narrows Airport",
+		"state": "WA",
+		"lat": 47.2675,
+		"lon": -122.57611
+	},
+	"KUIL": {
+		"id": "KUIL",
+		"city": "Quillayute, Quillayute State Airport",
+		"state": "WA",
+		"lat": 47.9375,
+		"lon": -124.555
+	},
+	"KVUO": {
+		"id": "KVUO",
+		"city": "Pearson Airfield",
+		"state": "WA",
+		"lat": 45.62103,
+		"lon": -122.65419
+	},
+	"KYKM": {
+		"id": "KYKM",
+		"city": "Yakima Air Terminal - McAllister Field",
+		"state": "WA",
+		"lat": 46.56402,
+		"lon": -120.53484
+	},
 	"KAKQ": {
 		"id": "KAKQ",
 		"city": "Wakefield Municipal Airport",
@@ -14542,7 +14423,7 @@
 		"id": "KBKT",
 		"city": "Ft. Pickett / Blackstone",
 		"state": "VA",
-		"lat": 37.0833299,
+		"lat": 37.08333,
 		"lon": -77.95
 	},
 	"KCHO": {
@@ -14633,7 +14514,7 @@
 		"id": "KFRR",
 		"city": "Front Royal-warren County Airport",
 		"state": "VA",
-		"lat": 38.9174999,
+		"lat": 38.9175,
 		"lon": -78.2535
 	},
 	"KFVX": {
@@ -14648,7 +14529,7 @@
 		"city": "West Point, Middle Peninsula Regional Airport",
 		"state": "VA",
 		"lat": 37.52111,
-		"lon": -76.7644399
+		"lon": -76.76444
 	},
 	"KGVE": {
 		"id": "KGVE",
@@ -14659,7 +14540,7 @@
 	},
 	"KHEF": {
 		"id": "KHEF",
-		"city": "Manassas, Manassas Regional Airport/Harry P. Davis Field",
+		"city": "Washington Manassas Airport",
 		"state": "VA",
 		"lat": 38.71667,
 		"lon": -77.51667
@@ -14682,7 +14563,7 @@
 		"id": "KHWY",
 		"city": "Warrenton-Fauquier Airport",
 		"state": "VA",
-		"lat": 38.5876499,
+		"lat": 38.58765,
 		"lon": -77.71501
 	},
 	"KIAD": {
@@ -14710,14 +14591,14 @@
 		"id": "KJYO",
 		"city": "Leesburg / Godfrey",
 		"state": "VA",
-		"lat": 39.0833299,
+		"lat": 39.08333,
 		"lon": -77.56667
 	},
 	"KLFI": {
 		"id": "KLFI",
 		"city": "Langley Air Force Base",
 		"state": "VA",
-		"lat": 37.0833299,
+		"lat": 37.08333,
 		"lon": -76.35
 	},
 	"KLKU": {
@@ -14745,7 +14626,7 @@
 		"id": "KLVL",
 		"city": "Lawrenceville/Brunswick Municipal Airport",
 		"state": "VA",
-		"lat": 36.7727999,
+		"lat": 36.7728,
 		"lon": -77.7943
 	},
 	"KLYH": {
@@ -14754,6 +14635,13 @@
 		"state": "VA",
 		"lat": 37.32083,
 		"lon": -79.20667
+	},
+	"KMFV": {
+		"id": "KMFV",
+		"city": "Melfa / Accomack Airport",
+		"state": "VA",
+		"lat": 37.65,
+		"lon": -75.76667
 	},
 	"KMKJ": {
 		"id": "KMKJ",
@@ -14888,13 +14776,6 @@
 		"lat": 38.26667,
 		"lon": -78.9
 	},
-	"KTGI": {
-		"id": "KTGI",
-		"city": "Tangier Island Airport",
-		"state": "VA",
-		"lat": 37.82587,
-		"lon": -75.99766
-	},
 	"KVBW": {
 		"id": "KVBW",
 		"city": "Bridgewater Air Park",
@@ -14923,760 +14804,18 @@
 		"lat": 37.859611,
 		"lon": -76.894111
 	},
-	"KALW": {
-		"id": "KALW",
-		"city": "Walla Walla Regional Airport",
-		"state": "WA",
-		"lat": 46.09462,
-		"lon": -118.2858
-	},
-	"KAWO": {
-		"id": "KAWO",
-		"city": "Arlington Municipal Airport",
-		"state": "WA",
-		"lat": 48.1584999,
-		"lon": -122.15909
-	},
-	"KBFI": {
-		"id": "KBFI",
-		"city": "Boeing Field - King County International Airport",
-		"state": "WA",
-		"lat": 47.54548,
-		"lon": -122.3147
-	},
-	"KBLI": {
-		"id": "KBLI",
-		"city": "Bellingham, Bellingham International Airport",
-		"state": "WA",
-		"lat": 48.79911,
-		"lon": -122.54064
-	},
-	"KBVS": {
-		"id": "KBVS",
-		"city": "Burlington/Mount Vernon, Skagit Regional Airport",
-		"state": "WA",
-		"lat": 48.47083,
-		"lon": -122.42083
-	},
-	"KCLM": {
-		"id": "KCLM",
-		"city": "Port Angeles Fairchild International Airport",
-		"state": "WA",
-		"lat": 48.12194,
-		"lon": -123.50661
-	},
-	"KCLS": {
-		"id": "KCLS",
-		"city": "Chehalis-Centralia Airport",
-		"state": "WA",
-		"lat": 46.677,
-		"lon": -122.9827
-	},
-	"KDEW": {
-		"id": "KDEW",
-		"city": "Deer Park, Deer Park Airport",
-		"state": "WA",
-		"lat": 47.97417,
-		"lon": -117.42833
-	},
-	"KDLS": {
-		"id": "KDLS",
-		"city": "The Dalles Municipal Airport",
-		"state": "WA",
-		"lat": 45.61901,
-		"lon": -121.16572
-	},
-	"KEAT": {
-		"id": "KEAT",
-		"city": "Wenatchee - Pangborn Memorial Airport",
-		"state": "WA",
-		"lat": 47.39749,
-		"lon": -120.20121
-	},
-	"KELN": {
-		"id": "KELN",
-		"city": "Ellensburg, Ellensburg Bowers Field",
-		"state": "WA",
-		"lat": 47.0337699,
-		"lon": -120.53132
-	},
-	"KEPH": {
-		"id": "KEPH",
-		"city": "Ephrata, Ephrata Municipal Airport",
-		"state": "WA",
-		"lat": 47.3075,
-		"lon": -119.51583
-	},
-	"KFHR": {
-		"id": "KFHR",
-		"city": "Friday Harbor Airport",
-		"state": "WA",
-		"lat": 48.52,
-		"lon": -123.02637
-	},
-	"KFLW": {
-		"id": "KFLW",
-		"city": "Kettle Falls",
-		"state": "WA",
-		"lat": 48.595,
-		"lon": -118.12417
-	},
-	"KGEG": {
-		"id": "KGEG",
-		"city": "Spokane, Spokane International Airport",
-		"state": "WA",
-		"lat": 47.62139,
-		"lon": -117.52778
-	},
-	"KGRF": {
-		"id": "KGRF",
-		"city": "Fort Lewis / Gray U. S. Army Airfield",
-		"state": "WA",
-		"lat": 47.11667,
-		"lon": -122.55
-	},
-	"KHQM": {
-		"id": "KHQM",
-		"city": "Hoquiam, Bowerman Airport",
-		"state": "WA",
-		"lat": 46.97111,
-		"lon": -123.92
-	},
-	"KKLS": {
-		"id": "KKLS",
-		"city": "Southwest Washington Regional Airport",
-		"state": "WA",
-		"lat": 46.11553,
-		"lon": -122.89273
-	},
-	"KMWH": {
-		"id": "KMWH",
-		"city": "Grant County Airport",
-		"state": "WA",
-		"lat": 47.19299,
-		"lon": -119.31451
-	},
-	"KNCW": {
-		"id": "KNCW",
-		"city": "KENNEWICK CANAL",
-		"state": "WA",
-		"lat": 46.2652777,
-		"lon": -119.5694444
-	},
-	"KNOW": {
-		"id": "KNOW",
-		"city": "Port Angeles Coast Guard Air Station",
-		"state": "WA",
-		"lat": 48.13333,
-		"lon": -123.4
-	},
-	"KNRA": {
-		"id": "KNRA",
-		"city": "Coupeville, Outlying Landing Field",
-		"state": "WA",
-		"lat": 48.19056,
-		"lon": -122.63056
-	},
-	"KNUW": {
-		"id": "KNUW",
-		"city": "Whidbey Island Naval Air Station - Ault Field",
-		"state": "WA",
-		"lat": 48.35525,
-		"lon": -122.66352
-	},
-	"KOLM": {
-		"id": "KOLM",
-		"city": "Olympia, Olympia Airport",
-		"state": "WA",
-		"lat": 46.97333,
-		"lon": -122.90333
-	},
-	"KOMK": {
-		"id": "KOMK",
-		"city": "Omak Airport",
-		"state": "WA",
-		"lat": 48.46116,
-		"lon": -119.52086
-	},
-	"KORS": {
-		"id": "KORS",
-		"city": "Eastsound, Orcas Island Airport",
-		"state": "WA",
-		"lat": 48.70806,
-		"lon": -122.91028
-	},
-	"KPAE": {
-		"id": "KPAE",
-		"city": "Everett Snohomish County",
-		"state": "WA",
-		"lat": 47.92331,
-		"lon": -122.28305
-	},
-	"KPLU": {
-		"id": "KPLU",
-		"city": "Pierce County-Thun Field",
-		"state": "WA",
-		"lat": 47.104,
-		"lon": -122.287
-	},
-	"KPSC": {
-		"id": "KPSC",
-		"city": "Tri-Cities Airport",
-		"state": "WA",
-		"lat": 46.26955,
-		"lon": -119.11813
-	},
-	"KPUW": {
-		"id": "KPUW",
-		"city": "Pullman / Moscow Regional Airport",
-		"state": "WA",
-		"lat": 46.74377,
-		"lon": -117.11579
-	},
-	"KPWT": {
-		"id": "KPWT",
-		"city": "Bremerton, Bremerton National Airport",
-		"state": "WA",
-		"lat": 47.5,
-		"lon": -122.75
-	},
-	"KRLD": {
-		"id": "KRLD",
-		"city": "Richland Airport",
-		"state": "WA",
-		"lat": 46.30859,
-		"lon": -119.3058
-	},
-	"KRNT": {
-		"id": "KRNT",
-		"city": "Renton Municipal Airport",
-		"state": "WA",
-		"lat": 47.49509,
-		"lon": -122.21437
-	},
-	"KSEA": {
-		"id": "KSEA",
-		"city": "Seattle, Seattle-Tacoma International Airport",
-		"state": "WA",
-		"lat": 47.4447199,
-		"lon": -122.31361
-	},
-	"KSFF": {
-		"id": "KSFF",
-		"city": "Spokane, Felts Field",
-		"state": "WA",
-		"lat": 47.68556,
-		"lon": -117.32028
-	},
-	"KSHN": {
-		"id": "KSHN",
-		"city": "Shelton, Shelton Sanderson Field",
-		"state": "WA",
-		"lat": 47.23806,
-		"lon": -123.14083
-	},
-	"KSKA": {
-		"id": "KSKA",
-		"city": "Fairchild Air Force Base",
-		"state": "WA",
-		"lat": 47.61667,
-		"lon": -117.65
-	},
-	"KSMP": {
-		"id": "KSMP",
-		"city": "Stampede Pass",
-		"state": "WA",
-		"lat": 47.27648,
-		"lon": -121.33817
-	},
-	"KTCM": {
-		"id": "KTCM",
-		"city": "Tacoma / McChord Air Force Base",
-		"state": "WA",
-		"lat": 47.15,
-		"lon": -122.48333
-	},
-	"KTCW": {
-		"id": "KTCW",
-		"city": "KITTITAS CANAL",
-		"state": "WA",
-		"lat": 47.2388888,
-		"lon": -121.1833333
-	},
-	"KTIW": {
-		"id": "KTIW",
-		"city": "Tacoma, Tacoma Narrows Airport",
-		"state": "WA",
-		"lat": 47.2675,
-		"lon": -122.57611
-	},
-	"KUIL": {
-		"id": "KUIL",
-		"city": "Quillayute, Quillayute State Airport",
-		"state": "WA",
-		"lat": 47.9375,
-		"lon": -124.555
-	},
-	"KVUO": {
-		"id": "KVUO",
-		"city": "Pearson Airfield",
-		"state": "WA",
-		"lat": 45.62103,
-		"lon": -122.65419
-	},
-	"KYKM": {
-		"id": "KYKM",
-		"city": "Yakima Air Terminal - McAllister Field",
-		"state": "WA",
-		"lat": 46.56402,
-		"lon": -120.53484
-	},
-	"PARW": {
-		"id": "PARW",
-		"city": "YAKIMA RIVER NEAR PARKER, WA.",
-		"state": "WA",
-		"lat": 46.5061111,
-		"lon": -120.4519444
-	},
-	"QSPW": {
-		"id": "QSPW",
-		"city": "QUARTZ MTN",
-		"state": "WA",
-		"lat": 47.0672222,
-		"lon": -121.0788888
-	},
-	"KAIG": {
-		"id": "KAIG",
-		"city": "Langlade County Airport",
-		"state": "WI",
-		"lat": 45.15659,
-		"lon": -89.11144
-	},
-	"KARV": {
-		"id": "KARV",
-		"city": "Minocqua/Woodruff, Lakeland Airport/Noble F. Lee Memorial Field",
-		"state": "WI",
-		"lat": 45.93333,
-		"lon": -89.73333
-	},
-	"KASX": {
-		"id": "KASX",
-		"city": "John F Kennedy Memorial Airport",
-		"state": "WI",
-		"lat": 46.54679,
-		"lon": -90.91841
-	},
-	"KATW": {
-		"id": "KATW",
-		"city": "Appleton-Outagamie",
-		"state": "WI",
-		"lat": 44.2595,
-		"lon": -88.51567
-	},
-	"KAUW": {
-		"id": "KAUW",
-		"city": "Wausau Downtown Airport",
-		"state": "WI",
-		"lat": 44.92759,
-		"lon": -89.62512
-	},
-	"KBCK": {
-		"id": "KBCK",
-		"city": "Black River Falls Area Airport",
-		"state": "WI",
-		"lat": 44.24996,
-		"lon": -90.84999
-	},
-	"KBUU": {
-		"id": "KBUU",
-		"city": "Burlington Municipal Airport",
-		"state": "WI",
-		"lat": 42.69088,
-		"lon": -88.308
-	},
-	"KCLI": {
-		"id": "KCLI",
-		"city": "Clintonville Municipal Airport",
-		"state": "WI",
-		"lat": 44.61526,
-		"lon": -88.73129
-	},
-	"KCMY": {
-		"id": "KCMY",
-		"city": "Sparta, Sparta / Fort McCoy Airport",
-		"state": "WI",
-		"lat": 43.9583299,
-		"lon": -90.73778
-	},
-	"KCWA": {
-		"id": "KCWA",
-		"city": "Mosinee",
-		"state": "WI",
-		"lat": 44.77944,
-		"lon": -89.67098
-	},
-	"KDLL": {
-		"id": "KDLL",
-		"city": "Baraboo Wisconsin Dells Airport",
-		"state": "WI",
-		"lat": 43.52372,
-		"lon": -89.77345
-	},
-	"KEAU": {
-		"id": "KEAU",
-		"city": "Chippewa Valley Regional Airport",
-		"state": "WI",
-		"lat": 44.86668,
-		"lon": -91.488
-	},
-	"KEFT": {
-		"id": "KEFT",
-		"city": "Monroe Municipal Airport",
-		"state": "WI",
-		"lat": 42.61959,
-		"lon": -89.59309
-	},
-	"KEGV": {
-		"id": "KEGV",
-		"city": "Eagle River Union Airport",
-		"state": "WI",
-		"lat": 45.9309299,
-		"lon": -89.26702
-	},
-	"KENW": {
-		"id": "KENW",
-		"city": "Kenosha, Kenosha Regional Airport",
-		"state": "WI",
-		"lat": 42.595,
-		"lon": -87.9380599
-	},
-	"KETB": {
-		"id": "KETB",
-		"city": "West Bend Municipal Airport",
-		"state": "WI",
-		"lat": 43.42256,
-		"lon": -88.1326
-	},
-	"KEZS": {
-		"id": "KEZS",
-		"city": "Shawano Municipal Airport",
-		"state": "WI",
-		"lat": 44.787,
-		"lon": -88.56
-	},
-	"KFLD": {
-		"id": "KFLD",
-		"city": "Fond Du Lac County Airport",
-		"state": "WI",
-		"lat": 43.76955,
-		"lon": -88.49072
-	},
-	"KGRB": {
-		"id": "KGRB",
-		"city": "Green Bay, Austin Straubel International Airport",
-		"state": "WI",
-		"lat": 44.4794399,
-		"lon": -88.13667
-	},
-	"KHYR": {
-		"id": "KHYR",
-		"city": "Sawyer County Airport",
-		"state": "WI",
-		"lat": 46.03029,
-		"lon": -91.44259
-	},
-	"KISW": {
-		"id": "KISW",
-		"city": "Wisconsin Rapids, Alexander Field South Wood County Airport",
-		"state": "WI",
-		"lat": 44.35917,
-		"lon": -89.83694
-	},
-	"KJVL": {
-		"id": "KJVL",
-		"city": "Janesville-Rock County",
-		"state": "WI",
-		"lat": 42.62135,
-		"lon": -89.04186
-	},
-	"KLNL": {
-		"id": "KLNL",
-		"city": "Land O' Lakes, Kings Land O' Lakes Airport",
-		"state": "WI",
-		"lat": 46.1538899,
-		"lon": -89.21194
-	},
-	"KLNR": {
-		"id": "KLNR",
-		"city": "Lone Rock Tri-County Regional Airport",
-		"state": "WI",
-		"lat": 43.21108,
-		"lon": -90.18735
-	},
-	"KLSE": {
-		"id": "KLSE",
-		"city": "La Crosse - La Crosse Regional Airport",
-		"state": "WI",
-		"lat": 43.87944,
-		"lon": -91.25667
-	},
-	"KLUM": {
-		"id": "KLUM",
-		"city": "Menomonie Municipal Airport-Score Field",
-		"state": "WI",
-		"lat": 44.89363,
-		"lon": -91.86652
-	},
-	"KMDZ": {
-		"id": "KMDZ",
-		"city": "Taylor County Airport",
-		"state": "WI",
-		"lat": 45.10462,
-		"lon": -90.30253
-	},
-	"KMFI": {
-		"id": "KMFI",
-		"city": "Marshfield, Marshfield Municipal Airport",
-		"state": "WI",
-		"lat": 44.63806,
-		"lon": -90.1875
-	},
-	"KMKE": {
-		"id": "KMKE",
-		"city": "Milwaukee, General Mitchell International Airport",
-		"state": "WI",
-		"lat": 42.955,
-		"lon": -87.9044399
-	},
-	"KMRJ": {
-		"id": "KMRJ",
-		"city": "Iowa County Airport",
-		"state": "WI",
-		"lat": 42.88754,
-		"lon": -90.23147
-	},
-	"KMSN": {
-		"id": "KMSN",
-		"city": "Madison, Dane County Regional-Truax Field",
-		"state": "WI",
-		"lat": 43.14056,
-		"lon": -89.34528
-	},
-	"KMTW": {
-		"id": "KMTW",
-		"city": "Manitowoc, Manitowoc County Airport",
-		"state": "WI",
-		"lat": 44.13333,
-		"lon": -87.68333
-	},
-	"KMWC": {
-		"id": "KMWC",
-		"city": "Milwaukee-Timmerman",
-		"state": "WI",
-		"lat": 43.10961,
-		"lon": -88.03048
-	},
-	"KOCQ": {
-		"id": "KOCQ",
-		"city": "Oconto J. Douglas Bake Municipal Airport",
-		"state": "WI",
-		"lat": 44.8742,
-		"lon": -87.9096
-	},
-	"KOEO": {
-		"id": "KOEO",
-		"city": "L O Simenstad Municipal Airport",
-		"state": "WI",
-		"lat": 45.31084,
-		"lon": -92.6948
-	},
-	"KOLG": {
-		"id": "KOLG",
-		"city": "Solon Springs Municipal Airport",
-		"state": "WI",
-		"lat": 46.3148,
-		"lon": -91.8164
-	},
-	"KOSH": {
-		"id": "KOSH",
-		"city": "Wittman Regional Airport",
-		"state": "WI",
-		"lat": 43.96701,
-		"lon": -88.55814
-	},
-	"KOVS": {
-		"id": "KOVS",
-		"city": "Boscobel, Boscobel Airport",
-		"state": "WI",
-		"lat": 43.15611,
-		"lon": -90.6775
-	},
-	"KPBH": {
-		"id": "KPBH",
-		"city": "Phillips / Price County",
-		"state": "WI",
-		"lat": 45.7,
-		"lon": -90.4
-	},
-	"KPCZ": {
-		"id": "KPCZ",
-		"city": "Waupaca Municipal Airport",
-		"state": "WI",
-		"lat": 44.33425,
-		"lon": -89.02023
-	},
-	"KPDC": {
-		"id": "KPDC",
-		"city": "Prairie Du Chien Municipal Airport",
-		"state": "WI",
-		"lat": 43.01938,
-		"lon": -91.12112
-	},
-	"KPVB": {
-		"id": "KPVB",
-		"city": "Platteville Municipal Airport",
-		"state": "WI",
-		"lat": 42.69092,
-		"lon": -90.4412399
-	},
-	"KRAC": {
-		"id": "KRAC",
-		"city": "Racine, Batten International Airport",
-		"state": "WI",
-		"lat": 42.75861,
-		"lon": -87.81778
-	},
-	"KRCX": {
-		"id": "KRCX",
-		"city": "Ladysmith - Rusk County Airport",
-		"state": "WI",
-		"lat": 45.4935,
-		"lon": -90.9985
-	},
-	"KRGK": {
-		"id": "KRGK",
-		"city": "Red Wing - Red Wing Regional Airport",
-		"state": "WI",
-		"lat": 44.5926,
-		"lon": -92.48439
-	},
-	"KRHI": {
-		"id": "KRHI",
-		"city": "Rhinelander, Rhinelander-Oneida County Airport",
-		"state": "WI",
-		"lat": 45.63167,
-		"lon": -89.48222
-	},
-	"KRNH": {
-		"id": "KRNH",
-		"city": "New Richmond Municipal Airport",
-		"state": "WI",
-		"lat": 45.14762,
-		"lon": -92.53349
-	},
-	"KRPD": {
-		"id": "KRPD",
-		"city": "Rice Lake, Rice Lake Regional-Carl's Field Airport",
-		"state": "WI",
-		"lat": 45.4180599,
-		"lon": -91.77361
-	},
-	"KRRL": {
-		"id": "KRRL",
-		"city": "Merrill, Merrill Municipal Airport",
-		"state": "WI",
-		"lat": 45.19844,
-		"lon": -89.70996
-	},
-	"KRYV": {
-		"id": "KRYV",
-		"city": "Watertown",
-		"state": "WI",
-		"lat": 43.17016,
-		"lon": -88.72497
-	},
-	"KRZN": {
-		"id": "KRZN",
-		"city": "Siren, Burnett County Airport",
-		"state": "WI",
-		"lat": 45.82278,
-		"lon": -92.3725
-	},
-	"KSBM": {
-		"id": "KSBM",
-		"city": "Sheboygan County Memorial Airport",
-		"state": "WI",
-		"lat": 43.77483,
-		"lon": -87.84897
-	},
-	"KSTE": {
-		"id": "KSTE",
-		"city": "Stevens Point Municipal Airport",
-		"state": "WI",
-		"lat": 44.54371,
-		"lon": -89.53468
-	},
-	"KSUE": {
-		"id": "KSUE",
-		"city": "Door County Cherryland Airport",
-		"state": "WI",
-		"lat": 44.83941,
-		"lon": -87.42188
-	},
-	"KSUW": {
-		"id": "KSUW",
-		"city": "Richard I. Bong Airport",
-		"state": "WI",
-		"lat": 46.68335,
-		"lon": -92.09254
-	},
-	"KTKV": {
-		"id": "KTKV",
-		"city": "Tomahawk Regional Airport",
-		"state": "WI",
-		"lat": 45.46801,
-		"lon": -89.80962
-	},
-	"KUBE": {
-		"id": "KUBE",
-		"city": "Cumberland",
-		"state": "WI",
-		"lat": 45.506,
-		"lon": -91.9811
-	},
-	"KUES": {
-		"id": "KUES",
-		"city": "Waukesha County Airport",
-		"state": "WI",
-		"lat": 43.04245,
-		"lon": -88.24607
-	},
-	"KUNU": {
-		"id": "KUNU",
-		"city": "Juneau, Dodge County Airport",
-		"state": "WI",
-		"lat": 43.42667,
-		"lon": -88.7033299
-	},
-	"KVOK": {
-		"id": "KVOK",
-		"city": "Volk / Camp Douglas",
-		"state": "WI",
-		"lat": 43.93333,
-		"lon": -90.26667
-	},
 	"KAFO": {
 		"id": "KAFO",
 		"city": "Afton WY",
 		"state": "WY",
-		"lat": 42.7113299,
+		"lat": 42.71133,
 		"lon": -110.94217
 	},
 	"KARL": {
 		"id": "KARL",
 		"city": "I80 - Arlington",
 		"state": "WY",
-		"lat": 41.5980599,
+		"lat": 41.59806,
 		"lon": -106.21487
 	},
 	"KBFU": {
@@ -15706,13 +14845,6 @@
 		"state": "WY",
 		"lat": 41.93066,
 		"lon": -104.9436
-	},
-	"KBVR": {
-		"id": "KBVR",
-		"city": "US287/WY789 - Beaver Rim",
-		"state": "WY",
-		"lat": 42.58565,
-		"lon": -108.28199
 	},
 	"KBYG": {
 		"id": "KBYG",
@@ -15791,13 +14923,6 @@
 		"lat": 43.5484,
 		"lon": -109.6903
 	},
-	"KDWX": {
-		"id": "KDWX",
-		"city": "Dixon Airport",
-		"state": "WY",
-		"lat": 41.03704,
-		"lon": -107.49976
-	},
 	"KEAN": {
 		"id": "KEAN",
 		"city": "Phifer Airfield - Wheatland",
@@ -15811,13 +14936,6 @@
 		"state": "WY",
 		"lat": 43.8854,
 		"lon": -104.3179
-	},
-	"KEHY": {
-		"id": "KEHY",
-		"city": "Elk Mountain AWOS",
-		"state": "WY",
-		"lat": 41.7253,
-		"lon": -106.4594
 	},
 	"KEMM": {
 		"id": "KEMM",
@@ -15845,7 +14963,7 @@
 		"city": "Francis E Warren Air Force Base Heliport",
 		"state": "WY",
 		"lat": 41.13332,
-		"lon": -104.8671899
+		"lon": -104.86719
 	},
 	"KFIR": {
 		"id": "KFIR",
@@ -15936,7 +15054,7 @@
 		"city": "WY220 - Pathfinder",
 		"state": "WY",
 		"lat": 42.5581,
-		"lon": -106.8453399
+		"lon": -106.84534
 	},
 	"KPER": {
 		"id": "KPER",
@@ -15956,7 +15074,7 @@
 		"id": "KPOY",
 		"city": "Powell Municipal Airport",
 		"state": "WY",
-		"lat": 44.8671999,
+		"lat": 44.8672,
 		"lon": -108.7934
 	},
 	"KPUM": {
@@ -16019,7 +15137,7 @@
 		"id": "KSHR",
 		"city": "Sheridan County Airport",
 		"state": "WY",
-		"lat": 44.7603099,
+		"lat": 44.76031,
 		"lon": -106.97411
 	},
 	"KSKL": {
@@ -16075,7 +15193,7 @@
 		"id": "KWRL",
 		"city": "Worland, Worland Municipal Airport",
 		"state": "WY",
-		"lat": 43.9658299,
+		"lat": 43.96583,
 		"lon": -107.95083
 	},
 	"KWTR": {
@@ -16092,11 +15210,417 @@
 		"lat": 41.04746,
 		"lon": -104.8901
 	},
-	"PCKY": {
-		"id": "PCKY",
-		"city": "Pacific Creek at Moran, WY",
-		"state": "WY",
-		"lat": 43.8502777,
-		"lon": -110.5177777
+	"KAIG": {
+		"id": "KAIG",
+		"city": "Langlade County Airport",
+		"state": "WI",
+		"lat": 45.15659,
+		"lon": -89.11144
+	},
+	"KARV": {
+		"id": "KARV",
+		"city": "Minocqua/Woodruff, Lakeland Airport/Noble F. Lee Memorial Field",
+		"state": "WI",
+		"lat": 45.93333,
+		"lon": -89.73333
+	},
+	"KASX": {
+		"id": "KASX",
+		"city": "John F Kennedy Memorial Airport",
+		"state": "WI",
+		"lat": 46.54679,
+		"lon": -90.91841
+	},
+	"KATW": {
+		"id": "KATW",
+		"city": "Appleton-Outagamie",
+		"state": "WI",
+		"lat": 44.2595,
+		"lon": -88.51567
+	},
+	"KAUW": {
+		"id": "KAUW",
+		"city": "Wausau Downtown Airport",
+		"state": "WI",
+		"lat": 44.92759,
+		"lon": -89.62512
+	},
+	"KBCK": {
+		"id": "KBCK",
+		"city": "Black River Falls Area Airport",
+		"state": "WI",
+		"lat": 44.24996,
+		"lon": -90.84999
+	},
+	"KBUU": {
+		"id": "KBUU",
+		"city": "Burlington Municipal Airport",
+		"state": "WI",
+		"lat": 42.69088,
+		"lon": -88.308
+	},
+	"KCLI": {
+		"id": "KCLI",
+		"city": "Clintonville Municipal Airport",
+		"state": "WI",
+		"lat": 44.61526,
+		"lon": -88.73129
+	},
+	"KCMY": {
+		"id": "KCMY",
+		"city": "Sparta, Sparta / Fort McCoy Airport",
+		"state": "WI",
+		"lat": 43.95833,
+		"lon": -90.73778
+	},
+	"KCWA": {
+		"id": "KCWA",
+		"city": "Mosinee",
+		"state": "WI",
+		"lat": 44.77944,
+		"lon": -89.67098
+	},
+	"KDLL": {
+		"id": "KDLL",
+		"city": "Baraboo Wisconsin Dells Airport",
+		"state": "WI",
+		"lat": 43.52372,
+		"lon": -89.77345
+	},
+	"KEAU": {
+		"id": "KEAU",
+		"city": "Chippewa Valley Regional Airport",
+		"state": "WI",
+		"lat": 44.86668,
+		"lon": -91.488
+	},
+	"KEFT": {
+		"id": "KEFT",
+		"city": "Monroe Municipal Airport",
+		"state": "WI",
+		"lat": 42.61959,
+		"lon": -89.59309
+	},
+	"KEGV": {
+		"id": "KEGV",
+		"city": "Eagle River Union Airport",
+		"state": "WI",
+		"lat": 45.93093,
+		"lon": -89.26702
+	},
+	"KENW": {
+		"id": "KENW",
+		"city": "Kenosha, Kenosha Regional Airport",
+		"state": "WI",
+		"lat": 42.595,
+		"lon": -87.93806
+	},
+	"KETB": {
+		"id": "KETB",
+		"city": "West Bend Municipal Airport",
+		"state": "WI",
+		"lat": 43.42256,
+		"lon": -88.1326
+	},
+	"KEZS": {
+		"id": "KEZS",
+		"city": "Shawano Municipal Airport",
+		"state": "WI",
+		"lat": 44.787,
+		"lon": -88.56
+	},
+	"KFLD": {
+		"id": "KFLD",
+		"city": "Fond Du Lac County Airport",
+		"state": "WI",
+		"lat": 43.76955,
+		"lon": -88.49072
+	},
+	"KGRB": {
+		"id": "KGRB",
+		"city": "Green Bay, Austin Straubel International Airport",
+		"state": "WI",
+		"lat": 44.47944,
+		"lon": -88.13667
+	},
+	"KHYR": {
+		"id": "KHYR",
+		"city": "Sawyer County Airport",
+		"state": "WI",
+		"lat": 46.03029,
+		"lon": -91.44259
+	},
+	"KISW": {
+		"id": "KISW",
+		"city": "Wisconsin Rapids, Alexander Field South Wood County Airport",
+		"state": "WI",
+		"lat": 44.35917,
+		"lon": -89.83694
+	},
+	"KJVL": {
+		"id": "KJVL",
+		"city": "Janesville-Rock County",
+		"state": "WI",
+		"lat": 42.62135,
+		"lon": -89.04186
+	},
+	"KLNL": {
+		"id": "KLNL",
+		"city": "Land O' Lakes, Kings Land O' Lakes Airport",
+		"state": "WI",
+		"lat": 46.15389,
+		"lon": -89.21194
+	},
+	"KLNR": {
+		"id": "KLNR",
+		"city": "Lone Rock Tri-County Regional Airport",
+		"state": "WI",
+		"lat": 43.21108,
+		"lon": -90.18735
+	},
+	"KLSE": {
+		"id": "KLSE",
+		"city": "La Crosse - La Crosse Regional Airport",
+		"state": "WI",
+		"lat": 43.87944,
+		"lon": -91.25667
+	},
+	"KLUM": {
+		"id": "KLUM",
+		"city": "Menomonie Municipal Airport-Score Field",
+		"state": "WI",
+		"lat": 44.89363,
+		"lon": -91.86652
+	},
+	"KMDZ": {
+		"id": "KMDZ",
+		"city": "Taylor County Airport",
+		"state": "WI",
+		"lat": 45.10462,
+		"lon": -90.30253
+	},
+	"KMFI": {
+		"id": "KMFI",
+		"city": "Marshfield, Marshfield Municipal Airport",
+		"state": "WI",
+		"lat": 44.63806,
+		"lon": -90.1875
+	},
+	"KMKE": {
+		"id": "KMKE",
+		"city": "Milwaukee, General Mitchell International Airport",
+		"state": "WI",
+		"lat": 42.955,
+		"lon": -87.90444
+	},
+	"KMSN": {
+		"id": "KMSN",
+		"city": "Madison, Dane County Regional-Truax Field",
+		"state": "WI",
+		"lat": 43.14056,
+		"lon": -89.34528
+	},
+	"KMTW": {
+		"id": "KMTW",
+		"city": "Manitowoc, Manitowoc County Airport",
+		"state": "WI",
+		"lat": 44.13333,
+		"lon": -87.68333
+	},
+	"KMWC": {
+		"id": "KMWC",
+		"city": "Milwaukee-Timmerman",
+		"state": "WI",
+		"lat": 43.10961,
+		"lon": -88.03048
+	},
+	"KOCQ": {
+		"id": "KOCQ",
+		"city": "Oconto J. Douglas Bake Municipal Airport",
+		"state": "WI",
+		"lat": 44.8742,
+		"lon": -87.9096
+	},
+	"KOEO": {
+		"id": "KOEO",
+		"city": "L O Simenstad Municipal Airport",
+		"state": "WI",
+		"lat": 45.31084,
+		"lon": -92.6948
+	},
+	"KOLG": {
+		"id": "KOLG",
+		"city": "Solon Springs Municipal Airport",
+		"state": "WI",
+		"lat": 46.3148,
+		"lon": -91.8164
+	},
+	"KOSH": {
+		"id": "KOSH",
+		"city": "Wittman Regional Airport",
+		"state": "WI",
+		"lat": 43.96701,
+		"lon": -88.55814
+	},
+	"KOVS": {
+		"id": "KOVS",
+		"city": "Boscobel, Boscobel Airport",
+		"state": "WI",
+		"lat": 43.15611,
+		"lon": -90.6775
+	},
+	"KPBH": {
+		"id": "KPBH",
+		"city": "Phillips / Price County",
+		"state": "WI",
+		"lat": 45.7,
+		"lon": -90.4
+	},
+	"KPCZ": {
+		"id": "KPCZ",
+		"city": "Waupaca Municipal Airport",
+		"state": "WI",
+		"lat": 44.33425,
+		"lon": -89.02023
+	},
+	"KPDC": {
+		"id": "KPDC",
+		"city": "Prairie Du Chien Municipal Airport",
+		"state": "WI",
+		"lat": 43.01938,
+		"lon": -91.12112
+	},
+	"KPVB": {
+		"id": "KPVB",
+		"city": "Platteville Municipal Airport",
+		"state": "WI",
+		"lat": 42.69092,
+		"lon": -90.44124
+	},
+	"KRAC": {
+		"id": "KRAC",
+		"city": "Racine, Batten International Airport",
+		"state": "WI",
+		"lat": 42.75861,
+		"lon": -87.81778
+	},
+	"KRCX": {
+		"id": "KRCX",
+		"city": "Ladysmith - Rusk County Airport",
+		"state": "WI",
+		"lat": 45.4935,
+		"lon": -90.9985
+	},
+	"KRGK": {
+		"id": "KRGK",
+		"city": "Red Wing - Red Wing Regional Airport",
+		"state": "WI",
+		"lat": 44.5926,
+		"lon": -92.48439
+	},
+	"KRHI": {
+		"id": "KRHI",
+		"city": "Rhinelander, Rhinelander-Oneida County Airport",
+		"state": "WI",
+		"lat": 45.63167,
+		"lon": -89.48222
+	},
+	"KRNH": {
+		"id": "KRNH",
+		"city": "New Richmond Municipal Airport",
+		"state": "WI",
+		"lat": 45.14762,
+		"lon": -92.53349
+	},
+	"KRPD": {
+		"id": "KRPD",
+		"city": "Rice Lake, Rice Lake Regional-Carl's Field Airport",
+		"state": "WI",
+		"lat": 45.41806,
+		"lon": -91.77361
+	},
+	"KRRL": {
+		"id": "KRRL",
+		"city": "Merrill, Merrill Municipal Airport",
+		"state": "WI",
+		"lat": 45.19844,
+		"lon": -89.70996
+	},
+	"KRYV": {
+		"id": "KRYV",
+		"city": "Watertown",
+		"state": "WI",
+		"lat": 43.17016,
+		"lon": -88.72497
+	},
+	"KRZN": {
+		"id": "KRZN",
+		"city": "Siren, Burnett County Airport",
+		"state": "WI",
+		"lat": 45.82278,
+		"lon": -92.3725
+	},
+	"KSBM": {
+		"id": "KSBM",
+		"city": "Sheboygan County Memorial Airport",
+		"state": "WI",
+		"lat": 43.77483,
+		"lon": -87.84897
+	},
+	"KSTE": {
+		"id": "KSTE",
+		"city": "Stevens Point Municipal Airport",
+		"state": "WI",
+		"lat": 44.54371,
+		"lon": -89.53468
+	},
+	"KSUE": {
+		"id": "KSUE",
+		"city": "Door County Cherryland Airport",
+		"state": "WI",
+		"lat": 44.83941,
+		"lon": -87.42188
+	},
+	"KSUW": {
+		"id": "KSUW",
+		"city": "Richard I. Bong Airport",
+		"state": "WI",
+		"lat": 46.68335,
+		"lon": -92.09254
+	},
+	"KTKV": {
+		"id": "KTKV",
+		"city": "Tomahawk Regional Airport",
+		"state": "WI",
+		"lat": 45.46801,
+		"lon": -89.80962
+	},
+	"KUBE": {
+		"id": "KUBE",
+		"city": "Cumberland",
+		"state": "WI",
+		"lat": 45.506,
+		"lon": -91.9811
+	},
+	"KUES": {
+		"id": "KUES",
+		"city": "Waukesha County Airport",
+		"state": "WI",
+		"lat": 43.04245,
+		"lon": -88.24607
+	},
+	"KUNU": {
+		"id": "KUNU",
+		"city": "Juneau, Dodge County Airport",
+		"state": "WI",
+		"lat": 43.42667,
+		"lon": -88.70333
+	},
+	"KVOK": {
+		"id": "KVOK",
+		"city": "Volk / Camp Douglas",
+		"state": "WI",
+		"lat": 43.93333,
+		"lon": -90.26667
 	}
 }

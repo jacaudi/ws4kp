@@ -2,6 +2,11 @@
 node_modules
 dist/
 
+# Local secrets, tests, and source artwork never belong in the image
+.env
+tests/
+image-templates/
+
 # VCS, CI, editor, OS, and agent-session scratch — not needed in the image
 .git/
 .github/

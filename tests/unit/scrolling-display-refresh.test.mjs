@@ -3,20 +3,20 @@
 // hazards, hourly and travelforecast all render a tall list into a persistent container and scroll
 // it by translating the container. Two bugs lived in that arrangement:
 //
-//   A. FROZEN SCROLL. baseCountChange() caches maxOffset and only re-measures when the container
-//      element identity changes or the cached displayHeight is 0. But the container (.hazard-lines
+//   A. FROZEN SCROLL. baseCountChange() cached maxOffset and only re-measured when the container
+//      element identity changed or the cached displayHeight was 0. But the container (.hazard-lines
 //      etc.) is persistent - only its children are replaced - and displayHeight is a fixed css
-//      value. Both conditions therefore stay false forever after the first measurement, so maxOffset
-//      keeps the height of whatever content was measured FIRST. Taller content later is clamped
-//      partway through and freezes there, never reaching its end. The fix zeroes displayHeight and
-//      nulls the cached element after every rebuild.
+//      value, so maxOffset kept the height of whatever content was measured FIRST. Taller content
+//      later was clamped partway through and froze there. Upstream v8 removed the cache: the shared
+//      base class (scroll-weather-display.mjs) recomputes maxOffset in setTiming() on every rebuild.
+//      The behavioral test below still guards against the freeze coming back by any route.
 //
 //   B. SCROLL RESTART. These displays refresh on a timer (hazards every 60s) while a long scroll
 //      runs for minutes. Every refresh rebuilt the DOM unconditionally, restarting the scroll from
 //      the top, so a long list could never reach its end. The fix compares a content signature and
 //      skips the rebuild when nothing rendered has changed.
 //
-// The displays are byte-identical to upstream/main and must stay that way, so nothing is exported
+// The displays are byte-identical to upstream and must stay that way, so nothing is exported
 // from them for testing. The harness instead rewrites only their import specifiers and runs the
 // real drawLongCanvas()/baseCountChange() against a minimal fake DOM - see helpers/.
 
@@ -38,7 +38,6 @@ const DISPLAYS = [
 		name: 'hazards',
 		module: 'hazards.mjs',
 		selector: '.hazard-lines',
-		cacheKey: 'hazardLines',
 		short: () => [alert('a', 'Flood Warning', 'Minor flooding expected. '.repeat(8))],
 		tall: () => [
 			alert('a', 'Flood Warning', 'Minor flooding expected. '.repeat(8)),
@@ -49,7 +48,6 @@ const DISPLAYS = [
 		name: 'hourly',
 		module: 'hourly.mjs',
 		selector: '.hourly-lines',
-		cacheKey: 'hourlyLines',
 		short: () => Array.from({ length: 4 }, (unused, i) => hour(50 + i)),
 		tall: () => Array.from({ length: 24 }, (unused, i) => hour(50 + i)),
 	},
@@ -57,7 +55,6 @@ const DISPLAYS = [
 		name: 'travelforecast',
 		module: 'travelforecast.mjs',
 		selector: '.travel-lines',
-		cacheKey: 'travelLines',
 		short: () => [city('Chicago', 60), city('Detroit', 58), city('Duluth', 44)],
 		tall: () => Array.from({ length: 12 }, (unused, i) => city(`City ${i}`, 50 + i)),
 	},
@@ -74,7 +71,7 @@ const scrollOffset = (list) => {
 const SCROLL_TO_END = 100_000;
 
 DISPLAYS.forEach(({
-	name, module, selector, cacheKey, short, tall,
+	name, module, selector, short, tall,
 }) => describe(name, () => {
 	const draw = async (display, data) => {
 		display.data = data;
@@ -155,22 +152,6 @@ DISPLAYS.forEach(({
 			tallHeight - MAIN_HEIGHT,
 			'the scroll is clamped to a maxOffset measured from the previous, shorter content',
 		);
-		assert.equal(display.scrollCache.maxOffset, tallHeight - MAIN_HEIGHT);
-	});
-
-	test('rebuilding invalidates the scroll cache so the next base count re-measures', async () => {
-		// states the fix directly: element identity never changes and displayHeight is a css
-		// constant, so an explicit invalidation is the only thing that can trigger a re-measure
-		const display = await loadDisplay(module);
-
-		await draw(display, short());
-		display.baseCountChange(1);
-		assert.equal(display.scrollCache.displayHeight, MAIN_HEIGHT);
-		assert.ok(display.scrollCache[cacheKey], `${cacheKey} should be cached after a measurement`);
-
-		await draw(display, tall());
-
-		assert.equal(display.scrollCache.displayHeight, 0, 'displayHeight must be zeroed to force a re-measure');
-		assert.equal(display.scrollCache[cacheKey], null, `${cacheKey} must be nulled to force a re-measure`);
+		assert.equal(display.scrollTiming.maxOffset, tallHeight - MAIN_HEIGHT);
 	});
 }));

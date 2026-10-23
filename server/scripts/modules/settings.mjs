@@ -14,8 +14,10 @@ const defaultLogoSrc = 'images/logos/logo-corner.svg';
 // with the markup it replaces.
 const defaultLogoAlt = 'WeatherStar 4000+';
 
+let unitChangefirstRunDone = false;
+
 // don't show checkboxes for these settings
-const hiddenSettings = [
+const hiddenSettingNames = [
 	'scanLines',
 
 	// wide, portrait and enhanced are handled by a dropdown which sets these individual settings accordingly
@@ -78,8 +80,6 @@ const enhancedChange = (value) => {
 	} else {
 		container.classList.remove('enhanced');
 	}
-	// Trigger resize to recalculate scaling for new width, on next event loop to allow settings to propigate
-	setTimeout(() => window.dispatchEvent(new Event('redraw')), 0);
 };
 
 const viewModeChange = (value) => {
@@ -105,6 +105,8 @@ const viewModeChange = (value) => {
 			settings.enhanced.value = false;
 			settings.portrait.value = false;
 	}
+	// notify displays to perform data updates or redraws as required
+	window.dispatchEvent(new Event('display-mode-change'));
 };
 
 const kioskChange = (value) => {
@@ -120,12 +122,11 @@ const kioskChange = (value) => {
 	if (value) {
 		body.classList.add('kiosk');
 		document.querySelector('#divTwc')?.classList.add('no-cursor');
-		window.dispatchEvent(new Event('resize'));
 	} else {
 		body.classList.remove('kiosk');
 		document.querySelector('#divTwc')?.classList.remove('no-cursor');
-		window.dispatchEvent(new Event('resize'));
 	}
+	window.dispatchEvent(new Event('resize'));
 
 	// Conditionally store the kiosk setting based on the "Sticky Kiosk" setting
 	// (Need to check if the method exists to handle initialization race condition)
@@ -151,11 +152,15 @@ const scanLineChange = (value) => {
 	if (value) {
 		container.classList.add('scanlines');
 		navIcons.classList.add('on');
+		navIcons.setAttribute('aria-pressed', 'true');
 		modeSelect?.style?.removeProperty('display');
+		// size the lines for the current scale now, resize() only does it when the window size changes
+		window.dispatchEvent(new Event('scanlines-change'));
 	} else {
 		// Remove all scanline classes
-		container.classList.remove('scanlines', 'scanlines-auto', 'scanlines-fine', 'scanlines-normal', 'scanlines-thick', 'scanlines-classic', 'scanlines-retro');
+		container.classList.remove('scanlines');
 		navIcons.classList.remove('on');
+		navIcons.setAttribute('aria-pressed', 'false');
 		if (modeSelect) {
 			modeSelect.style.display = 'none';
 		}
@@ -164,13 +169,10 @@ const scanLineChange = (value) => {
 
 const scanLineModeChange = (_value) => {
 	// Only apply if scanlines are currently enabled
+	// scaling.mjs re-applies the scan lines at the current scale
+	// an event, because scaling.mjs imports settings and importing it here would be circular
 	if (settings.scanLines?.value) {
-		// Call the scanline update function directly with current scale
-		if (typeof window.applyScanlineScaling === 'function') {
-			// Get current scale from navigation module or use 1.0 as fallback
-			const scale = window.currentScale || 1.0;
-			window.applyScanlineScaling(scale);
-		}
+		window.dispatchEvent(new Event('scanlines-change'));
 	}
 };
 
@@ -195,7 +197,7 @@ const setCustomLogoStatus = (message, isError = false) => {
 const toggleCustomLogoControls = (enabled) => {
 	const uploadControls = document.getElementById('settings-customLogoImage-upload');
 	if (uploadControls) {
-		uploadControls.style.display = enabled ? 'block' : 'none';
+		uploadControls.style.display = enabled ? '' : 'none'; // '' falls back to the stylesheet's layout
 	}
 };
 
@@ -343,10 +345,10 @@ window.changeScanlineMode = (mode) => {
 const unitChange = () => {
 	// reload the data at the top level to refresh units
 	// after the initial load
-	if (unitChange.firstRunDone) {
+	if (unitChangefirstRunDone) {
 		window.location.reload();
 	}
-	unitChange.firstRunDone = true;
+	unitChangefirstRunDone = true;
 };
 
 const init = () => {
@@ -407,11 +409,11 @@ const init = () => {
 		type: 'select',
 		defaultValue: 1.0,
 		values: [
-			[0.5, 'Very Fast'],
-			[0.75, 'Fast'],
+			[0.5, 'Very Fast 2x'],
+			[0.75, 'Fast 1.5x'],
 			[1.0, 'Normal'],
-			[1.25, 'Slow'],
-			[1.5, 'Very Slow'],
+			[1.25, 'Slow 0.75x'],
+			[1.5, 'Very Slow 0.67x'],
 		],
 	});
 	settings.scanLines = new Setting('scanLines', {
@@ -432,7 +434,7 @@ const init = () => {
 			['medium', 'Medium (2x)'],
 			['thick', 'Thick (3x)'],
 		],
-		visible: false,
+		visible: true,
 	});
 	settings.units = new Setting('units', {
 		name: 'Units',
@@ -485,8 +487,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// Then generate the settings UI
-	const settingHtml = Object.values(settings).map((setting) => {
-		if (hiddenSettings.includes(setting.shortName)) {
+	const settingElems = Object.values(settings).map((setting) => {
+		if (hiddenSettingNames.includes(setting.shortName)) {
 			// setting is hidden, register it
 			registerHiddenSetting(setting.shortName, setting);
 			return false;
@@ -495,9 +497,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		return setting.generate();
 	}).filter((d) => d);
 	const settingsSection = document.querySelector('#settings');
-	settingsSection.innerHTML = '';
-	settingsSection.append(...settingHtml);
-	settingsSection.append(createCustomLogoUploadControl());
+	// the logo upload sits directly after the generated settings, ahead of anything else in the panel
+	settingsSection.prepend(...settingElems, createCustomLogoUploadControl());
 
 	// update visibility on some settings
 	const modeSelect = document.getElementById('settings-scanLineMode-label');

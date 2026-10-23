@@ -9,11 +9,16 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import {
+	existsSync, mkdtempSync, readFileSync, readdirSync, rmSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import * as sass from 'sass';
-import { vendorManifest, normalizeVendorText } from '../../gulp/update-vendor.mjs';
+import {
+	vendorManifest, normalizeVendorText, buildProj4, PROJ4_DEST,
+} from '../../gulp/update-vendor.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const read = (relative) => readFileSync(path.join(repoRoot, relative), 'utf8');
@@ -26,40 +31,44 @@ const registeredDisplays = () => {
 	const dir = path.join(repoRoot, 'server/scripts/modules');
 	const found = readdirSync(dir)
 		.filter((file) => file.endsWith('.mjs'))
-		.filter((file) => /^registerDisplay\(/m.test(readFileSync(path.join(dir, file), 'utf8')))
-		.sort();
+		.map((file) => ({ file, source: readFileSync(path.join(dir, file), 'utf8') }))
+		.map(({ file, source }) => ({ file, registration: source.match(/^registerDisplay\(new \w+\((\d+),/m) }))
+		.filter(({ registration }) => registration)
+		.map(({ file, registration }) => ({ file, navId: Number(registration[1]) }))
+		.sort((a, b) => a.file.localeCompare(b.file));
 
 	// A zero-length scan would make every assertion below vacuously true.
 	assert.ok(found.length > 0, 'found no modules calling registerDisplay(); the scan is broken, not the config');
 	return found;
 };
 
-// Production loads prebuilt bundles, so a display missing here is absent from
-// every DIST=1 deployment no matter how correct the module itself is.
-const gulpDisplayEntries = () => {
-	const block = read('gulp/build.mjs').match(/displays:\s*\{\s*import:\s*\[([\s\S]*?)\]/);
-	assert.ok(block, 'could not locate entry.displays.import in gulp/build.mjs; update this test to match the new shape');
-
-	const entries = [...block[1].matchAll(/modules\/([\w.-]+\.mjs)/g)].map(([, file]) => file);
-	assert.ok(entries.length > 0, 'parsed entry.displays.import as empty; the parse is broken, not the config');
-	return entries;
+// Dev (views/index.ejs) and production (gulp/build.mjs) both load one entry point,
+// server/scripts/ws.mjs, so a module it does not import never executes and never
+// registers -- in every deployment mode at once.
+const wsImports = () => {
+	const imports = [...read('server/scripts/ws.mjs').matchAll(/^import '\.\/modules\/([\w.-]+\.mjs)';/gm)].map(([, file]) => file);
+	assert.ok(imports.length > 0, 'found no module imports in server/scripts/ws.mjs; the parse is broken, not the config');
+	return imports;
 };
 
-// Development loads each module directly rather than the bundles.
-const ejsModuleTags = () => {
-	const tags = [...read('views/index.ejs').matchAll(/scripts\/modules\/([\w.-]+\.mjs)/g)].map(([, file]) => file);
-	assert.ok(tags.length > 0, 'found no module script tags in views/index.ejs; the parse is broken, not the config');
-	return tags;
-};
-
-test('every registered display is bundled into the production build', () => {
-	const missing = registeredDisplays().filter((file) => !gulpDisplayEntries().includes(file));
-	assert.deepEqual(missing, [], `missing from entry.displays.import in gulp/build.mjs, so absent from every DIST=1 build: ${missing.join(', ')}`);
+test('both deployment modes load ws.mjs as their single entry point', () => {
+	assert.match(read('gulp/build.mjs'), /'\.\/server\/scripts\/ws\.mjs'/, 'gulp/build.mjs no longer bundles server/scripts/ws.mjs; update this test to match the new shape');
+	assert.match(read('views/index.ejs'), /src="scripts\/ws\.mjs"/, 'views/index.ejs no longer loads scripts/ws.mjs in development; update this test to match the new shape');
 });
 
-test('every registered display is loaded by the development page', () => {
-	const missing = registeredDisplays().filter((file) => !ejsModuleTags().includes(file));
-	assert.deepEqual(missing, [], `missing a module script tag in views/index.ejs, so absent when running npm start: ${missing.join(', ')}`);
+test('every registered display is imported by ws.mjs', () => {
+	const imported = wsImports();
+	const missing = registeredDisplays().map(({ file }) => file).filter((file) => !imported.includes(file));
+	assert.deepEqual(missing, [], `missing from server/scripts/ws.mjs, so absent from every build: ${missing.join(', ')}`);
+});
+
+// navigation stores displays by nav ID, so a second display on the same ID silently
+// replaces the first. Upstream v8 gave Future Radar ID 12, which Air Quality already used.
+test('every registered display has a unique nav ID', () => {
+	const byId = Map.groupBy(registeredDisplays(), ({ navId }) => navId);
+	const clashes = [...byId].filter(([, displays]) => displays.length > 1)
+		.map(([navId, displays]) => `${navId}: ${displays.map(({ file }) => file).join(' + ')}`);
+	assert.deepEqual(clashes, [], `displays sharing a nav ID, only the last to load survives: ${clashes.join('; ')}`);
 });
 
 // The vendored copies under server/scripts/vendor/auto/ are what actually ship --
@@ -77,6 +86,18 @@ test('every vendored file matches the package the lockfile installs', () => {
 		.map(({ dest }) => dest);
 
 	assert.deepEqual(stale, [], `out of step with node_modules; run \`npx gulp updateVendor\` and commit the result: ${stale.join(', ')}`);
+});
+
+// proj4 is built rather than copied, so the comparison is against a fresh build. The
+// build is deterministic: it reproduces upstream's committed proj4.js byte for byte.
+test('vendored proj4.js matches a fresh build of the installed proj4', async () => {
+	const buildDir = mkdtempSync(path.join(tmpdir(), 'ws4kp-proj4-test-'));
+	try {
+		const fresh = readFileSync(await buildProj4(buildDir), 'utf8');
+		assert.equal(read(path.join('server/scripts/vendor/auto', PROJ4_DEST)), fresh, 'proj4.js is out of step with node_modules; run `npx gulp updateVendor` and commit the result');
+	} finally {
+		rmSync(buildDir, { recursive: true, force: true });
+	}
 });
 
 // updateVendor used to delete the whole vendored tree before copying, so a package

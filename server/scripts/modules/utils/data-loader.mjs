@@ -1,15 +1,10 @@
 // Data loader utility for fetching JSON data with cache-busting
 
-let dataCache = {};
-
 // Load data with version-based cache busting
 const loadData = async (dataType, version = '') => {
-	if (dataCache[dataType]) {
-		return dataCache[dataType];
-	}
-
 	try {
-		const url = `/data/${dataType}.json${version ? `?_=${version}` : ''}`;
+		// relative, so it also works when the site is hosted under a subpath
+		const url = `data/${dataType}.json${version ? `?_=${version}` : ''}`;
 		const response = await fetch(url);
 
 		if (!response.ok) {
@@ -17,7 +12,7 @@ const loadData = async (dataType, version = '') => {
 		}
 
 		const data = await response.json();
-		dataCache[dataType] = data;
+
 		return data;
 	} catch (error) {
 		console.error(`Error loading ${dataType}:`, error);
@@ -25,29 +20,15 @@ const loadData = async (dataType, version = '') => {
 	}
 };
 
-// Load all data types
-const loadAllData = async (version = '') => {
-	const [travelCities, regionalCities, stationInfo] = await Promise.all([
-		loadData('travelcities', version),
-		loadData('regionalcities', version),
-		loadData('stations', version),
-	]);
+// start off loading the data
+const version = typeof OVERRIDES !== 'undefined' && OVERRIDES.VERSION ? OVERRIDES.VERSION : '';
 
-	// Set global variables for backward compatibility
-	window.TravelCities = travelCities;
-	window.RegionalCities = regionalCities;
-	window.StationInfo = stationInfo;
-
-	return { travelCities, regionalCities, stationInfo };
-};
-
-// Clear cache (useful for development)
-const clearDataCache = () => {
-	dataCache = {};
-};
+const TravelCities = loadData('travelcities', version);
+const RegionalCities = loadData('regionalcities', version);
+const StationInfo = loadData('stations', version);
 
 export {
-	loadData,
-	loadAllData,
-	clearDataCache,
+	TravelCities,
+	RegionalCities,
+	StationInfo,
 };

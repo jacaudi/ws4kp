@@ -1,10 +1,11 @@
 // Stubs and a minimal DOM used to run the real drawLongCanvas()/baseCountChange() of the three
-// scrolling displays (hazards, hourly, travelforecast) inside node --test.
+// scrolling displays (hazards, hourly, travelforecast) inside node --test. Since upstream v8 that
+// logic lives in their shared base class, scroll-weather-display.mjs, and each display supplies
+// its own contentSignature().
 //
-// Those three files are byte-identical to upstream and must stay that way, so nothing here may be
+// Those files are byte-identical to upstream and must stay that way, so nothing here may be
 // imported by them. Instead scroll-display-harness.mjs rewrites their import specifiers to point at
-// this module, which means the code under test is the unmodified source on disk - including the
-// module-private contentSignature() helper.
+// this module, which means the code under test is the unmodified source on disk.
 
 import { Settings } from '../../../server/scripts/vendor/auto/luxon.mjs';
 
@@ -68,7 +69,7 @@ class FakeElement {
 	}
 }
 
-// stand-in for WeatherDisplay. Only the members the three drawLongCanvas()/baseCountChange() paths
+// stand-in for WeatherDisplay, which ScrollWeatherDisplay extends. Only the members the drawLongCanvas()/baseCountChange() paths
 // touch are implemented; anything else is deliberately absent so an untested path fails loudly.
 class WeatherDisplay {
 	constructor(navId, elemId) {
@@ -110,14 +111,15 @@ const timeZone = () => 'UTC';
 const notReached = (name) => () => { throw new Error(`${name} must not be called in these tests`); };
 const safeJson = notReached('safeJson');
 const safePromiseAll = notReached('safePromiseAll');
-const getSmallIcon = notReached('getSmallIcon');
-const getHourlyIcon = notReached('getHourlyIcon');
+const smallIcon = notReached('smallIcon');
+const hourlyIcon = notReached('hourlyIcon');
 const getSun = notReached('getSun');
 const temperature = notReached('temperature');
 const windSpeed = notReached('windSpeed');
 const directionToNSEW = notReached('directionToNSEW');
 const debugFlag = () => false;
 const settings = {};
+const TravelCities = Promise.resolve([]);
 
 export {
 	MAIN_HEIGHT,
@@ -128,12 +130,13 @@ export {
 	timeZone,
 	safeJson,
 	safePromiseAll,
-	getSmallIcon,
-	getHourlyIcon,
+	smallIcon,
+	hourlyIcon,
 	getSun,
 	temperature,
 	windSpeed,
 	directionToNSEW,
 	debugFlag,
 	settings,
+	TravelCities,
 };

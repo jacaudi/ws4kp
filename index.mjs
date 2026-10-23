@@ -1,18 +1,17 @@
 import 'dotenv/config';
 import express from 'express';
-import fs from 'fs';
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
 import {
-	weatherProxy, radarProxy, outlookProxy, mesonetProxy, forecastProxy, airQualityProxy,
+	weatherProxy, radarProxy, outlookProxy, mesonetProxy, forecastProxy, hrrrProxy, airQualityProxy,
 } from './proxy/handlers.mjs';
-import playlist from './src/playlist.mjs';
+import playlistGenerator from './src/playlist.mjs';
 import OVERRIDES from './src/overrides.mjs';
 import cache from './proxy/cache.mjs';
 import devTools from './src/com.chrome.devtools.mjs';
 
-const travelCities = JSON.parse(await readFile('./datagenerators/output/travelcities.json'));
-const regionalCities = JSON.parse(await readFile('./datagenerators/output/regionalcities.json'));
-const stationInfo = JSON.parse(await readFile('./datagenerators/output/stations.json'));
+const travelCities = await readFile('./datagenerators/output/travelcities.json');
+const regionalCities = await readFile('./datagenerators/output/regionalcities.json');
+const stationInfo = await readFile('./datagenerators/output/stations.json');
 
 const app = express();
 const port = process.env.WS4KP_PORT ?? 8080;
@@ -27,7 +26,7 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 
 // version
-const { version } = JSON.parse(fs.readFileSync('package.json'));
+const { version } = JSON.parse(await readFile('package.json'));
 
 // read and parse environment variables to append to the query string
 // use the permalink (share) button on the web app to generate a starting point for your configuration
@@ -62,6 +61,10 @@ const renderIndex = (req, res, production = false) => {
 	});
 };
 
+// production ("distribution") mode serves pre-built files from the dist directory
+// 'npm run build' and then 'DIST=1 npm start'
+const isDist = process.env?.DIST === '1';
+
 const index = (req, res) => {
 	// test for no query string in request and if environment query string values were provided
 	if (hasQsVars && Object.keys(req.query).length === 0) {
@@ -71,8 +74,9 @@ const index = (req, res) => {
 		res.redirect(307, url.toString());
 		return;
 	}
-	// return the EJS template page in development mode (serve files from server directory directly)
-	renderIndex(req, res, false);
+	// render the EJS template: production mode uses the compressed files in dist,
+	// development mode serves the files from the server directory directly
+	renderIndex(req, res, isDist);
 };
 
 const geoip = (req, res) => {
@@ -95,11 +99,7 @@ const geoip = (req, res) => {
 const staticOptions = {
 	etag: true, // Enable ETag generation
 	lastModified: true, // Enable Last-Modified headers
-	setHeaders: (res, path, stat) => {
-		// Generate ETag based on file modification time and size for better cache validation
-		const etag = `"${stat.mtime.getTime().toString(16)}-${stat.size.toString(16)}"`;
-		res.setHeader('ETag', etag);
-
+	setHeaders: (res, path) => {
 		if (path.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|ttf|eot)$/i)) {
 			// Images and fonts - cache for 1 year (immutable content)
 			res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
@@ -113,6 +113,9 @@ const staticOptions = {
 		}
 	},
 };
+
+// serve .well-known files (off by default in express)
+app.use('/.well-known', express.static('./server/.well-known', { ...staticOptions, dotfiles: 'allow' }));
 
 // Weather.gov API proxy (catch-all for any Weather.gov API endpoint)
 // Skip setting up routes for the caching proxy server in static mode
@@ -128,13 +131,14 @@ if (!process.env?.STATIC) {
 
 	// specific proxies for other services
 	app.use('/radar/', radarProxy);
+	app.use('/hrrr/', hrrrProxy);
 	app.use('/spc/', outlookProxy);
 	app.use('/airquality/', airQualityProxy);
 	app.use('/mesonet/', mesonetProxy);
 	app.use('/forecast/', forecastProxy);
 
 	// Playlist route is available in server mode (not in static mode)
-	app.get('/playlist.json', playlist);
+	app.get('/playlist.json', playlistGenerator);
 }
 
 // Data endpoints - serve JSON data with long-term caching
@@ -147,23 +151,19 @@ const dataEndpoints = {
 Object.entries(dataEndpoints).forEach(([name, data]) => {
 	app.get(`/data/${name}.json`, (req, res) => {
 		res.set({
-			'Cache-Control': 'public, max-age=31536000, immutable',
+			'Cache-Control': 'public, max-age=2592000, immutable',
 			'Content-Type': 'application/json',
 		});
-		res.json(data);
+		res.send(data);
 	});
 });
 
-if (process.env?.DIST === '1') {
-	// Production ("distribution") mode uses pre-baked files in the dist directory
-	// 'npm run build' and then 'DIST=1 npm start'
+if (isDist) {
 	app.use('/scripts', express.static('./server/scripts', staticOptions));
 	app.use('/geoip', geoip);
 	app.use('/music', express.static('./server/music', staticOptions));
 
-	// render the EJS template in production mode (serve compressed files from dist directory)
-	app.get('/', (req, res) => { renderIndex(req, res, true); });
-
+	app.get('/', index);
 	app.use('/', express.static('./dist', staticOptions));
 } else {
 	// Development mode serves files from the server directory: 'npm start'
@@ -172,7 +172,7 @@ if (process.env?.DIST === '1') {
 	app.use('/resources', express.static('./server/scripts/modules'));
 	app.get('/', index);
 	app.get('/.well-known/appspecific/com.chrome.devtools.json', devTools);
-	app.get('*name', express.static('./server', staticOptions));
+	app.get('*name', express.static('./server'));
 }
 
 const server = app.listen(port, () => {
@@ -183,6 +183,7 @@ const server = app.listen(port, () => {
 const gracefulShutdown = () => {
 	server.close(() => {
 		console.log('Server closed');
+		// eslint-disable-next-line n/no-process-exit
 		process.exit(0);
 	});
 };

@@ -18,30 +18,23 @@
  * @class HttpCache
  */
 
-import https from 'https';
+import https from 'node:https';
 
 // Default timeout for upstream requests (matches client-side default)
 const DEFAULT_REQUEST_TIMEOUT = 15000;
 
-// Upstream headers the proxy must never copy onto (or cache for) its own response:
-// - cache-control/expires/etag/last-modified: the proxy sets its own client-facing
-//   cache policy and tracks validators separately (see storeCachedResponse).
-// - hop-by-hop headers (RFC 7230 §6.1): they describe the upstream connection, not
-//   the payload. Forwarding `transfer-encoding` in particular onto a re-buffered body
-//   that res.send() frames with its own Content-Length yields a response carrying both
-//   framings — illegal per RFC 7230 §3.3.3, which a strict fronting proxy (e.g. Envoy)
-//   rejects with a 502 protocol error. Express recomputes Content-Length on send.
-// - set-cookie: upstream cookies belong to the upstream origin, not to us. NWS sends
-//   a Dynatrace analytics cookie scoped to Domain=.weather.gov; relayed from our own
-//   host the browser rejects it for domain mismatch and logs an error per request.
-//   It is also cached (this same set filters what gets stored), so one upstream
-//   cookie would be re-emitted to every client on each cache hit.
-const EXCLUDED_RESPONSE_HEADERS = new Set([
+// upstream headers that are not passed on to the browser
+// cache headers: the proxy sets its own cache policy
+// hop-by-hop headers: they describe the proxy's connection to upstream, not the browser's connection to the proxy
+// content-length: res.send() sets it for the body actually sent
+// set-cookie: upstream cookies belong to the upstream origin (NWS sends one scoped to .weather.gov,
+// which the browser rejects from our host), and a cached one would be re-sent to every client
+const SKIPPED_HEADERS = [
 	'cache-control', 'expires', 'etag', 'last-modified',
-	'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
-	'te', 'trailer', 'transfer-encoding', 'upgrade',
+	'connection', 'keep-alive', 'transfer-encoding', 'te', 'trailer', 'upgrade', 'proxy-authenticate', 'proxy-authorization',
+	'content-length',
 	'set-cookie',
-]);
+];
 
 class HttpCache {
 	constructor() {
@@ -71,11 +64,10 @@ class HttpCache {
 
 	// Helper method to set filtered headers and our cache policy
 	static setFilteredHeaders(res, headers) {
-		// Strip cache-related and hop-by-hop headers and pass through others
+		// Strip cache-related headers and pass through others
 		Object.entries(headers || {}).forEach(([key, value]) => {
 			const lowerKey = key.toLowerCase();
-			// Skip headers the proxy must control or must not forward (see EXCLUDED_RESPONSE_HEADERS)
-			if (!EXCLUDED_RESPONSE_HEADERS.has(lowerKey)) {
+			if (!SKIPPED_HEADERS.includes(lowerKey)) {
 				res.header(lowerKey, value);
 			}
 		});
@@ -89,8 +81,9 @@ class HttpCache {
 		const path = req.path || req.url || '/';
 		const url = req.url || req.path || '/';
 
-		// Since this cache is intended only by the frontend, we can use a simple URL-based key
-		return `${path}${url.includes('?') ? url.substring(url.indexOf('?')) : ''}`;
+		// req.path is relative to where the proxy is mounted, so include the mount (/api, /spc, /hrrr...)
+		// to keep each service's entries apart. This is also the form DELETE /cache/... takes: /cache/api/points/...
+		return `${req.baseUrl ?? ''}${path}${url.includes('?') ? url.substring(url.indexOf('?')) : ''}`;
 	}
 
 	// High-level method to handle caching for HTTP proxies
@@ -151,7 +144,7 @@ class HttpCache {
 
 				// Fallthrough to make request if cache miss (shouldn't happen but safety net)
 				console.warn(`⚠️ Redo     | Cache miss after waiting for in-flight request: ${fullUrl}`);
-			} catch (_error) {
+			} catch {
 				// If the in-flight request failed, we'll make our own request
 				console.warn(`⚠️ Redo     | In-flight request failed, making new request: ${fullUrl}`);
 			}
@@ -205,6 +198,19 @@ class HttpCache {
 
 			let responseHandled = false; // Track if we've already sent a response
 
+			// when upstream fails, an expired copy is better than an error (weather.gov has frequent short outages)
+			// expired entries are kept for up to 3 hours, see startCleanup()
+			const serveStale = (reason) => {
+				if (!staleCache) return false;
+				const age = Math.round((Date.now() - staleCache.timestamp) / 1000);
+				console.warn(`🕰️ Stale    | ${fullUrl} (${reason}, serving the cached copy, age: ${age}s)`);
+				res.status(staleCache.statusCode);
+				HttpCache.setFilteredHeaders(res, staleCache.headers);
+				res.send(staleCache.data);
+				resolve(true);
+				return true;
+			};
+
 			const upstreamReq = https.get(fullUrl, { headers }, (getRes) => {
 				const { statusCode } = getRes;
 
@@ -247,12 +253,11 @@ class HttpCache {
 						console.error(`🚫 ${statusCode}      | ${fullUrl}`);
 					}
 
-					// Filter out cache and hop-by-hop headers before storing - a cache hit
-					// re-emits these, so a stored transfer-encoding would break framing too
+					// Filter out cache and hop-by-hop headers before storing - they aren't sent to the browser
 					const filteredHeaders = {};
 					Object.entries(getRes.headers || {}).forEach(([key, value]) => {
 						const lowerKey = key.toLowerCase();
-						if (!EXCLUDED_RESPONSE_HEADERS.has(lowerKey)) {
+						if (!SKIPPED_HEADERS.includes(lowerKey)) {
 							filteredHeaders[key] = value;
 						}
 					});
@@ -265,6 +270,7 @@ class HttpCache {
 
 					// Check if this is a server error (5xx) or client error that shouldn't be cached
 					if (statusCode >= 500 && statusCode <= 599) {
+						if (serveStale(`upstream ${statusCode}`)) return;
 						// For 5xx errors, send response (don't cache, but don't reject since response is sent)
 						res.status(statusCode);
 						HttpCache.setFilteredHeaders(res, getRes.headers);
@@ -329,6 +335,7 @@ class HttpCache {
 				if (responseHandled) return; // Prevent double response
 				responseHandled = true;
 				console.error(`💥 Error    | ${fullUrl}: ${err.message}`);
+				if (serveStale(err.message)) return;
 				res.status(500).json({ error: `Failed to fetch data from ${options.serviceName || 'upstream API'}` });
 				resolve(false); // Error handled, response sent
 			});
@@ -339,9 +346,6 @@ class HttpCache {
 
 				console.error(`⏲️ Timeout  | ${fullUrl} (after ${options.timeout || DEFAULT_REQUEST_TIMEOUT}ms)`);
 
-				// Send timeout response to client
-				res.status(504).json({ error: 'Gateway timeout' });
-
 				// Don't destroy the request immediately - let the response be sent first
 				// Then destroy to clean up the upstream connection
 				setImmediate(() => {
@@ -349,6 +353,11 @@ class HttpCache {
 						upstreamReq.destroy();
 					}
 				});
+
+				if (serveStale('timeout')) return;
+
+				// Send timeout response to client
+				res.status(504).json({ error: 'Gateway timeout' });
 
 				resolve(false); // Timeout handled, response sent
 			});
@@ -438,7 +447,7 @@ class HttpCache {
 			const maxAge = 4 * 60 * 60; // 4 hours
 
 			return Math.max(minAge, Math.min(maxAge, heuristicAge));
-		} catch (_error) {
+		} catch {
 			return 0; // Invalid date format
 		}
 	}
@@ -467,34 +476,6 @@ class HttpCache {
 		}, 5 * 60 * 1000); // Cleanup every 5 minutes
 	}
 
-	// Cache statistics
-	getStats() {
-		const now = Date.now();
-		let expired = 0;
-		let valid = 0;
-
-		Array.from(this.cache.values()).forEach((cached) => {
-			if (now > cached.expiry) {
-				expired += 1;
-			} else {
-				valid += 1;
-			}
-		});
-
-		return {
-			total: this.cache.size,
-			valid,
-			expired,
-			inFlight: this.inFlight.size,
-		};
-	}
-
-	// Clear all cache entries
-	clear() {
-		this.cache.clear();
-		console.log('🗑️ Clear    | Cache cleared');
-	}
-
 	// Clear a specific cache entry by path
 	clearEntry(path) {
 		const key = path;
@@ -504,16 +485,6 @@ class HttpCache {
 			return true;
 		}
 		return false;
-	}
-
-	// Stop cleanup interval
-	destroy() {
-		if (this.cleanupInterval) {
-			clearInterval(this.cleanupInterval);
-			this.cleanupInterval = null;
-		}
-		this.clear();
-		this.inFlight.clear();
 	}
 }
 

@@ -184,7 +184,7 @@ const convertMapClickIcon = (weatherImage) => {
 /**
  * Convert MapClick observation data to match the standard API format
  *
- * This is NOT intended to be a full replacment process, but rather a minimal
+ * This is NOT intended to be a full replacement process, but rather a minimal
  * fallback for the data used in WS4KP.
  *
  * @param {Object} mapClickObs - MapClick observation data
@@ -193,10 +193,10 @@ const convertMapClickIcon = (weatherImage) => {
 export const convertMapClickObservationsToApiFormat = (mapClickObs) => {
 	// Convert temperature from Fahrenheit to Celsius (only if valid)
 	const tempF = parseFloat(mapClickObs.Temp);
-	const tempC = !Number.isNaN(tempF) ? (tempF - 32) * 5 / 9 : null;
+	const tempC = !Number.isNaN(tempF) ? ((tempF - 32) * 5) / 9 : null;
 
 	const dewpF = parseFloat(mapClickObs.Dewp);
-	const dewpC = !Number.isNaN(dewpF) ? (dewpF - 32) * 5 / 9 : null;
+	const dewpC = !Number.isNaN(dewpF) ? ((dewpF - 32) * 5) / 9 : null;
 
 	// Convert wind speed from mph to km/h (only if valid)
 	const windMph = parseFloat(mapClickObs.Winds);
@@ -224,7 +224,7 @@ export const convertMapClickObservationsToApiFormat = (mapClickObs) => {
 
 	// Convert wind chill from Fahrenheit to Celsius (only if valid and not "NA")
 	const windChillF = mapClickObs.WindChill !== 'NA' ? parseFloat(mapClickObs.WindChill) : NaN;
-	const windChill = !Number.isNaN(windChillF) ? (windChillF - 32) * 5 / 9 : null;
+	const windChill = !Number.isNaN(windChillF) ? ((windChillF - 32) * 5) / 9 : null;
 
 	// Convert MapClick weather image to weather.gov API icon format
 	const iconUrl = convertMapClickIcon(mapClickObs.Weatherimage);
@@ -250,110 +250,6 @@ export const convertMapClickObservationsToApiFormat = (mapClickObs) => {
 				},
 			},
 		],
-	};
-};
-
-/**
- * Convert MapClick forecast data to weather.gov API forecast format
- * @param {Object} mapClickData - Raw MapClick response data
- * @returns {Object|null} - Forecast data in API format or null if invalid
- */
-export const convertMapClickForecastToApiFormat = (mapClickData) => {
-	if (!mapClickData?.data || !mapClickData?.time) {
-		return null;
-	}
-
-	const { data, time } = mapClickData;
-	const {
-		temperature, weather, iconLink, text, pop,
-	} = data;
-
-	if (!temperature || !weather || !iconLink || !text || !time.startValidTime || !time.startPeriodName) {
-		return null;
-	}
-
-	// Convert each forecast period
-	const periods = temperature.map((temp, index) => {
-		if (index >= weather.length || index >= iconLink.length || index >= text.length || index >= time.startValidTime.length) {
-			return null;
-		}
-
-		// Determine if this is a daytime period based on the period name
-		const periodName = time.startPeriodName[index] || '';
-		const isDaytime = !periodName.toLowerCase().includes('night');
-
-		// Convert icon from MapClick format to API format
-		let icon = iconLink[index];
-		if (icon) {
-			let filename = null;
-
-			// Handle DualImage.php URLs: extract from 'i' parameter
-			if (icon.includes('DualImage.php')) {
-				const iMatch = icon.match(/[?&]i=([^&]+)/);
-				if (iMatch) {
-					[, filename] = iMatch;
-				}
-			} else {
-				// Handle regular image URLs: extract filename from path, removing percentage numbers
-				const pathMatch = icon.match(/\/([^/]+?)(?:\d+)?(?:\.png)?$/);
-				if (pathMatch) {
-					[, filename] = pathMatch;
-				}
-			}
-
-			if (filename) {
-				icon = convertMapClickIcon(filename);
-			}
-		}
-
-		return {
-			number: index + 1,
-			name: periodName,
-			startTime: time.startValidTime[index],
-			endTime: index + 1 < time.startValidTime.length ? time.startValidTime[index + 1] : null,
-			isDaytime,
-			temperature: parseInt(temp, 10),
-			temperatureUnit: 'F',
-			temperatureTrend: null,
-			probabilityOfPrecipitation: {
-				unitCode: 'wmoUnit:percent',
-				value: pop[index] ? parseInt(pop[index], 10) : null,
-			},
-			dewpoint: {
-				unitCode: 'wmoUnit:degC',
-				value: null, // MapClick doesn't provide dewpoint in forecast
-			},
-			relativeHumidity: {
-				unitCode: 'wmoUnit:percent',
-				value: null, // MapClick doesn't provide humidity in forecast
-			},
-			windSpeed: null, // MapClick doesn't provide wind speed in forecast
-			windDirection: null, // MapClick doesn't provide wind direction in forecast
-			icon,
-			shortForecast: weather[index],
-			detailedForecast: text[index],
-		};
-	}).filter((period) => period !== null);
-
-	// Return in API forecast format
-	return {
-		type: 'Feature',
-		geometry: {
-			type: 'Point',
-			coordinates: [mapClickData.location?.longitude, mapClickData.location?.latitude],
-		},
-		properties: {
-			units: 'us',
-			forecastGenerator: 'MapClick',
-			generatedAt: new Date().toISOString(),
-			updateTime: parseMapClickDate(mapClickData.creationDateLocal)?.toISOString() || new Date().toISOString(),
-			validTimes: `${time.startValidTime[0]}/${time.startValidTime[time.startValidTime.length - 1]}`,
-			elevation: {
-				unitCode: 'wmoUnit:m',
-				value: mapClickData.location?.elevation ? parseFloat(mapClickData.location.elevation) : null,
-			},
-			periods,
-		},
 	};
 };
 
@@ -439,29 +335,6 @@ export const getMapClickCurrentObservation = async (latitude, longitude, station
 };
 
 /**
- * Get forecast data from MapClick API in weather.gov API format
- * @param {number} latitude - Latitude coordinate
- * @param {number} longitude - Longitude coordinate
- * @param {string} stationId - Station identifier (used for URL logging)
- * @param {Object} options - Optional parameters
- * @param {Function} options.stillWaiting - Callback for loading status
- * @param {number} options.retryCount - Number of retries (default: 3)
- * @returns {Object|null} - Forecast data in API format or null if failed
- */
-export const getMapClickForecast = async (latitude, longitude, stationId, options = {}) => {
-	const { stillWaiting, retryCount = 3 } = options;
-
-	const mapClickData = await getMapClickData(latitude, longitude, stationId, { stillWaiting, retryCount });
-
-	if (!mapClickData) {
-		return null;
-	}
-
-	// Convert to API format
-	return convertMapClickForecastToApiFormat(mapClickData);
-};
-
-/**
  * Enhanced observation fetcher with MapClick fallback
  * Centralized logic for checking data quality and falling back to MapClick when needed
  * @param {Object} observationData - Original API observation data
@@ -506,7 +379,8 @@ export const enhanceObservationWithMapClick = async (observationData, options = 
 			data: observationData,
 			wasImproved: false,
 			improvements: [],
-			missingFields: [...missingRequired, ...missingOptional],
+			missingRequired,
+			missingOptional,
 		};
 	};
 
@@ -653,17 +527,16 @@ export const enhanceObservationWithMapClick = async (observationData, options = 
 		data: { ...mapClickProps, timestamp: observationData.timestamp },
 		wasImproved: true,
 		improvements,
-		missingFields: [...mapClickMissingRequired, ...mapClickMissingOptional],
+		missingRequired: mapClickMissingRequired,
+		missingOptional: mapClickMissingOptional,
 	};
 };
 
 export default {
 	parseMapClickDate,
 	convertMapClickObservationsToApiFormat,
-	convertMapClickForecastToApiFormat,
 	isDataStale,
 	getMapClickData,
 	getMapClickCurrentObservation,
-	getMapClickForecast,
 	enhanceObservationWithMapClick,
 };

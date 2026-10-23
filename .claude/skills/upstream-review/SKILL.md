@@ -75,12 +75,19 @@ baseline. Never force-fetch upstream tags into `refs/tags/`.
 
 ```bash
 S="${TMPDIR:-/tmp}"                      # or the session scratchpad
-git diff --name-only $B..main    | sort > "$S/fork.txt"
-git diff --name-only $B..$TARGET | sort > "$S/up.txt"
+git diff --no-renames --name-only $B..main    | sort > "$S/fork.txt"
+git diff --no-renames --name-only $B..$TARGET | sort > "$S/up.txt"
 
 comm -12 "$S/fork.txt" "$S/up.txt"   # CONTESTED — both sides changed
 comm -13 "$S/fork.txt" "$S/up.txt"   # upstream-only — clean apply
 ```
+
+**`--no-renames` is not optional.** Rename detection lists only the *new* path of a
+moved file, so its old path silently drops out of one list and lands in the wrong bucket.
+The v8.0.1 review misclassified three files this way: the fork moved `nginx.conf` and
+`static-env-handler.sh` into `.archive/static/`, and upstream renamed
+`views/partials/radar.ejs` to `radar-common.ejs` — all three read as upstream-only
+"clean apply" when they were contested or deleted here.
 
 The upstream-only set applies with `git checkout $TARGET -- <file>` — the release tag,
 not `upstream/main`, unless you are deliberately taking unreleased work — and needs no
@@ -184,8 +191,10 @@ Standing decisions (do not silently reverse):
   upstream, so it lands in the *upstream-only* bucket and looks like a clean apply — the
   partition cannot tell "we never had it" from "we deleted it". Before applying that
   bucket, check each path against `main` and skip anything the fork dropped deliberately.
-  Currently: `ws4kp.code-workspace` (removed 2026-09-18, duplicated `.vscode/`) and
-  `.github/workflows/build-docker.yaml` (this fork composes its own `ci.yaml`). Record
+  Currently: `ws4kp.code-workspace` (removed 2026-09-18, duplicated `.vscode/`),
+  `.github/workflows/build-docker.yaml` (this fork composes its own `ci.yaml`),
+  `Dockerfile.server`, and `nginx.conf` + `static-env-handler.sh` (static mode archived
+  to `.archive/static/`). Record
   each one in `skipped` in `.upstream-sync.json` so it is not re-litigated.
 
 ## Step 6 — Package by risk
@@ -201,9 +210,8 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
   `tests/unit/build-consistency.test.mjs`, which fails if `server/styles/ws.min.css` is not
   a byte-match for a fresh compile — so a forgotten `npm run build:css` after adopting an
   upstream `.scss` fails the unit suite, not just review.
-- `rtk proxy npm run lint` — raw/uncached. `npm run lint` is CI's scope; `lintall`
-  includes `tests/` and has **pre-existing** failures. Compare against clean `main`
-  before blaming your change.
+- `rtk proxy npm run lint` — raw/uncached. Since v8 it is `eslint .` with upstream's flat
+  config, which ignores `tests/`. Compare against clean `main` before blaming your change.
 - Integration test (Puppeteer, 5 cities, live NWS) — what `ci-test.yml` runs:
   ```bash
   npm ci --prefix tests            # tests/ is its own npm package (puppeteer, chalk)

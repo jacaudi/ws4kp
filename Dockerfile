@@ -31,13 +31,19 @@ COPY views ./views
 
 # Served by express.static under DIST=1. src/playlist-reader.mjs also reads
 # server/music (and server/music/default) at startup to build the playlist.
+# index.mjs serves /.well-known from server/.well-known in every mode.
 COPY server/scripts ./server/scripts
 COPY server/music ./server/music
+COPY server/.well-known ./server/.well-known
 
 # Read and parsed at startup by index.mjs.
 COPY datagenerators/output ./datagenerators/output
 
 EXPOSE 8080
+
+# busybox wget ships with alpine; manifest.json is a small static file from dist/
+HEALTHCHECK --interval=60s --timeout=5s --start-period=15s --retries=3 \
+	CMD wget -q --spider "http://127.0.0.1:8080/manifest.json" || exit 1
 
 # NODE_ENV=production is read by Express, not by this project's own code
 # (nothing here branches on it). It enables the view cache, so the EJS

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 
 <head>
   <meta charset="utf-8" />
@@ -29,12 +29,8 @@
   <% } %>
 
   <% if (production) { %>
-  <link rel="stylesheet" type="text/css" href="resources/ws.min.css?_=<%=production%>" />
-  <script type="text/javascript" src="resources/vendor.min.js?_=<%=production%>"></script>
-  <script type="text/javascript" src="resources/index.min.js?_=<%=production%>"></script>
-  <script type="text/javascript" src="resources/displays.min.js?_=<%=production%>"></script>
-  <script type="text/javascript" src="resources/features.min.js?_=<%=production%>"></script>
-  <script type="text/javascript" src="resources/shared.min.js?_=<%=production%>"></script>
+  <link rel="stylesheet" type="text/css" href="resources/ws.min.css?_=<%=version%>" />
+  <script type="text/javascript" src="resources/ws.min.js?_=<%=version%>" defer></script>
   <script type="text/javascript">
     const OVERRIDES = <%- JSON.stringify(OVERRIDES ?? {}) %>;
   </script>
@@ -42,45 +38,27 @@
   <link rel="stylesheet" type="text/css" href="styles/ws.min.css" />
   <!--<script type="text/javascript">const OVERRIDES={};</script>-->
   <script type="text/javascript">
-    OVERRIDES = <%- JSON.stringify(OVERRIDES ?? {}) %>;
+    const OVERRIDES = <%- JSON.stringify(OVERRIDES ?? {}) %>;
   </script>
-  <script type="text/javascript" src="scripts/vendor/auto/swiped-events.js"></script>
-  <script type="text/javascript" src="scripts/vendor/auto/suncalc.js"></script>
-  <script type="module" src="scripts/modules/hazards.mjs"></script>
-  <script type="module" src="scripts/modules/currentweatherscroll.mjs"></script>
-  <script type="module" src="scripts/modules/currentweather.mjs"></script>
-  <script type="module" src="scripts/modules/almanac.mjs"></script>
-  <script type="module" src="scripts/modules/spc-outlook.mjs"></script>
-  <script type="module" src="scripts/modules/airquality.mjs"></script>
-  <script type="module" src="scripts/modules/icons.mjs"></script>
-  <script type="module" src="scripts/modules/extendedforecast.mjs"></script>
-  <script type="module" src="scripts/modules/hourly-graph.mjs"></script>
-  <script type="module" src="scripts/modules/hourly.mjs"></script>
-  <script type="module" src="scripts/modules/latestobservations.mjs"></script>
-  <script type="module" src="scripts/modules/localforecast.mjs"></script>
-  <script type="module" src="scripts/modules/radar.mjs"></script>
-  <script type="module" src="scripts/modules/regionalforecast.mjs"></script>
-  <script type="module" src="scripts/modules/travelforecast.mjs"></script>
-  <script type="module" src="scripts/modules/progress.mjs"></script>
-  <script type="module" src="scripts/modules/settings.mjs"></script>
-  <script type="module" src="scripts/modules/media.mjs"></script>
-  <script type="module" src="scripts/modules/custom-scroll-text.mjs"></script>
-  <script type="module" src="scripts/index.mjs"></script>
+  <script type="module" src="scripts/ws.mjs"></script>
   <% } %>
 
 </head>
 
-<body <% if (query && (query['kiosk'] === true || query['settings-kiosk-checkbox'] === 'true' )) { %>class="kiosk" <% }%>>
+<body <% if (query && (query['kiosk'] === 'true' || query['settings-kiosk-checkbox'] === 'true' )) { %>class="kiosk" <% }%>>
 
   <div id="divQuery">
-    <input id="txtLocation" name="txtLocation" type="text" value="" placeholder="ZIP Code or City, State" data-1p-ignore />
+    <div class="location-input">
+      <input id="txtLocation" name="txtLocation" type="text" value="" placeholder="ZIP Code or City, State" aria-label="Location" data-1p-ignore />
+    </div>
     <div class="buttons">
-      <button id="btnGetGps" type="button" title="Get GPS Location"><img src="images/nav/ic_gps_fixed_black_18dp_1x.png" class="light" />
-        <img src="images/nav/ic_gps_fixed_white_18dp_1x.png" class="dark" />
+      <button id="btnGetGps" type="button" title="Get GPS Location" aria-label="Get GPS location"><img src="images/nav/ic_gps_fixed_black_18dp_1x.png" class="light" alt="" />
+        <img src="images/nav/ic_gps_fixed_white_18dp_1x.png" class="dark" alt="" />
       </button>
       <button id="btnGetLatLng" type="submit">GO</button>
-      <button id="btnClearQuery" type="reset">Reset</button>
+      <button id="btnClearQuery" type="button">Reset</button>
     </div>
+    <div class="location-status" role="status"></div>
   </div>
   <div id="version" style="display:none">
     <%- version %>
@@ -89,11 +67,12 @@
   <div id="divTwc">
     <div id="divTwcMain">
       <div id="container">
-        <div id="loading" width="640" height="480">
+        <div id="loading">
           <div>
             <div class="title">WeatherStar 4000+</div>
             <div class="version">v<%- version %></div>
             <div class="instructions">Enter your location above to continue</div>
+            <div class="location-status"></div>
           </div>
         </div>
         <div id="progress-html" class="weather-display">
@@ -133,7 +112,10 @@
           <%- include('partials/extended-forecast.ejs') %>
         </div>
         <div id="radar-html" class="weather-display">
-          <%- include('partials/radar.ejs') %>
+          <%- include('partials/radar-common.ejs', { titleTop: 'Local', mainClass: 'radar' }) %>
+        </div>
+        <div id="future-radar-html" class="weather-display">
+          <%- include('partials/radar-common.ejs', { titleTop: 'Future', mainClass: 'future-radar' }) %>
         </div>
         <div id="hazards-html" class="weather-display">
           <%- include('partials/hazards.ejs') %>
@@ -143,83 +125,134 @@
     </div>
     <div id="divTwcBottom">
       <div id="divTwcBottomLeft">
-        <img id="NavigateMenu" class="navButton" src="images/nav/ic_menu_white_24dp_2x.png" title="Menu" />
-        <img id="NavigatePrevious" class="navButton" src="images/nav/ic_skip_previous_white_24dp_2x.png" title="Previous" />
-        <img id="NavigateNext" class="navButton" src="images/nav/ic_skip_next_white_24dp_2x.png" title="Next" />
-        <img id="NavigatePlay" class="navButton" src="images/nav/ic_play_arrow_white_24dp_2x.png" title="Play" />
+        <button type="button" id="NavigateMenu" class="navButton" title="Menu" aria-label="Menu"><img src="images/nav/ic_menu_white_24dp_2x.png" alt="" /></button>
+        <button type="button" id="NavigatePrevious" class="navButton" title="Previous" aria-label="Previous"><img src="images/nav/ic_skip_previous_white_24dp_2x.png" alt="" /></button>
+        <button type="button" id="NavigateNext" class="navButton" title="Next" aria-label="Next"><img src="images/nav/ic_skip_next_white_24dp_2x.png" alt="" /></button>
+        <button type="button" id="NavigatePlay" class="navButton" title="Play" aria-label="Play"><img src="images/nav/ic_play_arrow_white_24dp_2x.png" alt="" /></button>
       </div>
       <div id="divTwcBottomMiddle">
-        <img id="NavigateRefresh" class="navButton" src="images/nav/ic_refresh_white_24dp_2x.png" title="Refresh" />
+        <button type="button" id="NavigateRefresh" class="navButton" title="Refresh" aria-label="Refresh"><img src="images/nav/ic_refresh_white_24dp_2x.png" alt="" /></button>
       </div>
       <div id="divTwcBottomRight">
         <div id="ToggleMediaContainer">
-          <div id="ToggleMedia">
-            <img class="navButton off" src="images/nav/ic_volume_off_white_24dp_2x.png" title="Unmute" />
-            <img class="navButton on" src="images/nav/ic_volume_on_white_24dp_2x.png" title="Volume" />
-          </div>
-          <div class="volume-slider">
-            <input type="range" min="1" max="100" value="75" /><br>
-            <img class="navButton" src="images/nav/ic_volume_off_white_24dp_2x.png" title="Mute" />
+          <button type="button" id="ToggleMedia" class="navButton" title="Toggle music" aria-label="Music" aria-pressed="false">
+            <img class="off" src="images/nav/ic_music_off_white_24dp_2x.png" alt="" />
+            <img class="on" src="images/nav/ic_music_on_white_24dp_2x.png" alt="" />
+          </button>
+          <button type="button" id="ToggleMediaVolume" class="navButton" title="Volume" aria-label="Volume" aria-expanded="false" aria-controls="volume-slider"><img src="images/nav/ic_volume_on_white_24dp_2x.png" alt="" /></button>
+          <div class="volume-slider" id="volume-slider">
+            <input type="range" min="1" max="100" value="75" aria-label="Music volume" />
           </div>
         </div>
-        <div id="ToggleScanlines">
-          <img class="navButton off" src="images/nav/ic_scanlines_off_white_24dp_2x.png" title="Scan lines on" />
-          <img class="navButton on" src="images/nav/ic_scanlines_on_white_24dp_2x.png" title="Scan lines off" />
+        <button type="button" id="ToggleScanlines" class="navButton" title="Scan lines" aria-label="Scan lines" aria-pressed="false">
+          <img class="off" src="images/nav/ic_scanlines_off_white_24dp_2x.png" alt="" />
+          <img class="on" src="images/nav/ic_scanlines_on_white_24dp_2x.png" alt="" />
+        </button>
+        <button type="button" id="ToggleFullScreen" class="navButton" title="Enter fullscreen" aria-label="Enter fullscreen"><img src="images/nav/ic_fullscreen_white_24dp_2x.png" alt="" /></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="lower-tabs">
+    <div class="tab-bar" role="tablist">
+      <button type="button" role="tab" id="tab-displays" aria-controls="tab-panel-displays" aria-selected="true">Displays <span id="enabled-count" class="count"></span></button>
+      <button type="button" role="tab" id="tab-settings" aria-controls="tab-panel-settings" aria-selected="false">Settings</button>
+      <button type="button" role="tab" id="tab-share" aria-controls="tab-panel-share" aria-selected="false">Share</button>
+      <button type="button" role="tab" id="tab-headend" aria-controls="tab-panel-headend" aria-selected="false">Headend</button>
+    </div>
+    <div class="tab-panels">
+      <div class="tab-panel active" role="tabpanel" id="tab-panel-displays" aria-labelledby="tab-displays">
+        <div id="enabledDisplays"></div>
+        <div class="legend">
+          <span class="ready">Ready (click to view)</span>
+          <span class="loading">Loading</span>
+          <span class="failed">Failed</span>
+          <span class="off">Off / no data</span>
         </div>
-        <img id="ToggleFullScreen" class="navButton" src="images/nav/ic_fullscreen_white_24dp_2x.png" title="Enter Fullscreen" />
+      </div>
+      <div class="tab-panel" role="tabpanel" id="tab-panel-settings" aria-labelledby="tab-settings">
+        <div id="settings"></div>
+      </div>
+      <div class="tab-panel" role="tabpanel" id="tab-panel-share" aria-labelledby="tab-share">
+        <div class="share-row">
+          <input type="url" id="share-link-url" readonly aria-label="Permalink">
+          <button type="button" id="share-link" class="tab-button">Copy permalink</button>
+        </div>
+        <p class="hint">Includes your location, selected displays and settings. <span id="share-link-copied" class="copied" role="status"></span></p>
+      </div>
+      <div class="tab-panel" role="tabpanel" id="tab-panel-headend" aria-labelledby="tab-headend">
+        <!-- each row is written by key through modules/headend.mjs -->
+        <dl id="divInfo">
+          <div class="wide-item">
+            <dt>Location</dt>
+            <dd data-headend="location"></dd>
+          </div>
+          <div>
+            <dt>Station</dt>
+            <dd data-headend="station"></dd>
+          </div>
+          <div>
+            <dt>Radar</dt>
+            <dd data-headend="radar"></dd>
+          </div>
+          <div class="wide-item">
+            <dt>Observed</dt>
+            <dd data-headend="observed"></dd>
+          </div>
+          <div>
+            <dt>Zone</dt>
+            <dd data-headend="zone"></dd>
+          </div>
+          <div>
+            <dt>Office</dt>
+            <dd data-headend="office"></dd>
+          </div>
+          <div class="wide-item">
+            <dt>Refreshed</dt>
+            <dd data-headend="refreshed"></dd>
+          </div>
+          <div>
+            <dt>Grid X,Y</dt>
+            <dd data-headend="grid"></dd>
+          </div>
+          <div>
+            <dt>HRRR run</dt>
+            <dd data-headend="hrrr"></dd>
+          </div>
+          <div class="wide-item">
+            <dt>Display</dt>
+            <dd data-headend="display"></dd>
+          </div>
+          <div class="wide-item">
+            <dt>Source</dt>
+            <dd data-headend="source"></dd>
+          </div>
+          <div>
+            <dt>Version</dt>
+            <dd data-headend="version"><%- version %></dd>
+          </div>
+          <div class="full-row">
+            <dt>Problems</dt>
+            <dd data-headend="problems"></dd>
+          </div>
+          <div class="full-row">
+            <dt>Music</dt>
+            <dd data-headend="music">Not playing</dd>
+          </div>
+        </dl>
+        <div class="button-row">
+          <button type="button" id="copy-headend" class="tab-button">Copy headend info</button>
+          <span id="copy-headend-copied" class="copied" role="status"></span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="content-wrapper">
-    <br />
-
     <div class="info">
       <a href="https://github.com/netbymatt/ws4kp#weatherstar-4000">More information</a>
     </div>
-    <div class="media"></div>
-
-    <div class='lower-flex-container'>
-      <div class='item'>
-        <div class='heading'>Selected displays</div>
-        <div id='enabledDisplays'>
-
-        </div>
-      </div>
-      <div class='item'>
-        <div class='heading'>Settings</div>
-        <div id='settings'>
-          <div class='heading'>Sharing</div>
-        </div>
-        <div class='item'>
-          <a href='' id='share-link'>Copy Permalink</a> <span id="share-link-copied">Link copied to clipboard!</span>
-          <div id="share-link-instructions">
-            Copy this long URL:
-            <input type='text' id="share-link-url">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class='heading'>Headend Information</div>
-    <div id="divInfo">
-      <div class="header">Location:</div>
-      <div class="header"><span id="spanCity"></span> <span id="spanState"></span></div>
-      <div class="header">Station Id:</div>
-      <div class="header"><span id="spanStationId"></span></div>
-      <div class="header">Radar Id:</div>
-      <div class="header"><span id="spanRadarId"></span></div>
-      <div class="header">Zone Id:</div>
-      <div class="header"><span id="spanZoneId"></span></div>
-      <div class="header">Office Id:</div>
-      <div class="header"><span id="spanOfficeId"></span></div>
-      <div class="header">Grid X,Y:</div>
-      <div class="header"><span id="spanGridPoint"></span></div>
-      <div class="header">Music:</div>
-      <div class="header"><span id="musicTrack">Not playing</span></div>
-      <div class="header">Ws4kp Version:</div>
-      <div class="header"><span><%- version %></span></div>
-    </div>
+  </div>
 
 </body>
 

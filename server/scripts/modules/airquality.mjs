@@ -220,4 +220,4 @@ class AirQuality extends WeatherDisplay {
 export default AirQuality;
 
 // register display — navId 12 (append after radar=11); elemId 'air-quality'
-registerDisplay(new AirQuality(12, 'air-quality'));
+registerDisplay(new AirQuality(13, 'air-quality'));

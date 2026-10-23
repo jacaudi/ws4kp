@@ -10,13 +10,14 @@
   "semanticCommitScope": "deps",
   "packageRules": [
     {
-      "description": "Vendored packages are copied into server/scripts/vendor/auto/ and served to the browser, so the lockfile bump alone leaves the shipped bundle stale. npm ci first: Renovate resolves lockfiles with --package-lock-only, so node_modules does not exist and updateVendor has nothing to copy from.",
+      "description": "Vendored packages are copied into server/scripts/vendor/auto/ and served to the browser, so the lockfile bump alone leaves the shipped bundle stale (proj4 is rebuilt from gulp/proj4-minimal.mjs rather than copied). npm ci first: Renovate resolves lockfiles with --package-lock-only, so node_modules does not exist and updateVendor has nothing to copy from.",
       "matchPackageNames": [
         "luxon",
         "@zakj/no-sleep",
         "suncalc",
         "swiped-events",
-        "metar-taf-parser"
+        "metar-taf-parser",
+        "proj4"
       ],
       "postUpgradeTasks": {
         "commands": [
