@@ -1,5 +1,24 @@
 # Changelog
 
+## [7.5.0](https://github.com/jacaudi/ws4kp/compare/v7.4.0...v7.5.0) (2026-10-23)
+
+
+### Features
+
+* adopt upstream v8.0.1 ([de73728](https://github.com/jacaudi/ws4kp/commit/de73728af90fc973d6399f0b625f0c06d0dda422))
+
+
+### Bug Fixes
+
+* give the current conditions icon a fixed slot ([90db353](https://github.com/jacaudi/ws4kp/commit/90db3534a8e598bdf013bd4a338f4da084f8c75e))
+* keep tall current-conditions icons off the condition text ([083c3cc](https://github.com/jacaudi/ws4kp/commit/083c3cc85bfd699c19f21bdb9fe3ef061767d679))
+* restore the MapClick fallback for blank observations ([e02c152](https://github.com/jacaudi/ws4kp/commit/e02c1520dda47cbb7f1593593f3946702308a266))
+
+
+### Miscellaneous
+
+* drop upstream's security.txt ([cae329b](https://github.com/jacaudi/ws4kp/commit/cae329bb5f946385c5b523984204336027308dd7))
+
 ## [7.4.0](https://github.com/jacaudi/ws4kp/compare/v7.3.0...v7.4.0) (2026-09-19)
 
 
