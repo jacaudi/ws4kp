@@ -81,6 +81,7 @@ const asRankCandidates = (stringify) => rankRows.map((r, i) => ({
 	lon: stringify ? String(r.lon) : r.lon,
 	baked: false,
 	priority: 13,
+	labelWidth: 95,
 	xy: { x: 100 + (i * 300), y: 100 + (i * 200) },
 }));
 
@@ -115,22 +116,21 @@ test('selection no longer collapses outright on string coordinates', () => {
 		lon: String(r.lon),
 		baked: false,
 		priority: 13,
+		labelWidth: 95,
 		xy: { x: 100 + (i * 300), y: 100 + (i * 200) },
 	}));
 	assert.equal(selectRegionalCities(user, spaced, { count: 10 }).length, 4);
 });
 
-// regionalforecast.mjs is upstream v8's until the density-aware selection is ported onto v8's
-// projection; v8 coerces with parseFloat in calcDistPxyBBox(). Re-pin this to the ported call site.
-test('regionalforecast.mjs coerces both city and station feeds', { skip: 'pending the density-aware regional port onto v8' }, () => {
+test('regionalforecast.mjs coerces both city and station feeds', () => {
 	// Pin the coercion at the call site rather than trusting the data files to
 	// keep their current types — regionalcities.json already flipped once.
 	const src = readFileSync(
 		new URL('../../server/scripts/modules/regionalforecast.mjs', import.meta.url),
 		'utf8',
 	);
-	const cities = src.match(/const cities = RegionalCities\.map\([\s\S]*?\)\);/);
-	const stations = src.match(/const stations = Object\.values\(StationInfo\)\.map\([\s\S]*?\)\);/);
+	const cities = src.match(/const cities = \(await RegionalCities\)\.map\([\s\S]*?\)\);/);
+	const stations = src.match(/const stations = Object\.values\(await StationInfo\)\.map\([\s\S]*?\)\);/);
 	assert.ok(cities, 'could not locate the RegionalCities candidate mapping; this guard needs updating');
 	assert.ok(stations, 'could not locate the StationInfo candidate mapping; this guard needs updating');
 	for (const [name, block] of [['cities', cities[0]], ['stations', stations[0]]]) {
