@@ -31,10 +31,8 @@ COPY views ./views
 
 # Served by express.static under DIST=1. src/playlist-reader.mjs also reads
 # server/music (and server/music/default) at startup to build the playlist.
-# index.mjs serves /.well-known from server/.well-known in every mode.
 COPY server/scripts ./server/scripts
 COPY server/music ./server/music
-COPY server/.well-known ./server/.well-known
 
 # Read and parsed at startup by index.mjs.
 COPY datagenerators/output ./datagenerators/output

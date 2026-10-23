@@ -57,6 +57,10 @@
     {
       "path": "server/images/logos/logo-corner.svg",
       "reason": "kept this fork's hand-built SVG (class/alt hooks for the custom logo) over upstream's Inkscape export"
+    },
+    {
+      "path": "server/.well-known/security.txt",
+      "reason": "points reporters at netbymatt/ws4kp advisories, which do not cover this fork's deployments; removed with its /.well-known route, build copy and Docker COPY"
     }
   ]
 }
