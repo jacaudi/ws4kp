@@ -1,0 +1,34 @@
+// Fork-owned: the current conditions icon gets a fixed slot, as it had when this display was
+// drawn on a canvas (before 2022). Without one the wind row follows whatever height the gif
+// is, so the left column rides a row above the right one and every icon sits high.
+// Kept out of upstream's _current-weather.scss so that file stays at parity.
+
+// right-column rows are 36px apart; the slot spans the Dewpoint, Ceiling and Visibility rows,
+// so Wind lands level with Pressure and Gusts with Heat Index, where the canvas version drew them
+$icon-slot-height: 3 * 36px;
+
+.weather-display .main.current-weather .col.left .icon {
+	height: $icon-slot-height;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	img {
+		margin: 0;
+		// the canvas version's max_width; it brings every gif, Fog included (148x122), inside the slot
+		max-width: 126px;
+		max-height: 100%;
+	}
+
+	// portrait enhanced has its own scaled icon layout upstream
+	.portrait.enhanced & {
+		height: auto;
+		display: block;
+
+		img {
+			margin: 0 auto;
+			max-width: none;
+			max-height: none;
+		}
+	}
+}
