@@ -1,8 +1,9 @@
+@use 'shared/_colors'as c;
 @use 'shared/_utils'as u;
 @use 'shared/positions'as p;
 
-// The WeatherStar header band and body gradient with nothing drawn on the body, built from SPC
-// Outlook's backgrounds by image-templates/air-quality-backgrounds.mjs
+// The WeatherStar header band and body gradient with SPC Outlook's bands removed (portrait keeps
+// SPC's detail box), built from SPC's backgrounds by image-templates/air-quality-backgrounds.mjs
 #air-quality-html.weather-display {
 	background-image: url('../images/backgrounds/air-quality.png');
 
@@ -26,6 +27,52 @@
 		.portrait.enhanced & {
 			top: 111px;
 			height: 361px;
+		}
+	}
+
+	// portrait only, placed where SPC Outlook's "Categorical Outlook" and "Probabilistic Outlook"
+	// headings and table sit (_spc-outlook.scss), so the two portrait slides line up
+	.heading {
+		font-family: 'Star4000 Large';
+		font-size: 32px;
+		color: c.$title-color;
+		text-align: center;
+		line-height: 60px;
+	}
+
+	>.heading {
+		position: absolute;
+		top: 52px;
+		width: 100%;
+	}
+
+	.details {
+		position: absolute;
+		top: 600px;
+		width: 100%;
+
+		.table {
+			display: grid;
+			grid-template-columns: repeat(3, auto);
+			gap: 0 70px;
+			margin: 30px auto 0;
+			width: fit-content;
+			font-size: 32px;
+			line-height: 50px;
+
+			.column-header {
+				color: c.$column-header-text;
+				text-align: center;
+			}
+
+			.label {
+				text-align: right;
+			}
+
+			.aqi,
+			.concentration {
+				text-align: center;
+			}
 		}
 	}
 

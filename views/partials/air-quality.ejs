@@ -1,11 +1,21 @@
 <%- include('header.ejs', {titleDual:{ top: 'Air Quality' , bottom: '' }, hasTime: true }) %>
 <div class="main has-scroll air-quality">
+  <div class="heading portrait-only">Air Quality Index</div>
   <div class="chart">
     <div class="bands"></div>
     <div class="reading">
       <div class="city"></div>
       <div class="value"></div>
       <div class="bar"></div>
+    </div>
+  </div>
+  <div class="details portrait-only">
+    <div class="heading">Pollutants</div>
+    <div class="table">
+      <div class="column-header"></div>
+      <div class="column-header">AQI</div>
+      <%# Star4000 has no µ or ³ glyph, so the unit is spelled in ASCII %>
+      <div class="column-header">ug/m3</div>
     </div>
   </div>
 </div>

@@ -1,7 +1,8 @@
 // Builds the Air Quality backgrounds from SPC Outlook's (6.png, 6-portrait.png): the same header
-// band and bottom bar, with the body's colored bands and boxes removed. Each body row is filled
-// with that row's own pixel from the left edge, which is plain body gradient in both images, so
-// the result is the WeatherStar backdrop with nothing drawn on it.
+// band and bottom bar, with SPC's colored bands removed. Each painted row is filled with that
+// row's own pixel from the left edge, which is plain body gradient in both images. Portrait keeps
+// SPC's detail box (rows 633-1055), which Air Quality fills with its pollutant table, just as SPC
+// fills it with its probabilistic outlook.
 //
 // One image rather than a CSS gradient layered over 6.png: layered, the browser's smoothing at
 // any non-1x scale bleeds 6.png's band edges into the rows around them and leaves a visible seam.
@@ -18,10 +19,11 @@ const inflateAsync = promisify(inflate);
 const deflateAsync = promisify(deflate);
 
 const DIR = new URL('../server/images/backgrounds/', import.meta.url);
-// [source, output, first body row, last body row]: the body sits between the header band and the bottom bar
+// [source, output, first row to paint, last row to paint]: the body below the header band, down
+// to the bottom bar (standard) or to just above the detail box (portrait)
 const IMAGES = [
 	['6.png', 'air-quality.png', 90, 398],
-	['6-portrait.png', 'air-quality-portrait.png', 90, 1055],
+	['6-portrait.png', 'air-quality-portrait.png', 90, 632],
 ];
 const EDGE_X = 5;
 const BYTES_PER_PIXEL = 4;
