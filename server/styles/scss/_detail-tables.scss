@@ -1,0 +1,17 @@
+// Fork-owned: the portrait detail tables, SPC Outlook's probabilistic outlook and Air Quality's
+// pollutants, at one width inside the blue box with their columns spread across it. Upstream sizes
+// SPC's table to its content plus 70px gaps, which put its last column 6px from the box's edge.
+//
+// The box spans x 52-584 on both portrait backgrounds, so its centre is 318, not the display's 320.
+// 460px centred there leaves ~36px of the box clear on each side; the widest content (Wednesday and
+// Thursday as SPC's day headings) measures 434px, so it still fits.
+//
+// Same selector as upstream's SPC rule, so this wins by coming later in ws.scss.
+.weather-display .spc-outlook .container-details .table,
+.weather-display .air-quality .details .table {
+	width: 460px;
+	gap: 0;
+	justify-content: space-between;
+	position: relative;
+	left: -2px;
+}

@@ -15,7 +15,8 @@
 .weather-display .air-quality {
 	@include u.text-shadow();
 
-	// the chart's coordinates are the 640x309 body below the header (airquality-utils.mjs band edges)
+	// the chart's coordinates are the 640x309 body below the header; band and bar x positions come
+	// from airquality-utils.mjs BAND_EDGES (SPC Outlook's staircase), set by airquality.mjs
 	.chart {
 		position: absolute;
 		top: 0;
@@ -23,9 +24,10 @@
 		width: p.$standard-width;
 		height: 309px;
 
-		// portrait sits the chart where SPC Outlook's portrait bands are
+		// portrait moves the chart exactly as SPC's portrait background moves its bands (6-portrait.png)
 		.portrait.enhanced & {
 			top: 111px;
+			left: -56px;
 			height: 361px;
 		}
 	}
@@ -52,17 +54,25 @@
 		width: 100%;
 
 		.table {
+			// width and column spread: _detail-tables.scss, shared with SPC Outlook's table
 			display: grid;
 			grid-template-columns: repeat(3, auto);
-			gap: 0 70px;
 			margin: 30px auto 0;
-			width: fit-content;
 			font-size: 32px;
 			line-height: 50px;
 
+			// SPC's column headings carry its .header class: Star4000 Large in a 60px row
 			.column-header {
+				font-family: 'Star4000 Large';
+				line-height: 60px;
 				color: c.$column-header-text;
 				text-align: center;
+			}
+
+			// four pollutant rows to SPC's three: at SPC's 50px they run to within 22px of the box's
+			// bottom; 40px leaves about the clearance SPC's table has, with both headings level
+			.row-cell {
+				line-height: 40px;
 			}
 
 			.label {
@@ -76,50 +86,41 @@
 		}
 	}
 
-	// each band's left, top and width come from airquality.mjs; the shape is the WS4000 staircase:
-	// a 20px tab out to the left on the label row and a 20px corner cut at the top right
+	// SPC Outlook's band shape: a 20px tab out to the left on the label row and a 20px corner cut
+	// at the top right. Each band's left, top and width come from airquality.mjs.
 	.band {
 		position: absolute;
 		bottom: 0;
-		box-sizing: border-box;
-		padding-left: 20px;
 		clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 20px 20px);
-		// the size and light outline the labels had when this display was a canvas: at SPC's
-		// 32px, VERY UNHEALTHY runs into its band's corner cut
-		font-family: 'Star4000 Small';
-		font-size: 20pt;
-		line-height: 20px;
-		color: white;
-		white-space: nowrap;
-		@include u.text-shadow(1px, 1px);
 	}
 
+	// SPC Outlook's .risk-level: Star4000 Small at the display's 32px, in a 20px row the text overflows
+	.band-label {
+		position: absolute;
+		height: 20px;
+		font-family: 'Star4000 Small';
+		font-size: 32px;
+		white-space: nowrap;
+	}
+
+	// SPC Outlook's first day row (_spc-outlook.scss .day): the name right-aligned 10px short of the
+	// bar, text 20px down a 60px row, and the bar 20px down the same row
 	.reading {
-		.city,
-		.value {
+		.name {
 			position: absolute;
-			top: 155px;
+			top: 120px;
+			padding-top: 20px;
+			display: flex;
+			gap: 16px;
 			font-family: 'Star4000';
 			font-size: 32px;
-			line-height: 46px;
-			text-align: right;
 			white-space: pre;
-		}
-
-		// right edges: city at x 240, value at x 310, bar starting at the GOOD band's left edge
-		.city {
-			right: calc(p.$standard-width - 240px);
-		}
-
-		.value {
-			right: calc(p.$standard-width - 310px);
 		}
 
 		// SPC Outlook's risk bar
 		.bar {
 			position: absolute;
-			top: 155px;
-			left: 320px;
+			top: 140px;
 			height: 40px;
 			border: 3px outset hsl(0, 0%, 70%);
 			background: linear-gradient(0deg, hsl(0, 0%, 40%) 0%, hsl(0, 0%, 60%) 50%, hsl(0, 0%, 40%) 100%);

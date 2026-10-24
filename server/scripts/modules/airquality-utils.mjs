@@ -72,10 +72,13 @@ export const parseAirQuality = (raw) => {
 	};
 };
 
-// Growing-bar tip x: the horizontal CENTER of the value's category band (the bar stops here).
-// Equal-width legend band edges (px) are the single source; the band is chosen by
-// aqiCategory so the breakpoints and the centers can never drift apart.
-export const BAND_EDGES = [320, 391, 462, 533, 604];
+// Growing-bar tip x: the horizontal CENTER of the value's category column (the bar stops here,
+// as SPC Outlook's do). The edges are the visible columns of SPC Outlook's staircase, measured
+// from its background (6.png): a 120px first column then 60px each, right edge at 640. These are
+// SPC's first four bands moved right 120px so the chart ends where SPC's does. They are the
+// single source for the band geometry (airquality.mjs) as well as the tip, and the band is chosen
+// by aqiCategory so the breakpoints and the centers can never drift apart.
+export const BAND_EDGES = [340, 460, 520, 580, 640];
 export const aqiBandCenterX = (usAqi) => {
 	const index = AQI_BANDS.indexOf(aqiCategory(usAqi));
 	return (BAND_EDGES[index] + BAND_EDGES[index + 1]) / 2;

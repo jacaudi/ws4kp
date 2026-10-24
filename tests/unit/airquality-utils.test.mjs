@@ -113,19 +113,20 @@ test('parseAirQuality returns null when us_aqi is NaN', () => {
 	assert.equal(parseAirQuality({ current: { us_aqi: NaN } }), null);
 });
 
-test('aqiBandCenterX maps each category to its band center', () => {
-	assert.equal(aqiBandCenterX(45), 355.5); // GOOD
-	assert.equal(aqiBandCenterX(142), 426.5); // UNHEALTHY
-	assert.equal(aqiBandCenterX(250), 497.5); // VERY UNHEALTHY
-	assert.equal(aqiBandCenterX(400), 568.5); // HAZARDOUS
+// columns follow SPC Outlook's staircase: a 120px first column, then 60px each, ending at 640
+test('aqiBandCenterX maps each category to the center of its visible column', () => {
+	assert.equal(aqiBandCenterX(45), 400); // GOOD 340-460
+	assert.equal(aqiBandCenterX(142), 490); // UNHEALTHY 460-520
+	assert.equal(aqiBandCenterX(250), 550); // VERY UNHEALTHY 520-580
+	assert.equal(aqiBandCenterX(400), 610); // HAZARDOUS 580-640
 });
 
 test('aqiBandCenterX snaps to the band center regardless of value within the band', () => {
 	// both 10 and 45 are GOOD -> same center; the bar tip does not slide within the band
-	assert.equal(aqiBandCenterX(10), 355.5);
-	assert.equal(aqiBandCenterX(45), 355.5);
+	assert.equal(aqiBandCenterX(10), 400);
+	assert.equal(aqiBandCenterX(45), 400);
 	// above 500 clamps to HAZARDOUS center
-	assert.equal(aqiBandCenterX(999), 568.5);
+	assert.equal(aqiBandCenterX(999), 610);
 });
 
 // portrait detail box: one row per pollutant, in POLLUTANT_LABELS order

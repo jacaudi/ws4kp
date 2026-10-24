@@ -16,6 +16,9 @@ const buildUrl = (latitude, longitude) => 'https://air-quality-api.open-meteo.co
 	+ '&current=us_aqi,us_aqi_pm2_5,us_aqi_pm10,us_aqi_ozone,us_aqi_nitrogen_dioxide,'
 	+ 'pm2_5,pm10,ozone,nitrogen_dioxide&timezone=auto';
 
+// width of the .chart the bands and reading are positioned in (_air-quality.scss)
+const CHART_WIDTH = 640;
+
 class AirQuality extends WeatherDisplay {
 	constructor(navId, elemId) {
 		super(navId, elemId, 'Air Quality', true);
@@ -76,28 +79,49 @@ class AirQuality extends WeatherDisplay {
 		// second title line: the pollutant driving the index
 		this.elem.querySelector('.title.dual .bottom').textContent = dominant ? `Main: ${dominant}` : '';
 
-		// the staircase: each band runs from the GOOD band's left edge (less its 20px label tab) to its
-		// own right edge, one 20px label row higher than the band inside it. Widest first, so each
-		// narrower band draws over the one behind it.
-		const left = BAND_EDGES[0] - 20;
-		const bands = AQI_BANDS.map((band, index) => {
+		// SPC Outlook's staircase: each band starts 20px right of the one in front of it (its label tab)
+		// and one 20px row higher, and ends at its own column's right edge. Widest first, so each
+		// narrower band draws over the one behind it. Labels sit as SPC's do, 16px into the tab and
+		// 14px above the band's top, so they are positioned beside the bands rather than inside them.
+		const geometry = AQI_BANDS.map((band, index) => ({
+			band,
+			left: BAND_EDGES[0] - 20 + (index * 20),
+			right: BAND_EDGES[index + 1],
+			top: (AQI_BANDS.length - 1 - index) * 20,
+		}));
+		const bands = geometry.map(({
+			band, left, right, top,
+		}) => {
 			const elem = document.createElement('div');
 			elem.className = `band ${band.cssClass}`;
-			elem.textContent = band.category;
 			elem.style.left = `${left}px`;
-			elem.style.width = `${BAND_EDGES[index + 1] - left}px`;
-			elem.style.top = `${(AQI_BANDS.length - 1 - index) * 20}px`;
+			elem.style.width = `${right - left}px`;
+			elem.style.top = `${top}px`;
 			elem.style.backgroundColor = band.color;
 			return elem;
 		}).reverse();
-		this.elem.querySelector('.bands').replaceChildren(...bands);
+		const labels = geometry.map(({ band, left, top }) => {
+			const elem = document.createElement('div');
+			elem.className = 'band-label';
+			elem.textContent = band.category;
+			elem.style.left = `${left + 16}px`;
+			elem.style.top = `${top - 14}px`;
+			return elem;
+		});
+		this.elem.querySelector('.bands').replaceChildren(...bands, ...labels);
 
 		// the reading: city, the value in its category's color, and a bar that stops at the centre of that band
-		this.elem.querySelector('.reading .city').textContent = (this.weatherParameters.city || '').toUpperCase();
+		this.elem.querySelector('.reading .city').textContent = this.weatherParameters.city || '';
 		const value = this.elem.querySelector('.reading .value');
 		value.textContent = aqi.toString();
 		value.style.color = category.color;
-		this.elem.querySelector('.reading .bar').style.width = `${Math.round(aqiBandCenterX(aqi) - BAND_EDGES[0])}px`;
+		// as SPC's rows: the name ends 10px short of the bar, which starts at the first column's left edge.
+		// The width is the content width; the 3px border either side lands the tip just past centre,
+		// exactly as SPC's bars do.
+		this.elem.querySelector('.reading .name').style.right = `${CHART_WIDTH - (BAND_EDGES[0] - 10)}px`;
+		const bar = this.elem.querySelector('.reading .bar');
+		bar.style.left = `${BAND_EDGES[0]}px`;
+		bar.style.width = `${Math.round(aqiBandCenterX(aqi) - BAND_EDGES[0])}px`;
 
 		// portrait detail table: each pollutant's own AQI, in its category's color, and its concentration
 		const table = this.elem.querySelector('.details .table');
