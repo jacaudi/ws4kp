@@ -6,7 +6,9 @@ COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps
 COPY . .
 
-RUN npm run build
+# buildDist copies the music into dist/ for static hosting; this image serves /music from
+# server/music (index.mjs, DIST=1), so the dist copy would only double the music in the image.
+RUN npm run build && rm -rf dist/music
 
 # Runtime stage: production dependencies only, so none of the build toolchain
 # reaches the shipped image. Only the paths the server actually touches with
