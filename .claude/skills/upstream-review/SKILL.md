@@ -1,14 +1,24 @@
 ---
 name: upstream-review
-description: Use when comparing this fork against netbymatt/ws4kp upstream — checking what upstream changed, deciding what to adopt, or planning an upstream catch-up. Triggers on "check upstream", "how far behind are we", "upstream catch-up", "what's new upstream", "compare with upstream".
+description: Use when comparing this fork against its upstreams — netbymatt/ws4kp (code) and netbymatt/ws4kp-music (the bundled music) — checking what changed, deciding what to adopt, or planning a catch-up. Triggers on "check upstream", "how far behind are we", "upstream catch-up", "what's new upstream", "compare with upstream", "new music", "check the music repo".
 ---
 
 # Upstream Review (ws4kp fork)
 
-Compare `jacaudi/ws4kp` against `netbymatt/ws4kp`, decide what to adopt, and present
+Compare `jacaudi/ws4kp` against its upstreams, decide what to adopt, and present
 findings. This fork has diverged deliberately in specific places; the job is to take
 upstream's fixes **without** losing the fork's work, and to notice where upstream's
 changes interact badly with fork-specific code.
+
+Two upstreams are tracked, each under `sources` in `.upstream-sync.json`, and a review
+covers both:
+
+| Source key | Repo | What it feeds | Baseline | Procedure |
+|---|---|---|---|---|
+| `ws4kp` | netbymatt/ws4kp | all the code | release tag + sha | Steps 1–7 |
+| `ws4kp-music` | netbymatt/ws4kp-music | `server/music/default` | commit sha (no tags) | [Music source](#music-source-ws4kp-music) |
+
+A new upstream is a new key under `sources` plus its own procedure section here.
 
 ## Prime directive
 
@@ -38,8 +48,8 @@ if [ ! -f .upstream-sync.json ]; then
   echo "trust local vX.Y.Z tags (see below). Ask which upstream tag main last adopted."
   exit 1
 fi
-B=$(node -p "require('./.upstream-sync.json').sha")
-BASE_TAG=$(node -p "require('./.upstream-sync.json').tag")
+B=$(node -p "require('./.upstream-sync.json').sources.ws4kp.sha")
+BASE_TAG=$(node -p "require('./.upstream-sync.json').sources.ws4kp.tag")
 
 git fetch upstream --no-tags '+refs/tags/*:refs/upstream-tags/*'
 git cat-file -e "$B^{commit}" || { echo "baseline $B missing — fetch failed, or upstream rewrote history"; exit 1; }
@@ -60,6 +70,14 @@ what this fork has adopted. It stores upstream-side identifiers only — never a
 SHA, because fork history has been rewritten before and those SHAs die with it (the
 `CHANGELOG.md` entry for the 7.1.3 adoption links `f9078ed`, which is now unreachable).
 Step 7 updates it. Do **not** infer the baseline from branch names or local tags.
+
+For the code source it also records **why every upstream file that differs here differs**:
+
+- `skipped` — upstream changes deliberately not taken (a sha or a path, one reason each).
+- `divergences` — upstream files this fork deliberately changes (`paths` plus a reason).
+
+Read both **before** Step 2: a contested file already listed in `divergences` is a known
+fork patch, so the question is only whether upstream's new change still fits around it.
 
 **Local tags are contaminated — do not trust them.** Both repos use release-please and
 mint the same `vX.Y.Z` names for *different* commits, so `git fetch upstream --tags`
@@ -195,7 +213,13 @@ Standing decisions (do not silently reverse):
   `.github/workflows/build-docker.yaml` (this fork composes its own `ci.yaml`),
   `Dockerfile.server`, and `nginx.conf` + `static-env-handler.sh` (static mode archived
   to `.archive/static/`). Record
-  each one in `skipped` in `.upstream-sync.json` so it is not re-litigated.
+  each one in `sources.ws4kp.skipped` so it is not re-litigated.
+- **Every fork change to an upstream file is recorded.** When a review (or any other
+  work) changes a file that exists upstream, add it to `sources.ws4kp.divergences` with a
+  reason in the same PR. Prefer a fork-owned file over editing an upstream one — new
+  modules, and fork-owned SCSS partials (`_custom-logo`, `_current-weather-icon`,
+  `_list-text`) that restyle upstream markup without touching upstream's partials —
+  so the list stays short and each entry is a real decision.
 
 ## Step 6 — Package by risk
 
@@ -228,19 +252,73 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
   compiled rule.
 - **Rendering changes require a browser.** Unit tests did not catch that decluttering
   was a silent no-op. See `.claude/skills/upstream-review/browser-verify.md`.
-- **Bump `.upstream-sync.json`** to the upstream tag you reached parity with: `tag`, `sha`
+- **Bump `sources.ws4kp`** to the upstream tag you reached parity with: `tag`, `sha`
   from `git rev-parse refs/upstream-tags/<tag>^{commit}`, `adopted` = today, `pr` = the PR
-  number, `skipped` = in-range upstream SHAs deliberately not taken, one reason each, so the
-  next run does not re-litigate them. Put the bump in the **same commit** as the adopted
-  files (or the last commit of a multi-commit PR) — the marker is the assertion and the
-  files are the evidence; split them and one can land without the other.
-- Re-run the Step 2 partition with the **new** baseline and report per-file parity:
-  `comm -13` must be empty, and `comm -12` must contain only the metadata/prose files the
-  fork intentionally diverges on. If not, you did not reach parity — do not bump the marker.
+  number, `skipped` = in-range upstream changes deliberately not taken, one reason each, so
+  the next run does not re-litigate them, and `divergences` updated for every fork patch.
+  Put the bump in the **same commit** as the adopted files (or the last commit of a
+  multi-commit PR) — the marker is the assertion and the files are the evidence; split
+  them and one can land without the other.
+- **Run the parity check** against the new baseline:
+  ```bash
+  node .claude/skills/upstream-review/parity-check.mjs
+  ```
+  It fails on any upstream file that differs here without a `divergences` or `skipped`
+  entry (unexplained drift), and on any `divergences` entry that now matches upstream
+  byte-for-byte (stale). Exit 0 is the definition of parity; until then, do not bump the
+  marker. Report its counts ("47 upstream files differ, 47 explained").
+
+## Music source (ws4kp-music)
+
+`netbymatt/ws4kp-music` holds the tracks this fork bundles in `server/music/default`,
+organised as album folders. It has **no release tags**, so its baseline is a commit on
+`main` (`sources.ws4kp-music.sha`), and adoption is tracked **per album** under `albums`:
+`status` (adopted / skipped), `tracks`, `license`, `source`, and any `renamed` files.
+
+```bash
+M=$(node -p "require('./.upstream-sync.json').sources['ws4kp-music'].sha")
+# what changed since the baseline
+gh api "repos/netbymatt/ws4kp-music/compare/$M...main" --jq '"ahead by \(.ahead_by)", (.files[] | "\(.status)\t\(.filename)")'
+# album folders at main, to spot a new album
+gh api "repos/netbymatt/ws4kp-music/git/trees/main" --jq '.tree[] | select(.type=="tree") | .path'
+```
+
+Classify each change by album:
+
+- **A new album folder** is a decision for the user. Read the repo's README license table
+  first: the albums are **not** all licensed alike (Latest Observations is CC BY 4.0;
+  Current Conditions and Holiday are owned by Suno, non-commercial only), and that decides
+  whether it may ship and what credit it needs. Seasonal albums (Holiday) would play
+  year-round — the playlist reader has no scheduling.
+- **A changed track in an adopted album** — compare duration, bitrate and tags with
+  `music-metadata` before taking it. Current Conditions here is deliberately *not* the
+  repo's copy (see its `source`), so differences in that folder are expected.
+- **A README or LICENSE change** — re-check the license table and the credit lines.
+
+Adopting tracks:
+
+1. Pin to a commit: download from `raw.githubusercontent.com/netbymatt/ws4kp-music/<sha>/…`,
+   never `main`.
+2. Verify every file byte-for-byte: its git blob hash, `sha1("blob <len>\0" + bytes)`,
+   must equal the tree entry's `sha`.
+3. Read the tags (`music-metadata`): the player shows the title/artist tags, falling back
+   to the file name.
+4. Flatten into `server/music/default`: the reader scans only `server/music` and falls back
+   to `server/music/default`, with no subfolders. A name already there (both albums have
+   *Rolling Clouds*) gets a distinct file name, recorded under `renamed`.
+5. Stage and confirm Git LFS took them (`git show :<path>` prints a pointer, not audio).
+6. Credit any license that needs it in `README.md` and `docs/music.md`, and keep those
+   docs' description of what ships accurate.
+7. Rebuild the Docker image, compare its size, and check `/playlist.json` lists the tracks
+   and `/music/…` serves them.
+8. Bump `sources.ws4kp-music`: `sha`, `adopted`, `pr`, and the album entries.
+
+Shell note: in zsh, `path` is tied to `$PATH`. Naming a loop variable `path` (as in
+`while read -r sha size path`) wipes the command search path mid-loop.
 
 ## Reporting
 
-Lead with what is contested and what it costs — not a commit count. Give a table of
+Report each source separately. For the code: lead with what is contested and what it costs — not a commit count. Give a table of
 upstream fixes with whether each applies clean, call out anything that is a live bug in
 this fork, and state the one or two genuine decisions plainly with a recommendation.
 

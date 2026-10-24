@@ -1,66 +1,227 @@
 {
-  "$comment": "Last netbymatt/ws4kp release this fork reached content parity with. Read by .claude/skills/upstream-review (Step 1) and updated by it (Step 7). There is NO git merge-base with upstream -- the LFS history rewrite severed it -- so this file is the only durable baseline. Store upstream identifiers only, never a fork commit SHA: fork history has been rewritten before and those SHAs die with it (the CHANGELOG entry for the 7.1.3 adoption links f9078ed, now unreachable).",
-  "upstream": "netbymatt/ws4kp",
-  "tag": "v8.0.1",
-  "sha": "e93fc8ea31dc37e4e1353df607e68f04c8b73316",
-  "adopted": "2026-10-23",
-  "pr": 99,
-  "skipped": [
-    {
-      "sha": "57ffe7ebf7384a7e868cc2d933eb02155af41876",
-      "reason": "consolidates .vscode/settings.json into ws4kp.code-workspace; this fork deleted the workspace file (2026-09-18) and keeps .vscode/"
+  "$comment": "Upstream repositories this fork follows, one entry per source under `sources`. Read and updated by .claude/skills/upstream-review. There is NO git merge-base with the code upstream -- the LFS history rewrite severed it -- so this file is the only durable baseline. Store upstream identifiers only, never a fork commit SHA: fork history has been rewritten before and those SHAs die with it. `skipped` = upstream changes deliberately not taken; `divergences` = upstream files this fork deliberately changes. The parity check (SKILL.md Step 7) fails on any upstream file that differs here and is in neither list.",
+  "sources": {
+    "ws4kp": {
+      "repo": "netbymatt/ws4kp",
+      "kind": "code",
+      "tag": "v8.0.1",
+      "sha": "e93fc8ea31dc37e4e1353df607e68f04c8b73316",
+      "adopted": "2026-10-23",
+      "pr": 99,
+      "skipped": [
+        {
+          "sha": "57ffe7ebf7384a7e868cc2d933eb02155af41876",
+          "reason": "consolidates .vscode/settings.json into ws4kp.code-workspace; this fork deleted the workspace file (2026-09-18) and keeps .vscode/"
+        },
+        {
+          "sha": "59defa03534279d51a1fec221d56a81314ecdadd",
+          "reason": "only touches build-docker.yaml; this fork composes its own ci.yaml"
+        },
+        {
+          "path": ".github/workflows/build-docker.yaml",
+          "reason": "this fork composes its own ci.yaml"
+        },
+        {
+          "path": ".github/workflows/lint-build.yaml",
+          "reason": "new in v8; ci.yaml already lints and builds every PR"
+        },
+        {
+          "path": "Dockerfile.server",
+          "reason": "this fork ships one multi-stage Dockerfile"
+        },
+        {
+          "path": "nginx.conf",
+          "reason": "static mode archived under .archive/static/"
+        },
+        {
+          "path": "static-env-handler.sh",
+          "reason": "static mode archived under .archive/static/"
+        },
+        {
+          "path": "ws4kp.code-workspace",
+          "reason": "removed 2026-09-18, duplicated .vscode/"
+        },
+        {
+          "path": ".vscode/settings.json",
+          "reason": "upstream deleted it in favour of the workspace file; this fork keeps it"
+        },
+        {
+          "path": "server/scripts/modules/utils/cache.mjs",
+          "reason": "deleted here as dead code; nothing in v8 imports it either"
+        },
+        {
+          "path": "server/images/maps/radar-alaska.png",
+          "reason": "upstream deleted it; kept for the Alaska regional forecast map"
+        },
+        {
+          "path": "server/images/maps/radar-hawaii.png",
+          "reason": "upstream deleted it; kept for the Hawaii regional forecast map"
+        },
+        {
+          "path": "server/images/logos/logo-corner.svg",
+          "reason": "kept this fork's hand-built SVG (class/alt hooks for the custom logo) over upstream's Inkscape export"
+        },
+        {
+          "path": "server/.well-known/security.txt",
+          "reason": "points reporters at netbymatt/ws4kp advisories, which do not cover this fork's deployments; removed with its /.well-known route, build copy and Docker COPY"
+        }
+      ],
+      "divergences": [
+        {
+          "paths": [
+            "server/scripts/ws.mjs",
+            "server/scripts/modules/utils/url-rewrite.mjs",
+            "proxy/handlers.mjs",
+            "index.mjs",
+            "views/index.ejs",
+            "server/robots.txt"
+          ],
+          "reason": "Air Quality display (fork-only): entry import, /airquality proxy route and rewrite, display container, robots disallow. index.mjs also long-caches .svg for the corner logo."
+        },
+        {
+          "paths": [
+            "proxy/cache.mjs"
+          ],
+          "reason": "strips upstream set-cookie (NWS sends a .weather.gov cookie that would be cached and re-sent to every client); v8 independently added the hop-by-hop filtering"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/almanac.mjs"
+          ],
+          "reason": "sun and moon times pinned to the location's calendar day via suncalc utcOffset (almanac-utils.mjs); v8 shows yesterday's sun for up to ~3h after midnight where solar noon is late"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/regionalforecast.mjs"
+          ],
+          "reason": "density-aware selection (regionalforecast-select.mjs) on v8's projection: Alaska/Hawaii maps, off-map cities dropped not coerced, junk-station filter, post-render declutter; also reads state from this.weatherParameters so re-ticking the checkbox does not throw"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/utils/mapclick.mjs"
+          ],
+          "reason": "v8 reads window.StationInfo, which v8 no longer sets: the MapClick fallback was dead and blank observations were accepted. Reads StationInfo from data-loader and reports missing fields on every return."
+        },
+        {
+          "paths": [
+            "server/scripts/modules/utils/calc.mjs"
+          ],
+          "reason": "adds geoDistance for regional ranking"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/settings.mjs",
+            "views/partials/header.ejs",
+            "views/partials/radar-common.ejs"
+          ],
+          "reason": "custom corner logo PNG (settings) and the logo-corner class/alt hooks it targets"
+        },
+        {
+          "paths": [
+            "server/styles/scss/ws.scss",
+            "server/styles/ws.min.css",
+            "server/styles/ws.min.css.map"
+          ],
+          "reason": "@use of fork-owned partials (_air-quality, _custom-logo, _current-weather-icon, _list-text) and the CSS compiled from them; fork restyles live in those partials so upstream partials stay byte-identical"
+        },
+        {
+          "paths": [
+            "gulp/build.mjs"
+          ],
+          "reason": "security.txt removed from the buildDist copy list (see skipped)"
+        },
+        {
+          "paths": [
+            "gulp/update-vendor.mjs",
+            "server/scripts/vendor/auto/suncalc.js"
+          ],
+          "reason": "manifest-based vendoring with a consistency test (proj4 built from gulp/proj4-minimal.mjs); suncalc regenerated from the lockfile"
+        },
+        {
+          "paths": [
+            "datagenerators/stations.mjs",
+            "datagenerators/stations-postprocessor.mjs",
+            "datagenerators/https.mjs",
+            "datagenerators/output/stations.json"
+          ],
+          "reason": "Alaska/Hawaii P-prefix airports not misread as weather stations, a regex-literal fix, NWS grid points baked per station, a 30s request timeout; stations.json regenerated from upstream's stations-raw.json with them"
+        },
+        {
+          "paths": [
+            "Dockerfile",
+            ".dockerignore"
+          ],
+          "reason": "fork's multi-stage server image (production deps only, no duplicate music) with upstream's HEALTHCHECK"
+        },
+        {
+          "paths": [
+            "package.json",
+            "package-lock.json"
+          ],
+          "reason": "fork version lineage (release-please) and the test:unit script"
+        },
+        {
+          "paths": [
+            "README.md",
+            ".github/ISSUE_TEMPLATE/bug_report.md"
+          ],
+          "reason": "fork prose; port facts, not diffs"
+        },
+        {
+          "paths": [
+            "tests/index.mjs",
+            "tests/locations.json"
+          ],
+          "reason": "fork integration test: exit 75 when upstream services are down, so an NWS outage does not fail CI"
+        },
+        {
+          "paths": [
+            ".gitattributes",
+            ".gitignore"
+          ],
+          "reason": "mp3 in Git LFS; fork ignores"
+        },
+        {
+          "paths": [
+            "server/music/default/Catch the Sun.mp3",
+            "server/music/default/Crisp day.mp3",
+            "server/music/default/Rolling Clouds.mp3",
+            "server/music/default/Strong Breeze.mp3"
+          ],
+          "reason": "music is tracked under sources.ws4kp-music; these four are the same 192 kbps audio upstream ships, tagged by this fork and stored in Git LFS"
+        }
+      ]
     },
-    {
-      "sha": "59defa03534279d51a1fec221d56a81314ecdadd",
-      "reason": "only touches build-docker.yaml; this fork composes its own ci.yaml"
-    },
-    {
-      "path": ".github/workflows/build-docker.yaml",
-      "reason": "this fork composes its own ci.yaml"
-    },
-    {
-      "path": ".github/workflows/lint-build.yaml",
-      "reason": "new in v8; ci.yaml already lints and builds every PR"
-    },
-    {
-      "path": "Dockerfile.server",
-      "reason": "this fork ships one multi-stage Dockerfile"
-    },
-    {
-      "path": "nginx.conf",
-      "reason": "static mode archived under .archive/static/"
-    },
-    {
-      "path": "static-env-handler.sh",
-      "reason": "static mode archived under .archive/static/"
-    },
-    {
-      "path": "ws4kp.code-workspace",
-      "reason": "removed 2026-09-18, duplicated .vscode/"
-    },
-    {
-      "path": ".vscode/settings.json",
-      "reason": "upstream deleted it in favour of the workspace file; this fork keeps it"
-    },
-    {
-      "path": "server/scripts/modules/utils/cache.mjs",
-      "reason": "deleted here as dead code; nothing in v8 imports it either"
-    },
-    {
-      "path": "server/images/maps/radar-alaska.png",
-      "reason": "upstream deleted it; kept for the Alaska regional forecast map"
-    },
-    {
-      "path": "server/images/maps/radar-hawaii.png",
-      "reason": "upstream deleted it; kept for the Hawaii regional forecast map"
-    },
-    {
-      "path": "server/images/logos/logo-corner.svg",
-      "reason": "kept this fork's hand-built SVG (class/alt hooks for the custom logo) over upstream's Inkscape export"
-    },
-    {
-      "path": "server/.well-known/security.txt",
-      "reason": "points reporters at netbymatt/ws4kp advisories, which do not cover this fork's deployments; removed with its /.well-known route, build copy and Docker COPY"
+    "ws4kp-music": {
+      "repo": "netbymatt/ws4kp-music",
+      "kind": "music",
+      "$comment": "No release tags: the baseline is a commit on main. Albums are folders; the playlist reader scans only server/music and falls back to server/music/default (no subfolders, no seasonal logic), so adopted albums are flattened into server/music/default.",
+      "sha": "8e3ecf67dd1f752c651780d239e94704e922c970",
+      "adopted": "2026-10-24",
+      "pr": 104,
+      "albums": {
+        "Current Conditions": {
+          "status": "adopted",
+          "tracks": 10,
+          "license": "owned by Suno, non-commercial only",
+          "source": "not this repo: the 192 kbps 2025 copies that shipped in ws4kp server/music/default (4 of them) plus 6 more, tagged by this fork. ws4kp-music at this sha has 128 kbps re-encodes tagged album \"Current Conditions\"; not taken."
+        },
+        "Latest Observations": {
+          "status": "adopted",
+          "tracks": 13,
+          "license": "CC BY 4.0, credit \"Music from ws4kp-music by netbymatt, CC BY 4.0\" with a link (README.md, docs/music.md)",
+          "source": "copied byte-for-byte from this sha; each file verified by git blob hash",
+          "renamed": {
+            "Rolling Clouds.mp3": "Rolling Clouds (Latest Observations).mp3"
+          }
+        },
+        "Holiday": {
+          "status": "skipped",
+          "tracks": 10,
+          "license": "owned by Suno, non-commercial only",
+          "reason": "no seasonal scheduling, so it would play year-round"
+        }
+      }
     }
-  ]
+  }
 }
