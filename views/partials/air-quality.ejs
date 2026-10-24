@@ -1,1 +1,11 @@
-<canvas class="aqi-canvas" width="640" height="399"></canvas>
+<%- include('header.ejs', {titleDual:{ top: 'Air Quality' , bottom: '' }, hasTime: true }) %>
+<div class="main has-scroll air-quality">
+  <div class="chart">
+    <div class="bands"></div>
+    <div class="reading">
+      <div class="city"></div>
+      <div class="value"></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+</div>

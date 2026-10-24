@@ -1,19 +1,95 @@
+@use 'shared/_utils'as u;
 @use 'shared/positions'as p;
 
-#air-quality-html.weather-display {
-	// WS4000 blue fills the strip below the 399px canvas (behind the bottom scroll overlay)
-	background-color: rgb(11, 8, 48);
+// SPC Outlook's background: the standard header band over a purple-to-orange body. Its own
+// bands are painted out with the body's gradient, sampled from both images (linear, identical
+// across x, rgb(46, 18, 80) at the top of the body to rgb(192, 92, 2) at the bottom), so this
+// display's bands sit on the same backdrop as every other slide.
+$body-gradient: linear-gradient(rgb(46, 18, 80), rgb(192, 92, 2));
+$body-top: 90px;
 
-	.aqi-canvas {
+#air-quality-html.weather-display {
+	background-image: $body-gradient, url('../images/backgrounds/6.png');
+	background-size: p.$standard-width 309px, auto;
+	background-position: 0 $body-top, 0 0;
+	background-repeat: no-repeat;
+
+	// widescreen pillarboxes the 4:3 frame; the player's own background fills the sides
+	.wide & {
+		background-position: p.$wide-margin $body-top, p.$wide-margin 0;
+	}
+
+	.portrait.enhanced & {
+		background-image: $body-gradient, url('../images/backgrounds/6-portrait.png');
+		background-size: p.$standard-width 966px, auto;
+	}
+}
+
+.weather-display .air-quality {
+	@include u.text-shadow();
+
+	// the chart's coordinates are the 640x309 body below the header (airquality-utils.mjs band edges)
+	.chart {
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: p.$standard-width;
-		height: 399px;
+		height: 309px;
 
-		// widescreen pillarboxes the 4:3 frame like every other display (_weather-display.scss)
-		.wide & {
-			left: p.$wide-margin;
+		// portrait sits the chart where SPC Outlook's portrait bands are
+		.portrait.enhanced & {
+			top: 111px;
+			height: 361px;
+		}
+	}
+
+	// each band's left, top and width come from airquality.mjs; the shape is the WS4000 staircase:
+	// a 20px tab out to the left on the label row and a 20px corner cut at the top right
+	.band {
+		position: absolute;
+		bottom: 0;
+		box-sizing: border-box;
+		padding-left: 20px;
+		clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 20px 20px);
+		// the size and light outline the labels had when this display was a canvas: at SPC's
+		// 32px, VERY UNHEALTHY runs into its band's corner cut
+		font-family: 'Star4000 Small';
+		font-size: 20pt;
+		line-height: 20px;
+		color: white;
+		white-space: nowrap;
+		@include u.text-shadow(1px, 1px);
+	}
+
+	.reading {
+		.city,
+		.value {
+			position: absolute;
+			top: 155px;
+			font-family: 'Star4000';
+			font-size: 32px;
+			line-height: 46px;
+			text-align: right;
+			white-space: pre;
+		}
+
+		// right edges: city at x 240, value at x 310, bar starting at the GOOD band's left edge
+		.city {
+			right: calc(p.$standard-width - 240px);
+		}
+
+		.value {
+			right: calc(p.$standard-width - 310px);
+		}
+
+		// SPC Outlook's risk bar
+		.bar {
+			position: absolute;
+			top: 155px;
+			left: 320px;
+			height: 40px;
+			border: 3px outset hsl(0, 0%, 70%);
+			background: linear-gradient(0deg, hsl(0, 0%, 40%) 0%, hsl(0, 0%, 60%) 50%, hsl(0, 0%, 40%) 100%);
 		}
 	}
 }
