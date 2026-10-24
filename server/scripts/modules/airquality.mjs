@@ -7,7 +7,7 @@ import { safeJson } from './utils/fetch.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay } from './navigation.mjs';
 import {
-	AQI_BANDS, BAND_EDGES, parseAirQuality, aqiBandCenterX,
+	AQI_BANDS, BAND_EDGES, parseAirQuality, aqiBandCenterX, pollutantRows,
 } from './airquality-utils.mjs';
 
 // Open-Meteo request — composite us_aqi plus per-pollutant sub-indices (for dominant) and raw concentrations.
@@ -69,8 +69,9 @@ class AirQuality extends WeatherDisplay {
 	drawCanvas() {
 		super.drawCanvas();
 
-		// `current` is retained on this.data for a future concentrations table
-		const { aqi, category, dominant } = this.data;
+		const {
+			aqi, category, dominant, current,
+		} = this.data;
 
 		// second title line: the pollutant driving the index
 		this.elem.querySelector('.title.dual .bottom').textContent = dominant ? `Main: ${dominant}` : '';
@@ -97,6 +98,22 @@ class AirQuality extends WeatherDisplay {
 		value.textContent = aqi.toString();
 		value.style.color = category.color;
 		this.elem.querySelector('.reading .bar').style.width = `${Math.round(aqiBandCenterX(aqi) - BAND_EDGES[0])}px`;
+
+		// portrait detail table: each pollutant's own AQI, in its category's color, and its concentration
+		const table = this.elem.querySelector('.details .table');
+		table.querySelectorAll('.row-cell').forEach((cell) => cell.remove());
+		const cell = (className, text, color) => {
+			const elem = document.createElement('div');
+			elem.className = `row-cell ${className}`;
+			elem.textContent = text;
+			if (color) elem.style.color = color;
+			return elem;
+		};
+		table.append(...pollutantRows(current).flatMap((row) => [
+			cell('label', row.label),
+			cell('aqi', row.aqi, row.color),
+			cell('concentration', row.concentration),
+		]));
 
 		this.finishDraw();
 	}

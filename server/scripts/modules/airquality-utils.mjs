@@ -45,6 +45,21 @@ export const dominantPollutant = (current) => {
 };
 
 // Normalize an Open-Meteo response into the shape drawCanvas consumes, or null to self-disable.
+// Portrait detail rows: each pollutant's own AQI (colored by its category) and its concentration
+// in µg/m³, in POLLUTANT_LABELS order. Open-Meteo names the concentration as the sub-index key
+// without its "us_aqi_" prefix. A value it did not report shows as a dash.
+export const pollutantRows = (current) => Object.entries(POLLUTANT_LABELS).map(([key, label]) => {
+	const aqi = current?.[key];
+	const concentration = current?.[key.replace('us_aqi_', '')];
+	const hasAqi = typeof aqi === 'number' && Number.isFinite(aqi);
+	return {
+		label,
+		aqi: hasAqi ? Math.round(aqi).toString() : '-',
+		concentration: typeof concentration === 'number' && Number.isFinite(concentration) ? concentration.toFixed(1) : '-',
+		color: hasAqi ? aqiCategory(Math.round(aqi)).color : undefined,
+	};
+});
+
 export const parseAirQuality = (raw) => {
 	const current = raw?.current;
 	if (!current || current.us_aqi == null || !Number.isFinite(current.us_aqi)) return null;

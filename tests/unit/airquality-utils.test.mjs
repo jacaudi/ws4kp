@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-	aqiCategory, dominantPollutant, parseAirQuality, aqiBandCenterX,
+	aqiCategory, dominantPollutant, parseAirQuality, aqiBandCenterX, pollutantRows,
 } from '../../server/scripts/modules/airquality-utils.mjs';
 
 test('AQI 0 is GOOD', () => {
@@ -126,4 +126,31 @@ test('aqiBandCenterX snaps to the band center regardless of value within the ban
 	assert.equal(aqiBandCenterX(45), 355.5);
 	// above 500 clamps to HAZARDOUS center
 	assert.equal(aqiBandCenterX(999), 568.5);
+});
+
+// portrait detail box: one row per pollutant, in POLLUTANT_LABELS order
+const sample = {
+	us_aqi: 21,
+	us_aqi_pm2_5: 12.4, us_aqi_pm10: 5, us_aqi_ozone: 21, us_aqi_nitrogen_dioxide: 2,
+	pm2_5: 3.44, pm10: 7.1, ozone: 45.25, nitrogen_dioxide: 3,
+};
+
+test('pollutantRows lists each pollutant with its AQI and concentration', () => {
+	assert.deepEqual(pollutantRows(sample).map(({ label, aqi, concentration }) => [label, aqi, concentration]), [
+		['PM2.5', '12', '3.4'],
+		['PM10', '5', '7.1'],
+		['O₃', '21', '45.3'],
+		['NO₂', '2', '3.0'],
+	]);
+});
+
+test('pollutantRows colors each AQI by its own category', () => {
+	const rows = pollutantRows({ ...sample, us_aqi_ozone: 150 });
+	assert.equal(rows.find((r) => r.label === 'O₃').color, aqiCategory(150).color);
+	assert.equal(rows.find((r) => r.label === 'PM10').color, aqiCategory(5).color);
+});
+
+test('pollutantRows shows a dash for a value Open-Meteo did not report', () => {
+	const row = pollutantRows({ ...sample, us_aqi_pm10: null, pm10: undefined }).find((r) => r.label === 'PM10');
+	assert.deepEqual([row.aqi, row.concentration, row.color], ['-', '-', undefined]);
 });
