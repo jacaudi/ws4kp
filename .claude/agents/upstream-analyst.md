@@ -31,8 +31,11 @@ file-by-file, so `git rev-list --count main..upstream/main` never decreases and 
 meaningless. If you cite it at all, say what it does not mean.
 
 **There is no merge-base.** `git merge-base main upstream/main` exits 1 — the LFS history
-rewrite severed shared history. Read the baseline from `.upstream-sync.json` instead; see
-SKILL.md Step 1 for the exact commands. If you let `$B` go empty, every range below
+rewrite severed shared history. Read the baseline from `.upstream-sync.json` instead
+(`sources.ws4kp` for the code; `sources.ws4kp-music` for the bundled music, which has its own
+procedure); see SKILL.md Step 1 for the exact commands. Every upstream file that differs here
+should already be explained under `divergences` or `skipped`: run
+`node .claude/skills/upstream-review/parity-check.mjs` and report any unexplained drift. If you let `$B` go empty, every range below
 silently becomes upstream's entire history.
 
 **Partition before you read diffs.** `comm -12` / `comm -13` on the two changed-file
