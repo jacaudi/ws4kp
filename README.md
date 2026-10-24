@@ -120,7 +120,9 @@ Full details on permalinks, kiosk/PWA install, keyboard shortcuts, every setting
 
 ## Music
 
-The build ships with a set of copyright-free, WeatherStar-inspired tracks (stored via **Git LFS** and **baked into the container image**), so music plays out of the box. Drop your own `.mp3` files in `./server/music/` — or bind-mount a folder over `/app/server/music` in Docker — to override them.
+The build ships with 23 AI-generated, WeatherStar-inspired tracks from two [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums (stored via **Git LFS** and **baked into the container image**), so music plays out of the box. Drop your own `.mp3` files in `./server/music/` — or bind-mount a folder over `/app/server/music` in Docker — to override them.
+
+The albums are licensed differently: *Latest Observations* is CC BY 4.0 (*Music from [ws4kp-music](https://github.com/netbymatt/ws4kp-music) by netbymatt, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)*), while *Current Conditions* is owned by Suno and is for non-commercial use only. See [docs/music.md](docs/music.md#licensing) before using the music commercially.
 
 Adding/replacing music, the autoplay rules browsers enforce, and static-mode scanning are covered in **[docs/music.md](docs/music.md)**.
 
