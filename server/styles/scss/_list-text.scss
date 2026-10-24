@@ -1,0 +1,18 @@
+// Fork-owned: the hourly and travel forecast rows in the plain white text the other slides use
+// (the page default, _page.scss) instead of upstream's yellow, which is the titles' and column
+// headers' color. Hourly heat index and wind chill keep their own colors: they are set on a more
+// specific selector in _hourly.scss. Kept out of upstream's partials so they stay at parity.
+//
+// Same selectors as upstream's rules (their &.main repeats the class), so these win by coming
+// later in ws.scss.
+.weather-display .main.hourly {
+	&.main .hourly-lines .hourly-row {
+		color: white;
+	}
+}
+
+.weather-display .main.travel {
+	&.main .travel-lines .travel-row {
+		color: white;
+	}
+}
