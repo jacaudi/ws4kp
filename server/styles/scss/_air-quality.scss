@@ -106,24 +106,41 @@
 	// SPC Outlook's first day row (_spc-outlook.scss .day): the name right-aligned 10px short of the
 	// bar, text 20px down a 60px row, and the bar 20px down the same row
 	.reading {
+		// SPC's .day-name: a 200px column (143px in portrait), right-aligned. airquality.mjs shrinks a
+		// city name that does not fit; SPC never needs to, its day names always do.
 		.name {
 			position: absolute;
 			top: 120px;
+			width: 200px;
+
+			.portrait.enhanced & {
+				width: 143px;
+			}
+
 			padding-top: 20px;
-			display: flex;
-			gap: 16px;
+			overflow: hidden;
+			text-align: right;
+			white-space: nowrap;
 			font-family: 'Star4000';
 			font-size: 32px;
-			white-space: pre;
 		}
 
-		// SPC Outlook's risk bar
+		// SPC Outlook's risk bar, with the AQI value in its end
 		.bar {
 			position: absolute;
 			top: 140px;
 			height: 40px;
 			border: 3px outset hsl(0, 0%, 70%);
 			background: linear-gradient(0deg, hsl(0, 0%, 40%) 0%, hsl(0, 0%, 60%) 50%, hsl(0, 0%, 40%) 100%);
+			font-family: 'Star4000';
+			font-size: 32px;
+			line-height: 40px;
+			text-align: right;
+
+			// kept off the bar's end without padding, which would lengthen the bar past SPC's tip
+			.value {
+				margin-right: 6px;
+			}
 		}
 	}
 }

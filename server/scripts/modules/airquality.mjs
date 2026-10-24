@@ -1,6 +1,6 @@
-// Air Quality display — current US EPA AQI from the key-free Open-Meteo Air Quality API.
-// Laid out like spc-outlook.mjs: the shared header and background, with the WS4000 staircase
-// of category bands and a bar to the value's band drawn in HTML (_air-quality.scss).
+// Air Quality display — the current US EPA AQI for PM2.5, from the key-free Open-Meteo Air Quality
+// API. Laid out like spc-outlook.mjs: the shared header and background, SPC's six-band staircase
+// (one band per EPA category) and a bar to the value's band, drawn in HTML (_air-quality.scss).
 
 import STATUS from './status.mjs';
 import { safeJson } from './utils/fetch.mjs';
@@ -10,14 +10,17 @@ import {
 	AQI_BANDS, BAND_EDGES, parseAirQuality, aqiBandCenterX, pollutantRows,
 } from './airquality-utils.mjs';
 
-// Open-Meteo request — composite us_aqi plus per-pollutant sub-indices (for dominant) and raw concentrations.
+// One Open-Meteo request for everything the display shows: PM2.5's AQI (the chart) and each
+// pollutant's AQI and concentration (the portrait table).
 const buildUrl = (latitude, longitude) => 'https://air-quality-api.open-meteo.com/v1/air-quality'
 	+ `?latitude=${latitude}&longitude=${longitude}`
-	+ '&current=us_aqi,us_aqi_pm2_5,us_aqi_pm10,us_aqi_ozone,us_aqi_nitrogen_dioxide,'
+	+ '&current=us_aqi_pm2_5,us_aqi_pm10,us_aqi_ozone,us_aqi_nitrogen_dioxide,'
 	+ 'pm2_5,pm10,ozone,nitrogen_dioxide&timezone=auto';
 
 // width of the .chart the bands and reading are positioned in (_air-quality.scss)
 const CHART_WIDTH = 640;
+// smallest font size (px) a long city name shrinks to; the column's normal size is 32px
+const MIN_NAME_SIZE = 20;
 
 class AirQuality extends WeatherDisplay {
 	constructor(navId, elemId) {
@@ -72,12 +75,7 @@ class AirQuality extends WeatherDisplay {
 	drawCanvas() {
 		super.drawCanvas();
 
-		const {
-			aqi, category, dominant, current,
-		} = this.data;
-
-		// second title line: the pollutant driving the index
-		this.elem.querySelector('.title.dual .bottom').textContent = dominant ? `Main: ${dominant}` : '';
+		const { aqi, current } = this.data;
 
 		// SPC Outlook's staircase: each band starts 20px right of the one in front of it (its label tab)
 		// and one 20px row higher, and ends at its own column's right edge. Widest first, so each
@@ -110,32 +108,36 @@ class AirQuality extends WeatherDisplay {
 		});
 		this.elem.querySelector('.bands').replaceChildren(...bands, ...labels);
 
-		// the reading: city, the value in its category's color, and a bar that stops at the centre of that band
-		this.elem.querySelector('.reading .city').textContent = this.weatherParameters.city || '';
-		const value = this.elem.querySelector('.reading .value');
-		value.textContent = aqi.toString();
-		value.style.color = category.color;
-		// as SPC's rows: the name ends 10px short of the bar, which starts at the first column's left edge.
-		// The width is the content width; the 3px border either side lands the tip just past centre,
-		// exactly as SPC's bars do.
-		this.elem.querySelector('.reading .name').style.right = `${CHART_WIDTH - (BAND_EDGES[0] - 10)}px`;
+		// the reading, as SPC's day rows: the city ends 10px short of the bar, which starts at the first
+		// column's left edge and stops at the centre of the value's column (content width; the 3px
+		// border either side lands the tip just past centre, as SPC's bars do). The value sits in the
+		// bar's end: every category's bar is long enough for that category's largest number.
+		const name = this.elem.querySelector('.reading .name');
+		name.textContent = this.weatherParameters.city || '';
+		name.style.right = `${CHART_WIDTH - (BAND_EDGES[0] - 10)}px`;
+		// a city name wider than the column steps down in size rather than being cut off
+		name.style.fontSize = '';
+		for (let size = 30; name.scrollWidth > name.clientWidth && size >= MIN_NAME_SIZE; size -= 2) {
+			name.style.fontSize = `${size}px`;
+		}
 		const bar = this.elem.querySelector('.reading .bar');
+		bar.querySelector('.value').textContent = aqi.toString();
 		bar.style.left = `${BAND_EDGES[0]}px`;
 		bar.style.width = `${Math.round(aqiBandCenterX(aqi) - BAND_EDGES[0])}px`;
 
-		// portrait detail table: each pollutant's own AQI, in its category's color, and its concentration
+		// portrait detail table: each pollutant's own AQI and its concentration, in white as SPC's
+		// table values are (EPA's maroon and purple would be unreadable on the box's dark blue)
 		const table = this.elem.querySelector('.details .table');
 		table.querySelectorAll('.row-cell').forEach((cell) => cell.remove());
-		const cell = (className, text, color) => {
+		const cell = (className, text) => {
 			const elem = document.createElement('div');
 			elem.className = `row-cell ${className}`;
 			elem.textContent = text;
-			if (color) elem.style.color = color;
 			return elem;
 		};
 		table.append(...pollutantRows(current).flatMap((row) => [
 			cell('label', row.label),
-			cell('aqi', row.aqi, row.color),
+			cell('aqi', row.aqi),
 			cell('concentration', row.concentration),
 		]));
 
