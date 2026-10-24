@@ -1,27 +1,13 @@
 @use 'shared/_utils'as u;
 @use 'shared/positions'as p;
 
-// SPC Outlook's background: the standard header band over a purple-to-orange body. Its own
-// bands are painted out with the body's gradient, sampled from both images (linear, identical
-// across x, rgb(46, 18, 80) at the top of the body to rgb(192, 92, 2) at the bottom), so this
-// display's bands sit on the same backdrop as every other slide.
-$body-gradient: linear-gradient(rgb(46, 18, 80), rgb(192, 92, 2));
-$body-top: 90px;
-
+// The WeatherStar header band and body gradient with nothing drawn on the body, built from SPC
+// Outlook's backgrounds by image-templates/air-quality-backgrounds.mjs
 #air-quality-html.weather-display {
-	background-image: $body-gradient, url('../images/backgrounds/6.png');
-	background-size: p.$standard-width 309px, auto;
-	background-position: 0 $body-top, 0 0;
-	background-repeat: no-repeat;
-
-	// widescreen pillarboxes the 4:3 frame; the player's own background fills the sides
-	.wide & {
-		background-position: p.$wide-margin $body-top, p.$wide-margin 0;
-	}
+	background-image: url('../images/backgrounds/air-quality.png');
 
 	.portrait.enhanced & {
-		background-image: $body-gradient, url('../images/backgrounds/6-portrait.png');
-		background-size: p.$standard-width 966px, auto;
+		background-image: url('../images/backgrounds/air-quality-portrait.png');
 	}
 }
 
@@ -92,4 +78,10 @@ $body-top: 90px;
 			background: linear-gradient(0deg, hsl(0, 0%, 40%) 0%, hsl(0, 0%, 60%) 50%, hsl(0, 0%, 40%) 100%);
 		}
 	}
+}
+
+// The progress screen's list fits 10 rows at upstream's 28px spacing; Air Quality is an 11th outside
+// portrait (SPC Outlook, Hazards and Future Radar are portrait-only there). 26px fits 11 in the box.
+.weather-display .progress .container {
+	line-height: 26px;
 }

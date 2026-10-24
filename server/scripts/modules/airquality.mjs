@@ -19,9 +19,6 @@ const buildUrl = (latitude, longitude) => 'https://air-quality-api.open-meteo.co
 class AirQuality extends WeatherDisplay {
 	constructor(navId, elemId) {
 		super(navId, elemId, 'Air Quality', true);
-		// the progress screen holds 10 rows outside portrait; upstream keeps its later displays
-		// (SPC Outlook, Hazards, Future Radar) off it for that reason, and an 11th row runs onto the bottom bar
-		this.showOnProgress = false;
 		// one screen
 		this.timing.totalScreens = 1;
 	}
