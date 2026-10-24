@@ -7,6 +7,10 @@
 // One image rather than a CSS gradient layered over 6.png: layered, the browser's smoothing at
 // any non-1x scale bleeds 6.png's band edges into the rows around them and leaves a visible seam.
 //
+// Images are served with a one-year immutable cache (index.mjs staticOptions), so a browser that
+// has fetched one never asks again. If a regenerated image's content changes once it has shipped,
+// give it a new file name (and update _air-quality.scss), or those browsers keep the old one.
+//
 // Run: node image-templates/air-quality-backgrounds.mjs
 // Handles only what these sources are: 8-bit RGBA, non-interlaced PNG.
 import { readFile, writeFile } from 'node:fs/promises';
