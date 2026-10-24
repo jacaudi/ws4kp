@@ -85,7 +85,8 @@ class Hourly extends ScrollWeatherDisplay {
 	buildRow(data) {
 		const fillValues = {};
 		// hour
-		fillValues.hour = data.hour.toLocaleString({ weekday: 'short', hour: 'numeric' });
+		// fork: no comma ("Sat 12 PM"), to fit the row inside the blue box (_list-box.scss)
+		fillValues.hour = data.hour.toLocaleString({ weekday: 'short', hour: 'numeric' }).replace(',', '');
 
 		// temperatures, convert to strings with no decimal
 		const temperature = data.temperature.toString().padStart(3);

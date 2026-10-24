@@ -1,0 +1,99 @@
+@use 'shared/positions'as p;
+
+// Fork-owned: the hourly and travel forecast lists sit inside the blue box from backgrounds/1.png,
+// like the has-box slides (Current Conditions, Local Forecast, Latest Observations), instead of
+// upstream's full-width #102080/#001040 gradient over the box and its side columns. Kept out of
+// upstream's partials so they stay at parity.
+//
+// Same selectors as upstream's rules (their &.main repeats the class), so these win by coming
+// later in ws.scss. The inset matches has-box (_weather-display.scss); the width is the box's own,
+// not has-box's calc(100% - 128px), which is too wide in widescreen. Neither list is can-enhance,
+// so the box never stretches.
+//
+// The columns are upstream's, moved into the box's 512px. Star4000 Large is monospaced at about
+// 19.3px a character: hour "Sat 12 PM" is 174px (hourly.mjs drops upstream's comma), temperatures
+// 58px (padded to 3), wind 116px (padded to 6), and the longest travel city, "San Francisco", 250px.
+.weather-display .main.hourly {
+	&.main {
+		margin-left: p.$blue-box-margin;
+		margin-right: p.$blue-box-margin;
+		width: p.$blue-box-width;
+
+		// no feels-like column (here and in the rows): five columns do not fit the box
+		.column-headers {
+			.like {
+				display: none;
+			}
+
+			.temp {
+				left: 302px;
+			}
+
+			.wind {
+				left: 412px;
+			}
+		}
+
+		.hourly-lines {
+			background: none;
+
+			.hourly-row {
+				.hour {
+					left: 20px;
+				}
+
+				.icon {
+					left: 216px;
+				}
+
+				.temp {
+					left: 302px;
+				}
+
+				.like {
+					display: none;
+				}
+
+				.wind {
+					left: 382px;
+					width: 116px;
+				}
+			}
+		}
+	}
+}
+
+.weather-display .main.travel {
+	&.main {
+		margin-left: p.$blue-box-margin;
+		margin-right: p.$blue-box-margin;
+		width: p.$blue-box-width;
+
+		// both 60px wide (upstream's low is 50) so two three-digit temperatures do not touch
+		.column-headers .temp,
+		.travel-lines .travel-row .temp {
+			&.low {
+				left: 372px;
+				width: 60px;
+			}
+
+			&.high {
+				left: 440px;
+			}
+		}
+
+		.travel-lines {
+			background: none;
+
+			.travel-row {
+				.city {
+					left: 20px;
+				}
+
+				.icon {
+					left: 280px;
+				}
+			}
+		}
+	}
+}
