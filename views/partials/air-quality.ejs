@@ -1,14 +1,11 @@
-<%- include('header.ejs', {titleDual:{ top: 'Air Quality' , bottom: '' }, hasTime: true }) %>
+<%- include('header.ejs', {titleDual:{ top: 'Air Quality' , bottom: 'PM2.5' }, hasTime: true }) %>
 <div class="main has-scroll air-quality">
   <div class="heading portrait-only">Air Quality Index</div>
   <div class="chart">
     <div class="bands"></div>
     <div class="reading">
-      <div class="name">
-        <div class="city"></div>
-        <div class="value"></div>
-      </div>
-      <div class="bar"></div>
+      <div class="name"></div>
+      <div class="bar"><span class="value"></span></div>
     </div>
   </div>
   <div class="details portrait-only">
