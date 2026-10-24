@@ -91,6 +91,9 @@ class AirQuality extends WeatherDisplay {
 		super(navId, elemId, 'Air Quality', true);
 		// full-canvas display: the canvas draws its own title/gradients, so no HTML header date/time
 		this.okToDrawCurrentDateTime = false;
+		// the progress screen holds 10 rows outside portrait; upstream keeps its later displays
+		// (SPC Outlook, Hazards, Future Radar) off it for that reason, and an 11th row runs onto the bottom bar
+		this.showOnProgress = false;
 		// one screen
 		this.timing.totalScreens = 1;
 	}

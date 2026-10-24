@@ -10,5 +10,10 @@
 		left: 0;
 		width: p.$standard-width;
 		height: 399px;
+
+		// widescreen pillarboxes the 4:3 frame like every other display (_weather-display.scss)
+		.wide & {
+			left: p.$wide-margin;
+		}
 	}
 }
