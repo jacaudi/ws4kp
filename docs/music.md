@@ -1,19 +1,40 @@
 # Music
 
-The WeatherStar had wonderful smooth-jazz / new-age background music. The originals are copyrighted, so this project ships a set of **copyright-free, WeatherStar-inspired tracks** (AI-generated) instead. Looking for the originals? [TWCClassics](https://twcclassics.com/audio/) documents the historical playlists.
+The WeatherStar had wonderful smooth-jazz / new-age background music. The originals are copyrighted, so this project ships **AI-generated, WeatherStar-inspired tracks** from [ws4kp-music](https://github.com/netbymatt/ws4kp-music) instead. They are not all under the same license; see [licensing](#licensing). Looking for the originals? [TWCClassics](https://twcclassics.com/audio/) documents the historical playlists.
 
 - [What ships in this fork](#what-ships-in-this-fork)
+- [Licensing](#licensing)
 - [Adding or overriding music](#adding-or-overriding-music)
 - [Static hosting](#static-hosting)
 - [Autoplay behavior](#autoplay-behavior)
 
 ## What ships in this fork
 
-The full companion library from [ws4kp-music](https://github.com/netbymatt/ws4kp-music) is bundled in `server/music/default/` and **baked into the container image**, so music plays out of the box.
+Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `server/music/default/` and **baked into the container image**, so music plays out of the box. They were copied from ws4kp-music commit [`8e3ecf6`](https://github.com/netbymatt/ws4kp-music/tree/8e3ecf67dd1f752c651780d239e94704e922c970).
+
+| Album | Tracks | Bundled |
+|---|---|---|
+| Current Conditions | 10 | yes |
+| Latest Observations | 13 | yes |
+| Holiday | 10 | no: there is no seasonal scheduling, so it would play year-round. Add its files to `server/music/` to use it. |
+
+Both bundled albums have a track called *Rolling Clouds*; the Latest Observations one is stored as `Rolling Clouds (Latest Observations).mp3`. The player shows each track's own title and artist tags.
 
 To keep the git repository lean, the `.mp3` files are stored with **[Git LFS](https://git-lfs.com/)** (see `.gitattributes`) — the audio lives in LFS storage, not the git blob history. CI checks out with `lfs: true` so the real files (not pointer files) end up in the image.
 
 > Cloning locally? Install Git LFS (`git lfs install`) so the tracks download as real audio. Without it you'll get small pointer files.
+
+## Licensing
+
+| Album | License | Commercial use (e.g. a monetized stream) |
+|---|---|---|
+| Latest Observations | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | allowed, with attribution |
+| Current Conditions | owned by Suno, non-commercial only | not allowed |
+| Holiday (not bundled) | owned by Suno, non-commercial only | not allowed |
+
+Attribution for the Latest Observations tracks: *Music from [ws4kp-music](https://github.com/netbymatt/ws4kp-music) by netbymatt, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).*
+
+For commercial use, play only the Latest Observations tracks: mount a folder containing just those over `server/music` (see below).
 
 ## Adding or overriding music
 
