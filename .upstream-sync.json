@@ -204,7 +204,8 @@
           "status": "adopted",
           "tracks": 10,
           "license": "owned by Suno, non-commercial only",
-          "source": "not this repo: the 192 kbps 2025 copies that shipped in ws4kp server/music/default (4 of them) plus 6 more, tagged by this fork. ws4kp-music at this sha has 128 kbps re-encodes tagged album \"Current Conditions\"; not taken."
+          "source": "not this repo: the 192 kbps 2025 copies that shipped in ws4kp server/music/default (4 of them) plus 6 more, tagged by this fork. ws4kp-music at this sha has 128 kbps re-encodes tagged album \"Current Conditions\".",
+          "decision": "keep the 192 kbps copies (user, 2026-10-24): quality over the ~10 MB the re-encodes would save. Do not propose replacing them with the repo's copies."
         },
         "Latest Observations": {
           "status": "adopted",
