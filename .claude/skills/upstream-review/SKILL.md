@@ -292,7 +292,8 @@ Classify each change by album:
   year-round — the playlist reader has no scheduling.
 - **A changed track in an adopted album** — compare duration, bitrate and tags with
   `music-metadata` before taking it. Current Conditions here is deliberately *not* the
-  repo's copy (see its `source`), so differences in that folder are expected.
+  repo's copy: the user chose to keep the 192 kbps originals over the repo's 128 kbps
+  re-encodes (its `decision`), so differences in that folder are expected, not drift.
 - **A README or LICENSE change** — re-check the license table and the credit lines.
 
 Adopting tracks:
