@@ -10,12 +10,12 @@ The WeatherStar had wonderful smooth-jazz / new-age background music. The origin
 
 ## What ships in this fork
 
-Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `server/music/default/` and **baked into the container image**, so music plays out of the box. They were copied from ws4kp-music commit [`8e3ecf6`](https://github.com/netbymatt/ws4kp-music/tree/8e3ecf67dd1f752c651780d239e94704e922c970).
+Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `server/music/default/` and **baked into the container image**, so music plays out of the box.
 
 | Album | Tracks | Bundled |
 |---|---|---|
-| Current Conditions | 10 | yes |
-| Latest Observations | 13 | yes |
+| Current Conditions | 10 | yes: the original 192 kbps release that shipped with ws4kp (ws4kp-music now holds 128 kbps re-encodes of it) |
+| Latest Observations | 13 | yes: copied from ws4kp-music commit [`8e3ecf6`](https://github.com/netbymatt/ws4kp-music/tree/8e3ecf67dd1f752c651780d239e94704e922c970) |
 | Holiday | 10 | no: there is no seasonal scheduling, so it would play year-round. Add its files to `server/music/` to use it. |
 
 Both bundled albums have a track called *Rolling Clouds*; the Latest Observations one is stored as `Rolling Clouds (Latest Observations).mp3`. The player shows each track's own title and artist tags.
