@@ -1,5 +1,49 @@
 # Changelog
 
+## [7.5.0](https://github.com/jacaudi/ws4kp/compare/v7.4.0...v7.5.0) (2026-10-25)
+
+
+### Features
+
+* adopt upstream v8.0.1 ([de73728](https://github.com/jacaudi/ws4kp/commit/de73728af90fc973d6399f0b625f0c06d0dda422))
+* Air Quality charts PM2.5 on the six EPA categories ([51fce7a](https://github.com/jacaudi/ws4kp/commit/51fce7a2debc384b67e49c3dc162b288b25437b4))
+* Air Quality portrait layout to match SPC Outlook's ([7bcaf60](https://github.com/jacaudi/ws4kp/commit/7bcaf602bdd03c4dfe4543d8db59d6f71e58bbbf))
+* bundle the Latest Observations album from ws4kp-music ([602498c](https://github.com/jacaudi/ws4kp/commit/602498cc9145b8324ffc0265e33478f76e8501cd))
+* port density-aware regional selection onto v8's map ([995e917](https://github.com/jacaudi/ws4kp/commit/995e9173ca090e3bd592089a54ae15260da651fd))
+
+
+### Bug Fixes
+
+* Air Quality built on SPC Outlook's geometry; portrait tables clear of the box ([68db842](https://github.com/jacaudi/ws4kp/commit/68db842930bf7d3859d8ada3b8531b916a2ea17a))
+* **deps:** update dependency ejs to v7 ([4996459](https://github.com/jacaudi/ws4kp/commit/499645957e5eda846da70909e70ea5b4954603a7))
+* give Air Quality its own clean background; put it back on the progress list ([8c0953e](https://github.com/jacaudi/ws4kp/commit/8c0953e4548a0da83b54373b4d8d91a5c0cbc383))
+* give the current conditions icon a fixed slot ([90db353](https://github.com/jacaudi/ws4kp/commit/90db3534a8e598bdf013bd4a338f4da084f8c75e))
+* hourly and travel forecast lists inside the blue box, like the other slides ([6b17ad7](https://github.com/jacaudi/ws4kp/commit/6b17ad7d54d8f617ed47deb095b99e377a462b43))
+* hourly and travel forecast rows in white, like the other slides' body text ([95cfaae](https://github.com/jacaudi/ws4kp/commit/95cfaae3f58595afc2d0c8a4801d9709027b1913))
+* keep tall current-conditions icons off the condition text ([083c3cc](https://github.com/jacaudi/ws4kp/commit/083c3cc85bfd699c19f21bdb9fe3ef061767d679))
+* lay Air Quality out like the other slides ([e481b83](https://github.com/jacaudi/ws4kp/commit/e481b83e81c2c14dff85ce28262a3c45ff0f47f8))
+* pillarbox Air Quality in widescreen; keep it off the 10-row progress list ([f5eada3](https://github.com/jacaudi/ws4kp/commit/f5eada3edfe55c4b262d3023270d9fbdf94dc86e))
+* restore the MapClick fallback for blank observations ([e02c152](https://github.com/jacaudi/ws4kp/commit/e02c1520dda47cbb7f1593593f3946702308a266))
+* stop shipping the music twice in the Docker image ([93d25e0](https://github.com/jacaudi/ws4kp/commit/93d25e0a161507d5db959ae9652c47285a5998f6))
+
+
+### Miscellaneous
+
+* **deps:** update actions/create-github-app-token action to v3.3.0 ([99c3f0c](https://github.com/jacaudi/ws4kp/commit/99c3f0c1396e98dddcaa1864422588702b1eb5e0))
+* **deps:** update actions/setup-node action to v7.1.0 ([fc16630](https://github.com/jacaudi/ws4kp/commit/fc16630baf591ecaa6103191e116623b958b71b7))
+* **deps:** update dependency del to v9 ([c283236](https://github.com/jacaudi/ws4kp/commit/c28323601efec89d9a3fd3bd9217b7a544d9fdf7))
+* **deps:** update dependency dotenv to v18.0.8 ([309d9c9](https://github.com/jacaudi/ws4kp/commit/309d9c966b5a79296317f115d0aa55989c22c04b))
+* **deps:** update dependency express to v5.3.0 ([84ce859](https://github.com/jacaudi/ws4kp/commit/84ce859bddb35bbdfea94e507aeae16358396cb5))
+* **deps:** update dependency music-metadata to v12.2.3 ([80bba94](https://github.com/jacaudi/ws4kp/commit/80bba948d21121b0d989708e7005d0444eb91817))
+* **deps:** update dependency sass to v1.106.1 ([60c9558](https://github.com/jacaudi/ws4kp/commit/60c95582fa14235e0207bb173873e7a79455ac8f))
+* **deps:** update dependency webpack to v5.112.0 ([53abfff](https://github.com/jacaudi/ws4kp/commit/53abfff78668c9f5b2c699dab941889834a51812))
+* **deps:** update ghcr.io/bjw-s-labs/helm/app-template docker tag to v5.3.0 ([d2bbd8f](https://github.com/jacaudi/ws4kp/commit/d2bbd8fba1df872f18ab93075b201df10ffabe6a))
+* drop upstream's security.txt ([cae329b](https://github.com/jacaudi/ws4kp/commit/cae329bb5f946385c5b523984204336027308dd7))
+* **music:** name the bundled tracks &lt;album&gt;--&lt;song&gt; ([97b8f67](https://github.com/jacaudi/ws4kp/commit/97b8f677407806e9b15dbae2cc60f4f9072ab429))
+* **music:** tag Current Conditions with its album and the shared artist ([7adbd62](https://github.com/jacaudi/ws4kp/commit/7adbd62d6405026d9fb8417b1af621531af57764))
+* **upstream-review:** record keeping the 192 kbps Current Conditions tracks ([126db8c](https://github.com/jacaudi/ws4kp/commit/126db8ca512306b513c392a0b2201db103a41150))
+* **upstream-review:** track each upstream separately, and record why files differ ([a60a54a](https://github.com/jacaudi/ws4kp/commit/a60a54ae720d8a1a63180e4bd25a2a96f8c492ae))
+
 ## [7.4.0](https://github.com/jacaudi/ws4kp/compare/v7.3.0...v7.4.0) (2026-09-19)
 
 
