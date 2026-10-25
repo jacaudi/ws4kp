@@ -145,5 +145,3 @@ spec:
 - **Replicas / caching:** the server's request de-dup + cache is **in-process (per-pod)**. One replica gives the best cache hit rate. Running more replicas still works, but each pod caches independently (more upstream calls); there's no shared cache to configure. For a single household/kiosk, keep `replicas: 1`.
 - **No storage needed:** music ships baked into the image. To override it, mount your own tracks over `/app/server/music` (e.g. an app-template `persistentVolumeClaim` or `configMap` volume) — see [music.md](music.md).
 - **Config:** everything is driven by `WSQS_` environment variables (above) — see [deployment.md](deployment.md#default-parameters-via-environment-variables) for the full list. No secrets or API keys are required (all data sources are key-free).
-- **Chart version:** `5.0.1` is current at the time of writing; check the [helm-charts repo](https://github.com/bjw-s-labs/helm-charts) for newer app-template releases (the values schema is stable across recent 3.x–5.x).
-```
