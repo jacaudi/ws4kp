@@ -305,8 +305,9 @@ Adopting tracks:
 3. Read the tags (`music-metadata`): the player shows the title/artist tags, falling back
    to the file name.
 4. Flatten into `server/music/default`: the reader scans only `server/music` and falls back
-   to `server/music/default`, with no subfolders. A name already there (both albums have
-   *Rolling Clouds*) gets a distinct file name, recorded under `renamed`.
+   to `server/music/default`, with no subfolders. Name each file `<album>--<song>.mp3`, all lower
+   case, with every space a single dash (`sources.ws4kp-music.naming`); the album prefix keeps same-named
+   songs apart (both albums have *Rolling Clouds*).
 5. Stage and confirm Git LFS took them (`git show :<path>` prints a pointer, not audio).
 6. Credit any license that needs it in `README.md` and `docs/music.md`, and keep those
    docs' description of what ships accurate.
