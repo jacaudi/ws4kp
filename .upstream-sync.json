@@ -211,8 +211,9 @@
           "status": "adopted",
           "tracks": 10,
           "license": "owned by Suno, non-commercial only",
-          "source": "not this repo: the 192 kbps 2025 copies that shipped in ws4kp server/music/default (4 of them) plus 6 more, tagged by this fork. ws4kp-music at this sha has 128 kbps re-encodes tagged album \"Current Conditions\".",
-          "decision": "keep the 192 kbps copies (user, 2026-10-24): quality over the ~10 MB the re-encodes would save. Do not propose replacing them with the repo's copies."
+          "source": "not this repo: the 192 kbps 2025 copies that shipped in ws4kp server/music/default (4 of them) plus 6 more, tagged by this fork with album \"Current Conditions\" and artist \"WeatherStar 4000+\" to match Latest Observations. ws4kp-music at this sha has 128 kbps re-encodes tagged album \"Current Conditions\".",
+          "decision": "keep the 192 kbps copies (user, 2026-10-24): quality over the ~10 MB the re-encodes would save. Do not propose replacing them with the repo's copies.",
+          "bitrate": "192 kbps except First snow, which is 128 kbps: its only original (ws4kp-music 5fed6bc, blob 4a7d01b, byte-identical audio to ours) was 128, and no 192 kbps copy was ever published (checked 2026-10-25)"
         },
         "Latest Observations": {
           "status": "adopted",

@@ -14,7 +14,7 @@ Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums,
 
 | Album | Tracks | Bundled |
 |---|---|---|
-| Current Conditions | 10 | yes: the original 192 kbps release that shipped with ws4kp (ws4kp-music now holds 128 kbps re-encodes of it) |
+| Current Conditions | 10 | yes: the original release that shipped with ws4kp, 192 kbps except *First snow* (128 kbps, as it was first published); ws4kp-music now holds 128 kbps re-encodes of it |
 | Latest Observations | 13 | yes: copied from ws4kp-music commit [`8e3ecf6`](https://github.com/netbymatt/ws4kp-music/tree/8e3ecf67dd1f752c651780d239e94704e922c970) |
 | Holiday | 10 | no: there is no seasonal scheduling, so it would play year-round. Add its files to `server/music/` to use it. |
 
