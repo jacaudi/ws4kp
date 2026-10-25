@@ -195,6 +195,12 @@
             "server/scripts/modules/hourly.mjs"
           ],
           "reason": "hour label drops the comma (\"Sat 12 PM\") so the row fits inside the blue box; the box layout and the hidden feels-like column live in the fork-owned _list-box.scss"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/future-radar.mjs"
+          ],
+          "reason": "expected HRRR run-lookup 404s are logged only with future-radar debugging enabled, and the hrrrzarr host name is spelled correctly"
         }
       ]
     },
