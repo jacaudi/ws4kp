@@ -18,7 +18,7 @@ Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums,
 | Latest Observations | 13 | yes: copied from ws4kp-music commit [`8e3ecf6`](https://github.com/netbymatt/ws4kp-music/tree/8e3ecf67dd1f752c651780d239e94704e922c970) |
 | Holiday | 10 | no: there is no seasonal scheduling, so it would play year-round. Add its files to `server/music/` to use it. |
 
-Both bundled albums have a track called *Rolling Clouds*; the Latest Observations one is stored as `Rolling Clouds (Latest Observations).mp3`. The player shows each track's own title and artist tags.
+The bundled tracks are named `<album>--<song>.mp3`, all lower case, with each space a single dash: `current-conditions--rolling-clouds.mp3`, `latest-observations--rolling-clouds.mp3`. The album prefix keeps the two albums' *Rolling Clouds* apart. The player shows each track's own title and artist tags, not its file name.
 
 To keep the git repository lean, the `.mp3` files are stored with **[Git LFS](https://git-lfs.com/)** (see `.gitattributes`) — the audio lives in LFS storage, not the git blob history. CI checks out with `lfs: true` so the real files (not pointer files) end up in the image.
 
