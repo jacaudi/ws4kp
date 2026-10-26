@@ -7,12 +7,17 @@
 // Also flags stale entries: a divergence whose files now match upstream byte-for-byte should be
 // removed, or the list stops meaning anything.
 //
+// Upstream files are paired with their fork copies through sources.ws4kp.pathMap (the fork keeps
+// the browser app under web/); divergences and skipped are keyed by UPSTREAM path. The check
+// compares against the COMMITTED tree (HEAD): commit before running it.
+//
 // Run from the repo root after SKILL.md Step 1 has fetched upstream tags:
 //   node .claude/skills/upstream-review/parity-check.mjs
 // Exit 0 = every difference explained, 1 = unexplained or stale entries (listed on stdout).
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
+import { differingFiles } from './path-map.mjs';
 
 const run = promisify(execFile);
 const git = async (...args) => (await run('git', args, { maxBuffer: 64 * 1024 * 1024 })).stdout;
@@ -26,10 +31,7 @@ if (resolved !== source.sha) {
 	throw new Error(`${upstreamRef} is ${resolved}, but .upstream-sync.json records ${source.sha}; fix the baseline first`);
 }
 
-const upstreamFiles = new Set((await git('ls-tree', '-r', '--name-only', upstreamRef)).trim().split('\n'));
-// --no-renames: a rename would hide its old path (see SKILL.md Step 2)
-const differing = (await git('diff', '--no-renames', '--name-only', upstreamRef, 'HEAD')).trim().split('\n')
-	.filter((file) => upstreamFiles.has(file));
+const differing = await differingFiles(upstreamRef, source.pathMap ?? []);
 
 const divergent = new Set(source.divergences.flatMap((d) => d.paths));
 const skipped = new Set(source.skipped.filter((s) => s.path).map((s) => s.path));
