@@ -30,26 +30,37 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        working-directory: web
         run: npm ci
 
       - name: Lint
+        working-directory: web
         run: npm run lint
 
       - name: Unit tests
+        working-directory: web
         run: npm run test:unit
 
+      # The upstream-review tooling lives outside web/, so the web/ lint and unit runs
+      # above do not reach it.
+      - name: Upstream-review tooling tests
+        run: node --test ".claude/skills/upstream-review/*.test.mjs"
+
       - name: Install integration test dependencies (Puppeteer + Chromium)
+        working-directory: web
         run: npm ci --prefix tests
 
-      # tests/index.mjs distinguishes our failures from upstream's and signals which
+      # web/tests/index.mjs distinguishes our failures from upstream's and signals which
       # by exit code: 0 clean, 1 a real regression, 75 upstream-only. Without that
       # split an api.weather.gov outage failed this job, and because every later
       # stage needs it, a third party's availability gated the whole pipeline.
       - name: Integration test (5 cities, server mode against live NWS)
         env:
           STRICT_INTEGRATION: ${{ inputs.strict-integration && '1' || '0' }}
+        working-directory: web
         run: |
           set -euo pipefail
           npm start > /tmp/ws4kp-server.log 2>&1 &
