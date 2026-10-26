@@ -10,7 +10,7 @@ WeatherStar 4000+ runs as a **server deployment** by default (Node/Express + a c
 
 ## Run modes
 
-All modes serve at `http://localhost:8080/`.
+Run these from `web/`. All modes serve at `http://localhost:8080/`.
 
 | Command | JS | Caching proxy | Notes |
 |---|---|---|---|
@@ -70,14 +70,16 @@ If you just want static hosting, you don't need a Dockerfile at all:
 **Any web server (Apache, nginx, a CDN, object storage):**
 
 ```bash
+cd web
 npm run build
 ```
 
-Upload the resulting `dist/` folder anywhere. No server-side scripting is required.
+Upload the resulting `web/dist/` folder anywhere. No server-side scripting is required.
 
 **Node in static mode:**
 
 ```bash
+cd web
 STATIC=1 npm start          # serve development files without the proxy
 STATIC=1 DIST=1 npm start   # serve the built (minified) files without the proxy
 ```
@@ -88,7 +90,7 @@ STATIC=1 DIST=1 npm start   # serve the built (minified) files without the proxy
 
 When running the Express server, environment variables can seed a default configuration. If a user opens the root page (`http://localhost:8080/`), the server appends a query string built from these variables — effectively a default [permalink](usage.md#permalinks).
 
-- Variables may be set on the command line or via a `.env` file (parsed by [dotenv](https://github.com/motdotla/dotenv)).
+- Variables may be set on the command line or via a `.env` file in `web/`, the server's working directory (parsed by [dotenv](https://github.com/motdotla/dotenv)).
 - Prefix with `WSQS_` and use the same key/value pairs as a permalink, replacing each `-` (dash) with `_` (underscore).
 
 For example, the permalink parameter `travel-checkbox=true` becomes:

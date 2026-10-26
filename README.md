@@ -1,4 +1,4 @@
-![WeatherStar 4000+ Current Conditions](server/images/social/1200x600.png)
+![WeatherStar 4000+ Current Conditions](web/server/images/social/1200x600.png)
 
 # WeatherStar 4000+
 
@@ -45,7 +45,7 @@ Requires [Node.js](https://nodejs.org/) (v24+ recommended).
 
 ```bash
 git clone https://github.com/jacaudi/ws4kp.git
-cd ws4kp
+cd ws4kp/web
 npm install
 npm start
 ```
@@ -56,7 +56,7 @@ Then open **http://localhost:8080/** and search for a US location.
 
 WeatherStar 4000+ runs as a **server deployment** by default: a small Node/Express server with a caching proxy in front of the weather APIs — it de-duplicates and caches requests, so many viewers make few upstream calls.
 
-**Run modes** — all serve at `http://localhost:8080/`:
+**Run modes** — run these from `web/`; all serve at `http://localhost:8080/`:
 
 | Command | Mode | Caching proxy |
 |---|---|---|
@@ -94,7 +94,7 @@ services:
 
 ## Configuration
 
-Seed a default location and display set with `WSQS_` environment variables (handy for kiosks/dashboards): take any [permalink](#using-it) parameter, replace `-` with `_`, and prefix `WSQS_` — e.g. `-e WSQS_latLonQuery="Orlando International Airport"` and `-e WSQS_kiosk=true`. Values can also come from a `.env` file. Full reference — plus dev/prod modes and the archived static image — is in **[docs/deployment.md](docs/deployment.md)**.
+Seed a default location and display set with `WSQS_` environment variables (handy for kiosks/dashboards): take any [permalink](#using-it) parameter, replace `-` with `_`, and prefix `WSQS_` — e.g. `-e WSQS_latLonQuery="Orlando International Airport"` and `-e WSQS_kiosk=true`. Values can also come from a `web/.env` file. Full reference — plus dev/prod modes and the archived static image — is in **[docs/deployment.md](docs/deployment.md)**.
 
 ## Using it
 
@@ -120,7 +120,7 @@ Full details on permalinks, kiosk/PWA install, keyboard shortcuts, every setting
 
 ## Music
 
-The build ships with 23 AI-generated, WeatherStar-inspired tracks from two [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums (stored via **Git LFS** and **baked into the container image**), so music plays out of the box. Drop your own `.mp3` files in `./server/music/` — or bind-mount a folder over `/app/server/music` in Docker — to override them.
+The build ships with 23 AI-generated, WeatherStar-inspired tracks from two [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums (stored via **Git LFS** and **baked into the container image**), so music plays out of the box. Drop your own `.mp3` files in `web/server/music/` — or bind-mount a folder over `/app/server/music` in Docker — to override them.
 
 The albums are licensed differently: *Latest Observations* is CC BY 4.0 (*Music from [ws4kp-music](https://github.com/netbymatt/ws4kp-music) by netbymatt, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)*), while *Current Conditions* is owned by Suno and is for non-commercial use only. See [docs/music.md](docs/music.md#licensing) before using the music commercially.
 
@@ -139,12 +139,12 @@ Beyond the upstream project, this fork adds:
 
 | Path | What's there |
 |---|---|
-| `index.mjs` | Express server entry — routes, the caching proxy, and `WSQS_` env-var seeding |
-| `server/scripts/modules/` | The browser app: one module per display, orchestrated by `navigation.mjs` over a `WeatherDisplay` base class |
-| `server/styles/scss/` | SCSS sources (compiled to CSS by the build) |
-| `server/music/default/` | Bundled music (Git LFS) baked into the image |
-| `datagenerators/` | Build-time scripts and their baked JSON (weather stations, regional cities) |
-| `proxy/` | The server-mode caching proxy |
+| `web/index.mjs` | Express server entry — routes, the caching proxy, and `WSQS_` env-var seeding |
+| `web/server/scripts/modules/` | The browser app: one module per display, orchestrated by `navigation.mjs` over a `WeatherDisplay` base class |
+| `web/server/styles/scss/` | SCSS sources (compiled to CSS by the build) |
+| `web/server/music/default/` | Bundled music (Git LFS) baked into the image |
+| `web/datagenerators/` | Build-time scripts and their baked JSON (weather stations, regional cities) |
+| `web/proxy/` | The server-mode caching proxy |
 | `.archive/static/` | The archived static (nginx) deployment |
 | `docs/` | The guides linked below |
 

@@ -266,7 +266,7 @@
     "ws4kp-music": {
       "repo": "netbymatt/ws4kp-music",
       "kind": "music",
-      "$comment": "No release tags: the baseline is a commit on main. Albums are folders; the playlist reader scans only server/music and falls back to server/music/default (no subfolders, no seasonal logic), so adopted albums are flattened into server/music/default under the naming below.",
+      "$comment": "No release tags: the baseline is a commit on main. Albums are folders; the playlist reader scans only web/server/music and falls back to web/server/music/default (no subfolders, no seasonal logic), so adopted albums are flattened into server/music/default under the naming below.",
       "naming": "<album>--<song>.mp3, all lower case, each space a single dash (latest-observations--rolling-clouds.mp3): the album prefix keeps same-named songs apart (both albums have Rolling Clouds) without a per-file rename list",
       "sha": "8e3ecf67dd1f752c651780d239e94704e922c970",
       "adopted": "2026-10-24",

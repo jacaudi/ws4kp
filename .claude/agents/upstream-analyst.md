@@ -39,7 +39,7 @@ should already be explained under `divergences` or `skipped`: run
 silently becomes upstream's entire history.
 
 **Partition before you read diffs.** `comm -12` / `comm -13` on the two changed-file
-lists against the recorded baseline, built with `git diff --no-renames --name-only` —
+lists against the recorded baseline. Build the fork-side list with `node .claude/skills/upstream-review/path-map.mjs changed <baseline>` (the fork keeps the browser app under web/, and every path you report is an upstream path; see sources.ws4kp.pathMap) and the upstream-side list with `git diff --no-renames --name-only` —
 rename detection drops a moved file's old path and misfiles it (see SKILL.md Step 2). Most upstream changes touch files this fork never
 modified and need no judgement. Do this first; it collapses the problem.
 

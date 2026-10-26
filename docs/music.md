@@ -10,13 +10,13 @@ The WeatherStar had wonderful smooth-jazz / new-age background music. The origin
 
 ## What ships in this fork
 
-Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `server/music/default/` and **baked into the container image**, so music plays out of the box.
+Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `web/server/music/default/` and **baked into the container image**, so music plays out of the box.
 
 | Album | Tracks | Bundled |
 |---|---|---|
 | Current Conditions | 10 | yes: the original release that shipped with ws4kp, 192 kbps except *First snow* (128 kbps, as it was first published); ws4kp-music now holds 128 kbps re-encodes of it |
 | Latest Observations | 13 | yes: copied from ws4kp-music commit [`8e3ecf6`](https://github.com/netbymatt/ws4kp-music/tree/8e3ecf67dd1f752c651780d239e94704e922c970) |
-| Holiday | 10 | no: there is no seasonal scheduling, so it would play year-round. Add its files to `server/music/` to use it. |
+| Holiday | 10 | no: there is no seasonal scheduling, so it would play year-round. Add its files to `web/server/music/` to use it. |
 
 The bundled tracks are named `<album>--<song>.mp3`, all lower case, with each space a single dash: `current-conditions--rolling-clouds.mp3`, `latest-observations--rolling-clouds.mp3`. The album prefix keeps the two albums' *Rolling Clouds* apart. The player shows each track's own title and artist tags, not its file name.
 
@@ -34,13 +34,13 @@ To keep the git repository lean, the `.mp3` files are stored with **[Git LFS](ht
 
 Attribution for the Latest Observations tracks: *Music from [ws4kp-music](https://github.com/netbymatt/ws4kp-music) by netbymatt, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).*
 
-For commercial use, play only the Latest Observations tracks: mount a folder containing just those over `server/music` (see below).
+For commercial use, play only the Latest Observations tracks: mount a folder containing just those over `/app/server/music` (see below).
 
 ## Adding or overriding music
 
-The server generates `playlist.json` by scanning `./server/music` for `.mp3` files; if none are found it falls back to `./server/music/default/`. The playlist is served at `/playlist.json`, and the browser randomizes track order (reshuffling each loop). Subdirectories are not scanned.
+The server generates `playlist.json` by scanning its music folder (`web/server/music` in a checkout, `/app/server/music` in the image) for `.mp3` files; if none are found it falls back to that folder's `default/`. The playlist is served at `/playlist.json`, and the browser randomizes track order (reshuffling each loop). Subdirectories are not scanned.
 
-**Add your own tracks:** drop `.mp3` files into `./server/music/`.
+**Add your own tracks:** drop `.mp3` files into `web/server/music/`.
 
 **Override the bundled music in Docker** — bind-mount a folder over the music directory:
 
@@ -48,14 +48,14 @@ The server generates `playlist.json` by scanning `./server/music` for `.mp3` fil
 docker run -p 8080:8080 -v /path/to/your/music:/app/server/music ws4kp
 ```
 
-Because the scanner uses `./server/music` first and only falls back to `default/`, a non-empty mount replaces the bundled tracks.
+Because the scanner uses the music folder first and only falls back to `default/`, a non-empty mount replaces the bundled tracks.
 
 ## Static hosting
 
 When hosting the built static files (no server):
 
 - **Archived static Docker image:** the build creates `playlist.json` but the image intentionally removes it, forcing browser-side directory scanning. The browser requests `playlist.json`, gets a `404` carrying the `X-Weatherstar` header, and falls back to scanning `music/`.
-- **Manual static hosting:** if you build and upload the files yourself (`npm run build`), `playlist.json` contains the default tracks unless you customize `./server/music/` before building.
+- **Manual static hosting:** if you build and upload the files yourself (`npm run build`), `playlist.json` contains the default tracks unless you customize `web/server/music/` before building.
 
 For browser directory scanning to work, the web server must generate directory listings for `music/` **and** send the `X-Weatherstar: true` header (the archived nginx config does both). To add music in the archived static image, bind-mount to `/usr/share/nginx/html/music`.
 

@@ -7,10 +7,10 @@ layout gets checked in a real browser.
 
 ## Start a server on a free port
 
-`WS4KP_PORT`, **not** `PORT` (`index.mjs`). Setting `PORT` silently does nothing.
+`WS4KP_PORT`, **not** `PORT` (`web/index.mjs`). Setting `PORT` silently does nothing.
 
 ```bash
-WS4KP_PORT=8136 node index.mjs &
+(cd web && WS4KP_PORT=8136 node index.mjs &)
 ```
 
 Use a fresh port per run. A stale server on the old port will happily serve the
