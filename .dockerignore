@@ -1,11 +1,11 @@
 # Dependencies + build output are (re)generated inside the image
-node_modules
-dist/
+**/node_modules
+web/dist/
 
 # Local secrets, tests, and source artwork never belong in the image
-.env
-tests/
-image-templates/
+**/.env
+web/tests/
+web/image-templates/
 
 # VCS, CI, editor, OS, and agent-session scratch — not needed in the image
 .git/
@@ -19,5 +19,5 @@ image-templates/
 Dockerfile
 
 # NOTE: do NOT ignore .archive/ (the archived static Dockerfile COPYs
-# .archive/static/{nginx.conf,static-env-handler.sh}) or datagenerators/
+# .archive/static/{nginx.conf,static-env-handler.sh}) or web/datagenerators/
 # (the server reads datagenerators/output/*.json at startup).

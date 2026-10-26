@@ -1,10 +1,11 @@
 # Build stage: needs the full toolchain (gulp, webpack, terser, sass) to emit dist/.
+# The Node project lives in web/; the build sees only that directory.
 FROM node:24-alpine AS build
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY web/package.json web/package-lock.json ./
 RUN npm ci --legacy-peer-deps
-COPY . .
+COPY web/ .
 
 # buildDist copies the music into dist/ for static hosting; this image serves /music from
 # server/music (index.mjs, DIST=1), so the dist copy would only double the music in the image.
@@ -13,31 +14,34 @@ RUN npm run build && rm -rf dist/music
 # Runtime stage: production dependencies only, so none of the build toolchain
 # reaches the shipped image. Only the paths the server actually touches with
 # DIST=1 are copied -- everything else is either inside dist/ or build-time only.
+# The runtime layout under /app is unchanged by the move to web/: documented mounts
+# (/app/server/music, /app/server/scripts/custom.js) and release-republish's
+# /app/package.json read depend on it.
 FROM node:24-alpine
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY web/package.json web/package-lock.json ./
 RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force
 
 # Built output: served at / and holds the compiled JS/CSS, images and fonts.
 COPY --from=build /app/dist ./dist
 
 # Server entry point and its imports.
-COPY index.mjs ./
-COPY proxy ./proxy
-COPY src ./src
+COPY web/index.mjs ./
+COPY web/proxy ./proxy
+COPY web/src ./src
 
 # EJS templates: index.mjs sets the ejs view engine and renders 'index' per
 # request, so views/ is needed at runtime, not only at build time.
-COPY views ./views
+COPY web/views ./views
 
 # Served by express.static under DIST=1. src/playlist-reader.mjs also reads
 # server/music (and server/music/default) at startup to build the playlist.
-COPY server/scripts ./server/scripts
-COPY server/music ./server/music
+COPY web/server/scripts ./server/scripts
+COPY web/server/music ./server/music
 
 # Read and parsed at startup by index.mjs.
-COPY datagenerators/output ./datagenerators/output
+COPY web/datagenerators/output ./datagenerators/output
 
 EXPOSE 8080
 
