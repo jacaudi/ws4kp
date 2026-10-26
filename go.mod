@@ -5,8 +5,10 @@ go 1.27.3
 ignore ./web/node_modules
 
 require (
+	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
+	github.com/tcolgate/mp3 v0.0.0-20170426193717-e79c5a46d300
 )
 
 require (
