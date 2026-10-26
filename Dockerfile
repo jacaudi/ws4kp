@@ -1,5 +1,5 @@
 # Build stage: needs the full toolchain (gulp, webpack, terser, sass) to emit dist/.
-# The Node project lives in web/; the build sees only that directory.
+# The Node project lives in web/; the build stage copies only that directory.
 FROM node:24-alpine AS build
 WORKDIR /app
 

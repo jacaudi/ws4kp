@@ -237,7 +237,7 @@
             ".gitattributes",
             ".gitignore"
           ],
-          "reason": "mp3 in Git LFS; fork ignores"
+          "reason": "mp3 in Git LFS; fork ignores. Since the web/ move, upstream's rules live in web/.gitignore; the root .gitignore holds fork-only rules (legacy /dist/ and /server/, agent scratch)."
         },
         {
           "paths": [

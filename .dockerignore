@@ -13,7 +13,7 @@ web/image-templates/
 .vscode/
 .superpowers/
 .claude/
-.DS_Store
+**/.DS_Store
 
 # The build's own Dockerfile doesn't need to be copied into the image
 Dockerfile

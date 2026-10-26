@@ -50,12 +50,15 @@ export const differingFiles = async (upstreamRef, pathMap, { cwd = process.cwd()
 };
 
 // Fork files with no upstream counterpart, named by their upstream-side path: the files the
-// fork added. A later upstream file at one of these paths is contested, never a clean apply.
+// fork added. Also names fork files left at a path the map no longer sends anything to (a stray
+// at an old location whose upstream name exists but does not round-trip). A later upstream file
+// at one of these paths is contested, never a clean apply.
 export const forkOnlyFiles = async (upstreamRef, pathMap, { cwd = process.cwd() } = {}) => {
 	const [upstream, fork] = await Promise.all([treeEntries(upstreamRef, cwd), treeEntries('HEAD', cwd)]);
 	return [...fork.keys()]
-		.map((file) => toUpstream(pathMap, file))
-		.filter((file) => !upstream.has(file))
+		.map((file) => [file, toUpstream(pathMap, file)])
+		.filter(([file, u]) => !upstream.has(u) || toFork(pathMap, u) !== file)
+		.map(([, u]) => u)
 		.sort();
 };
 

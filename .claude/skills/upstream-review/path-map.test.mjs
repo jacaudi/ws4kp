@@ -65,13 +65,15 @@ test('differingFiles and forkOnlyFiles compare content through the map, not by p
 		await writeFile(path.join(dir, 'web', 'server', 'changed.mjs'), 'after\n');
 		await writeFile(path.join(dir, 'web', 'server', 'added.mjs'), 'fork only\n');
 		await git('rm', '-q', '-f', 'web/server/gone.mjs');
+		await mkdir(path.join(dir, 'server'), { recursive: true });
+		await writeFile(path.join(dir, 'server', 'same.mjs'), 'left behind\n');
 		await git('add', '-A');
 		await git('commit', '-q', '-m', 'fork layout');
 
 		assert.deepEqual(await differingFiles(upstream, MAP, { cwd: dir }), ['server/changed.mjs', 'server/gone.mjs']);
 		// with no map, every moved file differs: proves the map is what makes same.mjs equal
 		assert.deepEqual(await differingFiles(upstream, [], { cwd: dir }), ['index.mjs', 'server/changed.mjs', 'server/gone.mjs', 'server/same.mjs']);
-		assert.deepEqual(await forkOnlyFiles(upstream, MAP, { cwd: dir }), ['server/added.mjs']);
+		assert.deepEqual(await forkOnlyFiles(upstream, MAP, { cwd: dir }), ['server/added.mjs', 'server/same.mjs']);
 	} finally {
 		await rm(dir, { recursive: true, force: true });
 	}

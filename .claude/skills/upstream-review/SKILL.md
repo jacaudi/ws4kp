@@ -96,7 +96,7 @@ baseline. Never force-fetch upstream tags into `refs/tags/`.
 **upstream** path; its copy here is that path piped through
 `node .claude/skills/upstream-review/path-map.mjs --to-fork`. A plain `git diff $B..main` cannot
 pair a moved file with its original, so the fork side of the partition comes from the map-aware
-`changed` listing, which also names every file the fork added.
+`changed` listing, which also names every file the fork added. `changed` compares against `HEAD`, so run the partition with `main` checked out, not mid-catch-up on a branch where some files are already applied.
 
 ```bash
 S="${TMPDIR:-/tmp}"                      # or the session scratchpad
@@ -119,6 +119,7 @@ unless you are deliberately taking unreleased work — and needs no judgement. W
 temp file so a failed `git show` (an upstream deletion) never truncates the fork's copy:
 
 ```bash
+git rev-parse -q --verify "$TARGET^{commit}" >/dev/null || { echo "TARGET is not a commit: $TARGET"; exit 1; }   # a typo must not fall into git rm below
 f=<upstream path>; dest=$(echo "$f" | node .claude/skills/upstream-review/path-map.mjs --to-fork)
 if git cat-file -e "$TARGET:$f" 2>/dev/null; then
   tmp=$(mktemp) && git show "$TARGET:$f" > "$tmp" && mkdir -p "$(dirname "$dest")" && mv "$tmp" "$dest"
@@ -128,7 +129,7 @@ fi
 ```
 
 Files **only the fork changed** (`comm -23`) are out of scope. That side of the diff
-lists everything the fork has ever diverged on (91 files today); do not read them.
+lists everything the fork has ever diverged on; do not read them.
 
 Expect the contested set to be small and mostly boring. The 7.1.3 catch-up had 9 of 17
 files upstream-only; the 7.1.4–7.1.6 catch-up had 5 of 8 upstream-only, and the 3
