@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import {
-	src, dest, series, parallel,
+	src, dest, series, parallel, watch,
 } from 'gulp';
 import ejs from 'gulp-ejs';
 import rename from 'gulp-rename';
@@ -8,6 +8,8 @@ import htmlmin from 'gulp-html-minifier-terser';
 import { deleteAsync } from 'del';
 import webpack from 'webpack-stream';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import log from 'fancy-log';
@@ -17,6 +19,7 @@ import OVERRIDES from '../src/overrides.mjs';
 import reader from '../src/playlist-reader.mjs';
 
 const sass = gulpSass(dartSass);
+const run = promisify(execFile);
 
 const clean = () => deleteAsync(['./dist/**/*', '!./dist/readme.txt']);
 
@@ -132,8 +135,38 @@ const logVersion = async () => {
 
 const buildDist = series(clean, parallel(buildJs, buildCss, compressHtml, copyOtherFiles, copyDataFiles, copyImageSources, buildPlaylist), logVersion);
 
+// Dev mode (`task dev`): the Go server serves web/server/ from disk and renders this file as
+// the index on each request, injecting the server flag and the runtime OVERRIDES itself.
+const DEV_DIR = './.dev';
+
+const buildDevIndex = async () => {
+	const version = await getVersion();
+	return src('views/index.ejs')
+		.pipe(ejs({
+			production: false,
+			serverAvailable: false,
+			version,
+			OVERRIDES: {},
+			query: {},
+		}))
+		.pipe(rename({ extname: '.html' }))
+		.pipe(dest(DEV_DIR));
+};
+
+// exactly `npm run build:css`, so the committed ws.min.css and its map stay byte-identical
+// to what that script writes (build-consistency.test.mjs checks the CSS)
+const buildDevCss = () => run('npm', ['run', 'build:css']);
+
+// runs until interrupted; `task dev` starts it next to the Go server
+const watchDev = () => {
+	watch('views/**', buildDevIndex);
+	watch('server/styles/scss/**', buildDevCss);
+};
+
 export default buildDist;
 
 export {
 	logVersion,
+	buildDevIndex,
+	watchDev,
 };

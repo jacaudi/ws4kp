@@ -118,3 +118,20 @@ test('committed ws.min.css matches a fresh compile of ws.scss', () => {
 
 	assert.equal(committed, fresh, 'server/styles/ws.min.css is stale; run `npm run build:css` and commit the result');
 });
+
+// The Go server (internal/server/render.go) finds these markers in the built index and
+// rewrites what sits between them on every request: the server flag, the runtime OVERRIDES
+// (one per production/development branch) and the kiosk class on the first <body. A template
+// edit that drops or duplicates one silently breaks that feature in server mode.
+test('views/index.ejs carries each marker the Go server rewrites, as often as it expects', () => {
+	const template = read('views/index.ejs');
+	const expected = {
+		'<!--ws4kp:server-->': 1,
+		'<!--/ws4kp:server-->': 1,
+		'/*ws4kp:overrides*/': 2,
+		'/*/ws4kp:overrides*/': 2,
+		'<body': 1,
+	};
+	const found = Object.fromEntries(Object.keys(expected).map((marker) => [marker, template.split(marker).length - 1]));
+	assert.deepEqual(found, expected);
+});

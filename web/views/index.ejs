@@ -22,23 +22,24 @@
   <link rel="prefetch" href="fonts/Star4000 Extended.woff" as="font" type="font/woff" crossorigin>
   <link rel="prefetch" href="fonts/Star4000 Large.woff" as="font" type="font/woff" crossorigin>
   <link rel="prefetch" href="fonts/Star4000 Small.woff" as="font" type="font/woff" crossorigin>
-  <% if (typeof serverAvailable !== 'undefined' && serverAvailable) { %>
+  <%# ws4kp markers: the Go server (internal/server/render.go) rewrites the spans between them per request %>
+  <!--ws4kp:server--><% if (typeof serverAvailable !== 'undefined' && serverAvailable) { %>
   <script>
     window.WS4KP_SERVER_AVAILABLE = true;
   </script>
-  <% } %>
+  <% } %><!--/ws4kp:server-->
 
   <% if (production) { %>
   <link rel="stylesheet" type="text/css" href="resources/ws.min.css?_=<%=version%>" />
   <script type="text/javascript" src="resources/ws.min.js?_=<%=version%>" defer></script>
   <script type="text/javascript">
-    const OVERRIDES = <%- JSON.stringify(OVERRIDES ?? {}) %>;
+    const OVERRIDES = /*ws4kp:overrides*/<%- JSON.stringify(OVERRIDES ?? {}) %>/*/ws4kp:overrides*/;
   </script>
   <% } else { %>
   <link rel="stylesheet" type="text/css" href="styles/ws.min.css" />
   <!--<script type="text/javascript">const OVERRIDES={};</script>-->
   <script type="text/javascript">
-    const OVERRIDES = <%- JSON.stringify(OVERRIDES ?? {}) %>;
+    const OVERRIDES = /*ws4kp:overrides*/<%- JSON.stringify(OVERRIDES ?? {}) %>/*/ws4kp:overrides*/;
   </script>
   <script type="module" src="scripts/ws.mjs"></script>
   <% } %>

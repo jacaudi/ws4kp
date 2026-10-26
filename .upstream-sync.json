@@ -260,6 +260,15 @@
             ".vscode/tasks.json"
           ],
           "reason": "launch and task paths point into web/ after the browser app moved under web/"
+        },
+        {
+          "paths": [
+            "views/index.ejs",
+            "gulp/build.mjs",
+            "gulpfile.mjs",
+            "package.json"
+          ],
+          "reason": "the Go server injects the server flag, runtime OVERRIDES and kiosk class into the built index between <!--ws4kp:server--> and /*ws4kp:overrides*/ markers; gulp gains buildDevIndex and watch for its dev mode (task dev)"
         }
       ]
     },

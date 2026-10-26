@@ -13,6 +13,8 @@
 		"build:css": "sass --style=compressed ./server/styles/scss/ws.scss ./server/styles/ws.min.css",
 		"watch:css": "npm run build:css -- --watch",
 		"build": "npx gulp buildDist",
+		"dev:index": "gulp buildDevIndex",
+		"dev:watch": "gulp watch",
 		"lint": "npx eslint .",
 		"lint:fix": "npx eslint --fix ."
 	},
