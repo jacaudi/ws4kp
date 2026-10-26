@@ -1,9 +1,10 @@
 {
+	"eslint.workingDirectories": ["web"],
 	"liveSassCompile.settings.formats": [
 		{
 			"format": "compressed",
 			"extensionName": ".min.css",
-			"savePath": "/server/styles"
+			"savePath": "/web/server/styles"
 		}
 	],
 	"search.exclude": {

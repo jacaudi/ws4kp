@@ -1,0 +1,22 @@
+# web/ is the browser app and its Node toolchain; these rules are relative to web/.
+# eslint.config.mjs loads this file (it resolves .gitignore from the working directory).
+node_modules
+**/debug.log
+server/scripts/custom*.*
+
+#music folder
+server/music/*
+#except for the readme
+!server/music/readme.txt
+#and the sample songs
+!server/music/default
+
+#dist folder
+dist/*
+!dist/readme.txt
+
+#environment variables
+.env
+
+#dev-mode index rendered by gulp (PR 2)
+.dev/

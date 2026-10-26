@@ -1,5 +1,5 @@
 {
-  "$comment": "Upstream repositories this fork follows, one entry per source under `sources`. Read and updated by .claude/skills/upstream-review. There is NO git merge-base with the code upstream -- the LFS history rewrite severed it -- so this file is the only durable baseline. Store upstream identifiers only, never a fork commit SHA: fork history has been rewritten before and those SHAs die with it. `skipped` = upstream changes deliberately not taken; `divergences` = upstream files this fork deliberately changes. The parity check (SKILL.md Step 7) fails on any upstream file that differs here and is in neither list.",
+  "$comment": "Upstream repositories this fork follows, one entry per source under `sources`. Read and updated by .claude/skills/upstream-review. There is NO git merge-base with the code upstream -- the LFS history rewrite severed it -- so this file is the only durable baseline. Store upstream identifiers only, never a fork commit SHA: fork history has been rewritten before and those SHAs die with it. `skipped` = upstream changes deliberately not taken; `divergences` = upstream files this fork deliberately changes. The parity check (SKILL.md Step 7) fails on any upstream file that differs here and is in neither list. `pathMap` pairs upstream paths with this fork's (the browser app lives under web/); divergences and skipped stay keyed by UPSTREAM path.",
   "sources": {
     "ws4kp": {
       "repo": "netbymatt/ws4kp",
@@ -8,6 +8,64 @@
       "sha": "e93fc8ea31dc37e4e1353df607e68f04c8b73316",
       "adopted": "2026-10-23",
       "pr": 99,
+      "pathMap": [
+        {
+          "from": "server/",
+          "to": "web/server/"
+        },
+        {
+          "from": "views/",
+          "to": "web/views/"
+        },
+        {
+          "from": "gulp/",
+          "to": "web/gulp/"
+        },
+        {
+          "from": "datagenerators/",
+          "to": "web/datagenerators/"
+        },
+        {
+          "from": "tests/",
+          "to": "web/tests/"
+        },
+        {
+          "from": "src/",
+          "to": "web/src/"
+        },
+        {
+          "from": "proxy/",
+          "to": "web/proxy/"
+        },
+        {
+          "from": "image-templates/",
+          "to": "web/image-templates/"
+        },
+        {
+          "from": "dist/",
+          "to": "web/dist/"
+        },
+        {
+          "from": "index.mjs",
+          "to": "web/index.mjs"
+        },
+        {
+          "from": "gulpfile.mjs",
+          "to": "web/gulpfile.mjs"
+        },
+        {
+          "from": "package.json",
+          "to": "web/package.json"
+        },
+        {
+          "from": "package-lock.json",
+          "to": "web/package-lock.json"
+        },
+        {
+          "from": "eslint.config.mjs",
+          "to": "web/eslint.config.mjs"
+        }
+      ],
       "skipped": [
         {
           "sha": "57ffe7ebf7384a7e868cc2d933eb02155af41876",
@@ -195,6 +253,13 @@
             "server/scripts/modules/hourly.mjs"
           ],
           "reason": "hour label drops the comma (\"Sat 12 PM\") so the row fits inside the blue box; the box layout and the hidden feels-like column live in the fork-owned _list-box.scss"
+        },
+        {
+          "paths": [
+            ".vscode/launch.json",
+            ".vscode/tasks.json"
+          ],
+          "reason": "launch and task paths point into web/ after the browser app moved under web/"
         }
       ]
     },
