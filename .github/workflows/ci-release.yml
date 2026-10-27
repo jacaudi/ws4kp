@@ -5,8 +5,10 @@
 # GitHub Release. Its config and manifest live under .github/, not at the repo root.
 #
 # The caller passes APP_ID / APP_PRIVATE_KEY explicitly. Both are optional: unset,
-# the App-token step is skipped and release-please falls back to GITHUB_TOKEN, which
-# still cuts the release — only the attribution changes.
+# the App-token step is skipped and release-please falls back to GITHUB_TOKEN. The
+# release is still cut, but the release PR's branch is pushed with GITHUB_TOKEN,
+# which triggers no workflow run, so `ci` never reports on it and it cannot merge
+# — see ci.yaml's header.
 name: ci-release
 
 on:
@@ -54,11 +56,13 @@ jobs:
       chart_release_created: ${{ steps.rp.outputs['chart--release_created'] }}
       chart_version: ${{ steps.rp.outputs['chart--version'] }}
     steps:
-      # The App token is for attribution — it makes the release PR and the release
-      # come from the App rather than github-actions[bot]. Unscoped, as before this
-      # pipeline: the template's permission-* scoping is a follow-up once the App
-      # installation's permissions are confirmed. If the App secrets aren't set this
-      # step is skipped and release-please falls back to GITHUB_TOKEN.
+      # The App token makes the release PR and the release come from the App rather
+      # than github-actions[bot], and its pushes trigger workflow runs. Unscoped, as
+      # before this pipeline: the template's permission-* scoping is a follow-up once
+      # the App installation's permissions are confirmed. If the App secrets aren't
+      # set this step is skipped and release-please falls back to GITHUB_TOKEN: the
+      # release is still cut, but the release PR's branch push triggers no workflow
+      # run, so `ci` never reports on it and it cannot merge — see ci.yaml's header.
       - name: Generate a GitHub App token
         id: app-token
         if: ${{ env.APP_ID != '' }}

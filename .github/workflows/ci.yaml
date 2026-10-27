@@ -188,7 +188,9 @@ jobs:
     # smoke, this gate accepts `skipped`, and the required check goes GREEN on a
     # PR whose image was never built or tested.
     needs: [context, test, integration, build, smoke]
-    if: ${{ !cancelled() }}   # required: else this is SKIPPED on failure, which can satisfy protection
+    # always(), NOT !cancelled(): a cancelled run would leave this SKIPPED, and GitHub counts a
+    # skipped required check as passing (docs, "Troubleshooting required status checks": use always() with needs).
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

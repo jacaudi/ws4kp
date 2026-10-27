@@ -37,12 +37,12 @@ See [deployment.md](deployment.md) for every run mode and the Docker builds.
 
 ## Checks: `task ci`
 
-`task ci` runs everything CI's `test` job runs, with the same command, so a green local run means a green `test` job. Run it from the repo root before pushing. `task --list` shows every target.
+`task ci` runs everything CI's `test` job runs, with the same command, so a green local run means a green `test` job — locally, actionlint checks workflow changes since HEAD~1; set `BASE_REF=origin/main task ci` to lint everything since main. Run it from the repo root before pushing. `task --list` shows every target.
 
 | Target | What it runs |
 |---|---|
 | `task ci` | `repo:ci`, `go:ci`, `node:ci`, then lint and unit tests for the upstream-review scripts |
-| `task lint` / `task test` | the static checks only / the tests only (run `npm --prefix web ci` first) |
+| `task lint` / `task test` | lint, format and type checks (no tidy or govulncheck) / the tests only (run `npm --prefix web ci` first) |
 | `task repo:ci` | actionlint (when workflows changed), every local `uses:` resolves, yamllint, hadolint |
 | `task go:ci` | `golangci-lint fmt --diff`, `go mod tidy -diff`, `golangci-lint run`, `govulncheck ./...`, `go test -race ./...` |
 | `task node:ci` | in `web/`: `npm ci`, `eslint --max-warnings 0 .`, the type-check ratchet, `npm test` |
@@ -87,9 +87,11 @@ For custom scrolling text in the bottom bar, you don't need a custom script — 
 `.github/workflows/ci.yaml` is the single entry point — one workflow runs on every push, and each stage is a local reusable workflow (`ci-*.yml`):
 
 ```
-test ────────┬─ context → build → smoke ─┬→ release → release image → release smoke
-integration ─┴───────────────────────────┘   ↑ main only   ↑ only when a release was cut
+test → context → build → smoke ─┬→ release → release image → release smoke
+integration ────────────────────┘   ↑ main only   ↑ only when a release was cut
 ```
+
+`integration` runs alongside `test` and gates nothing before `release`; it feeds only `release` and `ci`.
 
 - **test** runs `task ci`; **integration** runs `task integration`. An upstream outage during the integration test (exit 75) is a warning, not a failure; `ci-nightly.yml` re-runs it every night with `STRICT=1`, so sustained breakage still turns something red.
 - **build** and **smoke** run on `main`, on manual dispatch, and on any branch with an open pull request (a draft counts). A push with no PR is tested but not built; open a draft PR to get an image.

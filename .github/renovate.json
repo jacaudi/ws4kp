@@ -53,6 +53,13 @@
         "@types/node"
       ],
       "allowedVersions": "<25"
+    },
+    {
+      "description": "Keeps .node-version on Node 24, in step with @types/node <25 above.",
+      "matchManagers": [
+        "nodenv"
+      ],
+      "allowedVersions": "<25"
     }
   ],
   "customManagers": [

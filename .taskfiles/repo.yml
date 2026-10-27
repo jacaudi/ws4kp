@@ -18,7 +18,7 @@ tasks:
         set -eu
         [ -d .github/workflows ] || { echo "no workflows — skipping actionlint"; exit 0; }
         base="${BASE_REF:-HEAD~1}"
-        if git rev-parse --verify --quiet "${base}" >/dev/null; then
+        if git rev-parse --verify --quiet "${base}^{commit}" >/dev/null; then
           if [ -z "$(git diff --name-only "${base}" HEAD -- .github/workflows)" ]; then
             echo "no workflow changes since ${base} — skipping actionlint"
             exit 0

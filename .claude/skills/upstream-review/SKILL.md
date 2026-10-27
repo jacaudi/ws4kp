@@ -266,7 +266,7 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
   ```
   It builds the site and the binary, serves it on that port, runs `web/tests/index.mjs` and
   stops the server. Exit **0** = clean (an upstream-only failure, exit 75 from `index.mjs`,
-  prints a warning and still exits 0), anything else = a real regression. `STRICT=1` makes an
+  prints a warning and still exits 0), anything else = a failure; read the output (a busy port or a failed build is not a regression). `STRICT=1` makes an
   upstream outage fail. `WS4KP_PORT`, not `PORT`.
 - `npm run build:css` (from `web/`) after any `.scss` change, then grep the minified output for the
   compiled rule.
