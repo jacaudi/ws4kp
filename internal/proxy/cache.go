@@ -425,11 +425,13 @@ func (c *Cache) store(key string, e *entry, upstream http.Header) {
 		c.logger.Debug("proxy sent: no cache directives, not cached", "url", e.url)
 		return
 	}
-	e.stored, e.expiry = now, now.Add(ttl)
+	expiry := now.Add(ttl)
+	e.stored, e.expiry = now, expiry
 	c.mu.Lock()
 	c.entries[key] = e
 	c.mu.Unlock()
-	c.logger.Debug("proxy add", "url", e.url, "ttl", ttl, "expires", e.expiry)
+	// the local, not e.expiry: once e is in the map another goroutine may rewrite it
+	c.logger.Debug("proxy add", "url", e.url, "ttl", ttl, "expires", expiry)
 }
 
 // send writes an entry as Express's res.send did: filtered headers, this proxy's

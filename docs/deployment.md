@@ -21,7 +21,7 @@ Run these from the repo root. All modes serve at `http://localhost:8080/`.
 | `STATIC=1 task dev` | individual module files | ❌ | Development without the proxy (the browser calls the weather APIs directly) |
 | `STATIC=1 go run ./cmd/ws4kp` | minified bundles | ❌ | Simulates the static deployment |
 
-`task dev` needs [Task](https://taskfile.dev), Go 1.27.3 or later, and Node 24 (`npm ci` in `web/` first). It runs `go run ./cmd/ws4kp --dev` next to `npm --prefix web run dev:watch`; Ctrl-C stops both.
+`task dev` needs [Task](https://taskfile.dev), Go 1.27.3 or later, and Node 24 (`npm ci` in `web/` first). It first renders the dev index (`dev:index`), then runs the server with `--dev --log-format text` next to `npm --prefix web run dev:watch`; Ctrl-C stops both.
 
 **Server vs. static:**
 
@@ -140,10 +140,11 @@ v8.0.0 replaced the Node/Express server with the Go binary. Environment variable
 - **The image runs as uid 65532.** Make mounted music, custom scripts and a mounted `.env` world-readable (`chmod -R a+rX /path/to/music`).
 - **There is no shell, `node` or `npm` in the image.** Replace any `command:`/`entrypoint:` override that ran `npm start` or `node`: the entrypoint is `/app/ws4kp`, and arguments are its flags. A `HEALTHCHECK` or probe that ran `wget` should use `/app/ws4kp healthcheck`, or an HTTP probe on `/manifest.json`.
 - **`DIST` does nothing** (one warning at startup): the binary always serves the embedded production build.
-- **`DOTENV_*` options are no longer read.** DOTENV_* options (DOTENV_CONFIG_PATH, DOTENV_PATH, DOTENV_OVERRIDE, DOTENV_ENCODING, DOTENV_QUIET) are no longer read; the server reads ./.env in its working directory only.
-- **The healthcheck reads the port from the environment.** If you serve on another port, set `WS4KP_PORT`; a `--port` flag is not seen by `ws4kp healthcheck`.
+- **DOTENV_* options are no longer read** (DOTENV_CONFIG_PATH, DOTENV_PATH, DOTENV_OVERRIDE, DOTENV_ENCODING, DOTENV_QUIET); the server reads ./.env in its working directory only.
+- **The healthcheck reads the port from the environment.** The server's `--port` flag is not seen by `ws4kp healthcheck`; set `WS4KP_PORT` (or pass the healthcheck its own `--port`).
+- **Caching validators changed.** Embedded files now send a strong content-hash `ETag` and no `Last-Modified`; files served from a mounted folder keep `Last-Modified` and send no `ETag`.
 - **Logs are JSON lines on stdout** (`--log-format text` for human-readable lines), and routine cache activity logs only at `--log-level debug`.
 - **Upstreams need TLS 1.3.** Every proxied service is reached over TLS 1.3 or not at all; all seven defaults support it. An `OVERRIDE_RADAR_HOST` mirror that only speaks TLS 1.2 stops working (the proxy answers 500).
-- **Unknown paths get Go's plain-text `404 page not found`**, not Express's HTML "Cannot GET" page, and a method other than GET or HEAD gets 405.
+- **Unknown paths get Go's plain-text `404 page not found`**, not Express's HTML "Cannot GET" page, and a method other than GET or HEAD gets 405 (except `DELETE /cache/…` in server mode).
 - **Proxied query strings are re-encoded slightly differently:** parameters keep the order they were sent in (Node moved numeric-looking keys first), and a run of non-UTF-8 bytes becomes one U+FFFD rather than one per byte. Upstreams read the same parameters either way.
 - **From a clone, `npm start` is gone.** Use `task dev` (or `go run ./cmd/ws4kp --dev`) from the repo root. The server's `.env` moves from `web/.env` to the repo root; `web/.env` is now read only by `npm run build`.

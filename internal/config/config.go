@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -39,7 +40,7 @@ type Config struct {
 
 // settings is what Viper decodes; Viper lowercases every key.
 type settings struct {
-	Port      int    `mapstructure:"port"`
+	Port      string `mapstructure:"port"` // parsed by parsePort, not by Viper
 	Static    string `mapstructure:"static"`
 	Dev       bool   `mapstructure:"dev"`
 	WebDir    string `mapstructure:"webdir"`
@@ -52,11 +53,18 @@ type binding struct {
 	def            any
 }
 
+// portBinding is the one setting the healthcheck resolves. The port is bound as a string
+// and parsed by parsePort: Viper's and pflag's integer decoding is base 0, so "010" would
+// bind port 8 and "08080" would fail, where Node's Number() read both as decimal.
+var portBinding = binding{"port", "WS4KP_PORT", "port", defaultPort}
+
+const defaultPort = "8080"
+
 // bindings is the single list of settings: Viper key, environment variable, flag and
 // default. musicDir and customDir default to "" here and are resolved by Load, because
 // their real defaults depend on dev.
 var bindings = []binding{
-	{"port", "WS4KP_PORT", "port", 8080},
+	portBinding,
 	{"static", "STATIC", "", ""},
 	{"dev", "WS4KP_DEV", "dev", false},
 	{"webdir", "WS4KP_WEB_DIR", "web-dir", "web"},
@@ -64,9 +72,14 @@ var bindings = []binding{
 	{"customdir", "WS4KP_CUSTOM_DIR", "custom-dir", ""},
 }
 
+// RegisterPortFlag adds --port to flags. It is a string flag; see portBinding.
+func RegisterPortFlag(flags *pflag.FlagSet) {
+	flags.String("port", defaultPort, "port to listen on (env WS4KP_PORT)")
+}
+
 // RegisterFlags adds the serve flags to flags.
 func RegisterFlags(flags *pflag.FlagSet) {
-	flags.Int("port", 8080, "port to listen on (env WS4KP_PORT)")
+	RegisterPortFlag(flags)
 	flags.Bool("dev", false, "serve web/ from disk for local development (env WS4KP_DEV)")
 	flags.String("web-dir", "web", "the web/ directory dev mode serves (env WS4KP_WEB_DIR)")
 	flags.String("music-dir", "", "music folder that overrides the bundled tracks; default /app/server/music, or <web-dir>/server/music with --dev (env WS4KP_MUSIC_DIR)")
@@ -82,30 +95,22 @@ func Load(flags *pflag.FlagSet, logger *slog.Logger) (Config, error) {
 		return Config{}, err
 	}
 
-	v := viper.NewWithOptions(viper.ExperimentalBindStruct())
-	for _, b := range bindings {
-		v.SetDefault(b.key, b.def)
-		if err := v.BindEnv(b.key, b.env); err != nil {
-			return Config{}, fmt.Errorf("bind %s: %w", b.env, err)
-		}
-		if b.flag == "" {
-			continue
-		}
-		if err := v.BindPFlag(b.key, flags.Lookup(b.flag)); err != nil {
-			return Config{}, fmt.Errorf("bind --%s: %w", b.flag, err)
-		}
+	v, err := newViper(flags, bindings)
+	if err != nil {
+		return Config{}, err
 	}
 	var s settings
 	if err := v.Unmarshal(&s); err != nil {
-		return Config{}, fmt.Errorf("decode config (WS4KP_PORT must be an integer, WS4KP_DEV a boolean): %w", err)
+		return Config{}, fmt.Errorf("decode config (WS4KP_DEV must be a boolean): %w", err)
 	}
+	port, portErr := parsePort(s.Port)
 
 	if _, set := os.LookupEnv("DIST"); set {
 		logger.Warn("DIST is ignored; the binary always serves the embedded build")
 	}
 
 	cfg := Config{
-		Port:      s.Port,
+		Port:      port,
 		Static:    s.Static != "", // any non-empty STATIC, as the Node server's !process.env.STATIC
 		Dev:       s.Dev,
 		WebDir:    s.WebDir,
@@ -137,20 +142,59 @@ func Load(flags *pflag.FlagSet, logger *slog.Logger) (Config, error) {
 			cfg.Overrides[name] = value
 		}
 	}
-	return cfg, cfg.validate()
+	return cfg, errors.Join(portErr, cfg.validate())
+}
+
+// ResolvePort resolves only the port, with Load's precedence (flag, environment, ./.env,
+// default). The healthcheck uses it so that settings it does not read, such as WS4KP_DEV
+// without a web/ directory, cannot make it fail.
+func ResolvePort(flags *pflag.FlagSet, logger *slog.Logger) (int, error) {
+	if err := loadDotEnv(DotEnvFile, logger); err != nil {
+		return 0, err
+	}
+	v, err := newViper(flags, []binding{portBinding})
+	if err != nil {
+		return 0, err
+	}
+	return parsePort(v.GetString(portBinding.key))
+}
+
+// newViper binds each of bs to its default, environment variable and flag.
+func newViper(flags *pflag.FlagSet, bs []binding) (*viper.Viper, error) {
+	v := viper.NewWithOptions(viper.ExperimentalBindStruct())
+	for _, b := range bs {
+		v.SetDefault(b.key, b.def)
+		if err := v.BindEnv(b.key, b.env); err != nil {
+			return nil, fmt.Errorf("bind %s: %w", b.env, err)
+		}
+		if b.flag == "" {
+			continue
+		}
+		if err := v.BindPFlag(b.key, flags.Lookup(b.flag)); err != nil {
+			return nil, fmt.Errorf("bind --%s: %w", b.flag, err)
+		}
+	}
+	return v, nil
+}
+
+// parsePort reads s as a decimal integer in 1-65535, ignoring surrounding whitespace, as
+// Node's Number() did: "010" is 10, "0x1F90" and "1_000" are errors.
+func parsePort(s string) (int, error) {
+	s = strings.TrimSpace(s)
+	n, err := strconv.ParseInt(s, 10, 0)
+	if err != nil || n < 1 || n > 65535 {
+		return 0, fmt.Errorf("port %s (WS4KP_PORT or --port): must be a decimal integer between 1 and 65535", s)
+	}
+	return int(n), nil
 }
 
 func (c Config) validate() error {
-	var errs []error
-	if c.Port < 1 || c.Port > 65535 {
-		errs = append(errs, fmt.Errorf("port %d (WS4KP_PORT or --port): must be between 1 and 65535", c.Port))
-	}
 	if c.Dev {
 		if info, err := os.Stat(c.WebDir); err != nil || !info.IsDir() {
-			errs = append(errs, fmt.Errorf("web dir %q (WS4KP_WEB_DIR or --web-dir): dev mode needs the web/ directory; run from the repo root or pass --web-dir", c.WebDir))
+			return fmt.Errorf("web dir %q (WS4KP_WEB_DIR or --web-dir): dev mode needs the web/ directory; run from the repo root or pass --web-dir", c.WebDir)
 		}
 	}
-	return errors.Join(errs...)
+	return nil
 }
 
 // loadDotEnv sets each variable in path that the environment does not already have, as

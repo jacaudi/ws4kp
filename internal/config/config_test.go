@@ -206,7 +206,7 @@ func TestValidationErrors(t *testing.T) {
 		args    []string
 		wantErr []string
 	}{
-		{"port not a number", map[string]string{"WS4KP_PORT": "eighty"}, nil, []string{"decode config"}},
+		{"port not a number", map[string]string{"WS4KP_PORT": "eighty"}, nil, []string{"port eighty"}},
 		{"port out of range", map[string]string{"WS4KP_PORT": "70000"}, nil, []string{"port 70000"}},
 		{"port zero", nil, []string{"--port", "0"}, []string{"port 0"}},
 		{"dev not a boolean", map[string]string{"WS4KP_DEV": "maybe"}, nil, []string{"decode config"}},
@@ -395,4 +395,71 @@ func TestInvalidUTF8ValuesBecomeReplacementCharacters(t *testing.T) {
 
 func paramEqual(a, b express.Param) bool {
 	return a.Key == b.Key && slices.Equal(a.Values, b.Values)
+}
+
+// Node read the port with Number(), which is decimal: a leading zero is padding, not octal,
+// and surrounding whitespace is ignored. Anything else that is not a plain integer fails.
+func TestPortIsParsedAsADecimalInteger(t *testing.T) {
+	tests := []struct {
+		value   string
+		want    int
+		wantErr bool
+	}{
+		{value: "010", want: 10},
+		{value: "08080", want: 8080},
+		{value: " 8080", want: 8080},
+		{value: "8080 ", want: 8080},
+		{value: "0x1F90", wantErr: true},
+		{value: "1_000", wantErr: true},
+		{value: "65536", wantErr: true},
+		{value: "0", wantErr: true},
+	}
+	for _, tt := range tests {
+		check := func(t *testing.T, cfg Config, err error) {
+			t.Helper()
+			if tt.wantErr {
+				if err == nil || !strings.Contains(err.Error(), "WS4KP_PORT or --port") {
+					t.Errorf("Load() = %+v, %v; want a port error", cfg, err)
+				}
+				return
+			}
+			if err != nil || cfg.Port != tt.want {
+				t.Errorf("Load() = port %d, %v; want %d", cfg.Port, err, tt.want)
+			}
+		}
+		t.Run("env "+tt.value, func(t *testing.T) {
+			flags, logger, _ := setup(t)
+			t.Setenv("WS4KP_PORT", tt.value)
+			cfg, err := Load(flags, logger)
+			check(t, cfg, err)
+		})
+		t.Run("flag "+tt.value, func(t *testing.T) {
+			flags, logger, _ := setup(t)
+			if err := flags.Parse([]string{"--port", tt.value}); err != nil {
+				t.Fatal(err)
+			}
+			cfg, err := Load(flags, logger)
+			check(t, cfg, err)
+		})
+	}
+}
+
+// The healthcheck resolves the port and nothing else: a dev-mode environment with no web/
+// directory must not stop it.
+func TestResolvePortIgnoresTheRestOfTheConfiguration(t *testing.T) {
+	flags := pflag.NewFlagSet("healthcheck", pflag.ContinueOnError)
+	RegisterPortFlag(flags)
+	_, logger, _ := setup(t)
+	t.Setenv("WS4KP_DEV", "1")
+	t.Setenv("WS4KP_PORT", " 09000")
+	got, err := ResolvePort(flags, logger)
+	if err != nil || got != 9000 {
+		t.Errorf("ResolvePort() = %d, %v; want 9000", got, err)
+	}
+	if err := flags.Parse([]string{"--port", "0"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ResolvePort(flags, logger); err == nil {
+		t.Error("ResolvePort() accepted port 0")
+	}
 }

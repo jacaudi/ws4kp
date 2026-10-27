@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/jacaudi/ws4kp/internal/config"
@@ -192,6 +193,7 @@ func (s *Server) Run(ctx context.Context, ln net.Listener) error {
 		ReadHeaderTimeout: ReadHeaderTimeout,
 		ReadTimeout:       ReadTimeout,
 		IdleTimeout:       IdleTimeout,
+		ErrorLog:          slog.NewLogLogger(s.logger.Handler(), slog.LevelWarn),
 	}
 	go s.loadPlaylist(ctx)
 	go s.cache.RunSweeper(ctx)
@@ -280,7 +282,13 @@ func (s *Server) serveData(name string) http.HandlerFunc {
 
 // clearCache is DELETE /cache/<key>: the key is the proxied request's path and query.
 func (s *Server) clearCache(w http.ResponseWriter, r *http.Request) {
-	key := proxy.Key(r.URL)[len("/cache"):]
+	// The mux matches the unescaped path, so /%63ache/... also arrives here; its key does
+	// not start with "/cache", and it is not a cache address.
+	key, ok := strings.CutPrefix(proxy.Key(r.URL), "/cache")
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
 	express.JSON(w, r, http.StatusOK, struct {
 		Cleared bool   `json:"cleared"`
 		Path    string `json:"path"`

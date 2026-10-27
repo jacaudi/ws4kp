@@ -88,6 +88,7 @@ jobs:
           echo "Waiting for the app on :8080..."
           for i in $(seq 1 45); do
             if curl -sf http://localhost:8080/ >/dev/null; then break; fi
+            kill -0 "$APP_PID" 2>/dev/null || { echo "app exited"; cat /tmp/ws4kp-server.log; exit 1; }
             if [ "$i" = "45" ]; then echo "app failed to start"; cat /tmp/ws4kp-server.log; exit 1; fi
             sleep 2
           done

@@ -250,3 +250,24 @@ func TestCleanStripsPaddingAndInvalidUTF8(t *testing.T) {
 		t.Errorf("clean kept invalid UTF-8: %q", got)
 	}
 }
+
+// The world-readable hint is for a permission failure only: a music folder that is really
+// a file is reported without it.
+func TestMusicFolderThatIsAFileIsReportedWithoutThePermissionHint(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, dir, "music", []byte("not a directory"))
+	file := filepath.Join(dir, "music")
+	var logs bytes.Buffer
+	got := Load(t.Context(), slog.New(slog.NewTextHandler(&logs, nil)),
+		Source{FS: os.DirFS(file), Dir: "."},
+		Source{FS: fstest.MapFS{"music/default/bundled.mp3": {Data: frames(38)}}, Dir: "music/default", Prefix: "default/"})
+	if !slices.Equal(got.AvailableFiles, []string{"default/bundled.mp3"}) {
+		t.Errorf("AvailableFiles = %v", got.AvailableFiles)
+	}
+	if !strings.Contains(logs.String(), "cannot list music folder") {
+		t.Errorf("no warning logged:\n%s", logs.String())
+	}
+	if strings.Contains(logs.String(), "world-readable") {
+		t.Errorf("the permission hint was logged for a non-permission error:\n%s", logs.String())
+	}
+}

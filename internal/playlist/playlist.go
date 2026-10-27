@@ -51,9 +51,11 @@ func Load(ctx context.Context, logger *slog.Logger, sources ...Source) Playlist 
 	p := Playlist{AvailableFiles: []string{}, MetaData: map[string]Track{}}
 	for _, src := range sources {
 		names, err := mp3Names(src)
-		if err != nil {
+		if errors.Is(err, fs.ErrPermission) {
 			// The image runs as uid 65532: a mounted folder it cannot list is the usual cause.
 			logger.Warn("playlist: cannot list music folder; mounted files must be world-readable", "dir", src.Dir, "error", err)
+		} else if err != nil {
+			logger.Warn("playlist: cannot list music folder", "dir", src.Dir, "error", err)
 		}
 		if len(names) == 0 {
 			continue

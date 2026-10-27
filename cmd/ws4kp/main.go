@@ -112,20 +112,20 @@ func newHealthcheckCmd() *cobra.Command {
 		Short: "Exit 0 if the server on this host answers /manifest.json",
 		Long: "healthcheck GETs http://127.0.0.1:<port>/manifest.json and exits 0 on a 2xx answer " +
 			"within 4 seconds, 1 otherwise. The port comes from its own --port, else WS4KP_PORT, else " +
-			"./.env, else 8080: it does not see the flags the serving process was started with, so a " +
-			"server on another port should be configured through WS4KP_PORT. The container image's " +
-			"HEALTHCHECK runs it.",
+			"./.env, else 8080, and reads nothing else: it does not see the flags the serving process " +
+			"was started with, so a server on another port should be configured through WS4KP_PORT. " +
+			"The container image's HEALTHCHECK runs it.",
 		Example: "  ws4kp healthcheck\n  ws4kp healthcheck --port 9000",
 		Args:    noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			cfg, err := config.Load(cmd.Flags(), slog.New(slog.DiscardHandler))
+			port, err := config.ResolvePort(cmd.Flags(), slog.New(slog.DiscardHandler))
 			if err != nil {
 				return err
 			}
-			return server.Healthcheck(cmd.Context(), fmt.Sprintf("http://127.0.0.1:%d/manifest.json", cfg.Port))
+			return server.Healthcheck(cmd.Context(), fmt.Sprintf("http://127.0.0.1:%d/manifest.json", port))
 		},
 	}
-	config.RegisterFlags(cmd.Flags())
+	config.RegisterPortFlag(cmd.Flags())
 	return cmd
 }
 

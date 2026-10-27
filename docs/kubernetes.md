@@ -26,6 +26,8 @@ controllers:
           # parameter: replace '-' with '_' and prefix WSQS_). Optional.
           WSQS_latLonQuery: "Orlando International Airport Orlando FL USA"
           WSQS_kiosk: "true"
+          # the Go runtime's soft memory cap: about 85% of the memory limit below
+          GOMEMLIMIT: "435MiB"
         probes:
           liveness: { enabled: true }
           readiness: { enabled: true }

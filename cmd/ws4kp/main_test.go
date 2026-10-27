@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"io"
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -119,8 +122,9 @@ func TestServeAndHealthcheck(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	var out, errOut syncBuffer
 	done := make(chan int, 1)
+	args := []string{"--dev", "--web-dir", devWeb(t), "--port", port, "--log-format", "text"}
 	go func() {
-		done <- run(ctx, []string{"--dev", "--web-dir", devWeb(t), "--port", port, "--log-format", "text"}, &out, &errOut)
+		done <- run(ctx, args, &out, &errOut)
 	}()
 	healthy := false
 	for deadline := time.Now().Add(5 * time.Second); !healthy && time.Now().Before(deadline); time.Sleep(50 * time.Millisecond) {
@@ -128,15 +132,40 @@ func TestServeAndHealthcheck(t *testing.T) {
 		healthy = code == 0
 	}
 	cancel()
+	code := <-done // drain before any failure, so the goroutine never outlives the test
 	if !healthy {
-		t.Fatalf("server never became healthy; stdout %q stderr %q", out.String(), errOut.String())
+		t.Fatalf("server never became healthy; exit %d, stdout %q stderr %q", code, out.String(), errOut.String())
 	}
-	if code := <-done; code != 0 {
+	if code != 0 {
 		t.Errorf("serve exit = %d; stderr %q", code, errOut.String())
 	}
 	for _, want := range []string{"level=INFO msg=listening addr=", ":" + port + " version=dev dev=true static=false", "level=INFO msg=stopped"} {
 		if !strings.Contains(out.String(), want) {
 			t.Errorf("logs lack %q:\n%s", want, out.String())
 		}
+	}
+}
+
+// healthcheck reads the port and nothing else: a dev-mode environment with no web/
+// directory (the server's own settings, inherited by the probe) must not make it fail.
+func TestHealthcheckIgnoresDevModeSettings(t *testing.T) {
+	t.Chdir(t.TempDir())
+	t.Setenv("WS4KP_DEV", "1")
+	up := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		if _, err := io.WriteString(w, "{}"); err != nil {
+			t.Error(err)
+		}
+	}))
+	t.Cleanup(up.Close)
+	_, port, err := net.SplitHostPort(up.Listener.Addr().String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if code, _, stderr := runArgs(t, "healthcheck", "--port", port); code != 0 {
+		t.Errorf("healthcheck with WS4KP_DEV=1 and no web/ = %d; stderr %q", code, stderr)
+	}
+	// the server's other flags are not the healthcheck's
+	if code, _, _ := runArgs(t, "healthcheck", "--dev"); code != 2 {
+		t.Errorf("healthcheck --dev = %d, want 2 (unknown flag)", code)
 	}
 }

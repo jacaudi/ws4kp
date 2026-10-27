@@ -665,3 +665,49 @@ func TestRunDrainsInFlightRequests(t *testing.T) {
 		t.Errorf("Run = %v, want nil after a clean shutdown", err)
 	}
 }
+
+// The mux matches the unescaped path, so DELETE /%63ache/... reaches the handler; its key
+// is the escaped path, which does not start with "/cache", and must not be sliced as if it did.
+func TestCacheDeleteWithAnEscapedPrefixIs404(t *testing.T) {
+	s := newTestServer(t, nil)
+	w := s.do(http.MethodDelete, "/%63ache/api/x")
+	if w.Code != http.StatusNotFound {
+		t.Errorf("DELETE /%%63ache/api/x = %d %s, want 404", w.Code, w.Body.String())
+	}
+}
+
+// net/http reports a handler panic through http.Server.ErrorLog; that goes through the
+// server's slog logger, not the standard library's unstructured stderr logger.
+func TestHTTPServerErrorsGoThroughTheLogger(t *testing.T) {
+	logs := &logBuffer{}
+	cfg := config.Config{MusicDir: t.TempDir(), CustomDir: t.TempDir()}
+	s, err := newServer(cfg, testAssets(t), slog.New(slog.NewTextHandler(logs, nil)), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.handler = http.HandlerFunc(func(http.ResponseWriter, *http.Request) { panic("boom") })
+	ln, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	done := make(chan error, 1)
+	go func() { done <- s.Run(ctx, ln) }()
+
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, "http://"+ln.Addr().String()+"/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp, err := http.DefaultClient.Do(req); err == nil { // the server drops the connection
+		if err := resp.Body.Close(); err != nil {
+			t.Error(err)
+		}
+	}
+	cancel()
+	if err := <-done; err != nil {
+		t.Fatal(err)
+	}
+	if got := logs.String(); !strings.Contains(got, "level=WARN msg=\"http: panic serving") {
+		t.Errorf("the panic was not logged as a WARN through slog:\n%s", got)
+	}
+}
