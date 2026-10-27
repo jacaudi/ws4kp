@@ -140,7 +140,7 @@ v8.0.0 replaced the Node/Express server with the Go binary. Environment variable
 - **The image runs as uid 65532.** Make mounted music, custom scripts and a mounted `.env` world-readable (`chmod -R a+rX /path/to/music`).
 - **There is no shell, `node` or `npm` in the image.** Replace any `command:`/`entrypoint:` override that ran `npm start` or `node`: the entrypoint is `/app/ws4kp`, and arguments are its flags. A `HEALTHCHECK` or probe that ran `wget` should use `/app/ws4kp healthcheck`, or an HTTP probe on `/manifest.json`.
 - **`DIST` does nothing** (one warning at startup): the binary always serves the embedded production build.
-- **DOTENV_* options are no longer read** (DOTENV_CONFIG_PATH, DOTENV_PATH, DOTENV_OVERRIDE, DOTENV_ENCODING, DOTENV_QUIET); the server reads ./.env in its working directory only.
+- **`DOTENV_*` options are no longer read** (`DOTENV_CONFIG_PATH`, `DOTENV_PATH`, `DOTENV_OVERRIDE`, `DOTENV_ENCODING`, `DOTENV_QUIET`); the server reads `./.env` in its working directory only.
 - **The healthcheck reads the port from the environment.** The server's `--port` flag is not seen by `ws4kp healthcheck`; set `WS4KP_PORT` (or pass the healthcheck its own `--port`).
 - **Caching validators changed.** Embedded files now send a strong content-hash `ETag` and no `Last-Modified`; files served from a mounted folder keep `Last-Modified` and send no `ETag`.
 - **Logs are JSON lines on stdout** (`--log-format text` for human-readable lines), and routine cache activity logs only at `--log-level debug`.
