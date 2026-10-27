@@ -1,5 +1,5 @@
-# Stage a — code testing: lint + unit tests + Puppeteer integration (5 cities).
-# Reusable workflow; called by ci.yaml.
+# Stage a — code testing: Go vet + race tests, lint + unit tests, and the Puppeteer
+# integration test (5 cities) against the Go server. Reusable workflow; called by ci.yaml.
 name: ci-test
 
 on:
@@ -24,6 +24,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # go.mod's `go` line is the toolchain floor; setup-go installs exactly that.
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      # Go first: it needs nothing from npm, and a Go failure ends the job before the
+      # slower npm installs. go.mod's `ignore ./web/node_modules` keeps npm's bundled Go
+      # files out of ./... for anyone running these after npm ci.
+      - name: Go vet
+        run: go vet ./...
+
+      - name: Go tests (race detector)
+        run: go test -race ./...
 
       - name: Set up Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -57,13 +72,18 @@ jobs:
       # by exit code: 0 clean, 1 a real regression, 75 upstream-only. Without that
       # split an api.weather.gov outage failed this job, and because every later
       # stage needs it, a third party's availability gated the whole pipeline.
+      #
+      # The server is the production build: the site is built first because the binary
+      # embeds web/dist/ at compile time. It is built to a file rather than `go run`, so
+      # APP_PID is the server itself and the kill below reaches it.
       - name: Integration test (5 cities, server mode against live NWS)
         env:
           STRICT_INTEGRATION: ${{ inputs.strict-integration && '1' || '0' }}
-        working-directory: web
         run: |
           set -euo pipefail
-          npm start > /tmp/ws4kp-server.log 2>&1 &
+          npm --prefix web run build
+          go build -o "$RUNNER_TEMP/ws4kp" ./cmd/ws4kp
+          "$RUNNER_TEMP/ws4kp" > /tmp/ws4kp-server.log 2>&1 &
           APP_PID=$!
           echo "Waiting for the app on :8080..."
           for i in $(seq 1 45); do
@@ -72,7 +92,7 @@ jobs:
             sleep 2
           done
           set +e
-          node tests/index.mjs
+          node web/tests/index.mjs
           STATUS=$?
           set -e
           kill "$APP_PID" 2>/dev/null || true
