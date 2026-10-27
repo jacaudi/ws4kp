@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"start": "echo \"The server is now Go: run 'task dev' or 'go run ./cmd/ws4kp' from the repo root\" && exit 1",
-		"test:unit": "node --test \"tests/unit/*.test.mjs\"",
+		"test": "node --test \"tests/unit/*.test.mjs\"",
 		"typecheck": "node scripts/tsc-ratchet.mjs",
 		"build:travelcities": "node datagenerators/travelcities.mjs",
 		"build:regionalcities": "node datagenerators/regionalcities.mjs",
