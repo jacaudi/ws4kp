@@ -31,6 +31,28 @@
         ],
         "executionMode": "branch"
       }
+    },
+    {
+      "description": "typescript and @types/node change what tsc reports together, and any change in the counts fails the type-check ratchet (web/scripts/tsc-ratchet.mjs). One PR for both, so one follow-up commit running npm run typecheck -- --update fixes it (docs/development.md).",
+      "matchPackageNames": [
+        "typescript",
+        "@types/node"
+      ],
+      "groupName": "typescript and node types"
+    },
+    {
+      "description": "typescript-eslint (through eslint-config-airbnb-extended) accepts typescript <6.1.0 only; a newer typescript breaks that peer range.",
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "allowedVersions": "<6.1.0"
+    },
+    {
+      "description": "@types/node follows the Node major in .node-version (24), not the newest Node.",
+      "matchPackageNames": [
+        "@types/node"
+      ],
+      "allowedVersions": "<25"
     }
   ],
   "customManagers": [

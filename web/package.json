@@ -6,6 +6,7 @@
 	"scripts": {
 		"start": "echo \"The server is now Go: run 'task dev' or 'go run ./cmd/ws4kp' from the repo root\" && exit 1",
 		"test:unit": "node --test \"tests/unit/*.test.mjs\"",
+		"typecheck": "node scripts/tsc-ratchet.mjs",
 		"build:travelcities": "node datagenerators/travelcities.mjs",
 		"build:regionalcities": "node datagenerators/regionalcities.mjs",
 		"build:stations": "node datagenerators/stations.mjs",
@@ -30,6 +31,7 @@
 	"devDependencies": {
 		"@eslint/config-helpers": "^0.7.0",
 		"@eslint/js": "^9.39.5",
+		"@types/node": "24.19.2",
 		"@zakj/no-sleep": "^0.13.6",
 		"del": "^9.0.0",
 		"dotenv": "^18.0.1",
@@ -51,6 +53,7 @@
 		"sass": "^1.54.0",
 		"suncalc": "^2.0.2",
 		"swiped-events": "^1.1.4",
+		"typescript": "6.0.3",
 		"webpack": "^5.99.9",
 		"webpack-stream": "^7.0.0"
 	},

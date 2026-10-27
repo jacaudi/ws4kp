@@ -71,6 +71,8 @@ const ignores = [
 	'*.min.*',
 	'server/scripts/vendor/*',
 	'dist/**/*',
+	// declarations for tsc only (the type-check ratchet); this config has no TypeScript parser
+	'types/**/*.d.ts',
 ];
 
 const htmlSpecial = {
