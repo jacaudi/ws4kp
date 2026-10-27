@@ -99,10 +99,18 @@ tasks:
         set -eu
         echo "smoke testing ${IMAGE}"
         base="http://localhost:${SMOKE_PORT}"
-        docker run -d --name ws4kp-smoke -p "${SMOKE_PORT}:8080" "${IMAGE}"
+        # Something already answering would be probed in place of the container.
+        if curl -s -m 5 -o /dev/null "${base}/"; then
+          echo "::error::something already answers on :${SMOKE_PORT}; set SMOKE_PORT to a free port"
+          exit 1
+        fi
+        # create, trap, start: a name conflict fails before the trap (the existing container is
+        # left alone), and a port or start failure afterwards is cleaned up.
+        docker create --name ws4kp-smoke -p "${SMOKE_PORT}:8080" "${IMAGE}"
         trap 'docker logs ws4kp-smoke || true; docker rm -f ws4kp-smoke >/dev/null 2>&1 || true' EXIT
+        docker start ws4kp-smoke
         for i in $(seq 1 30); do
-          curl -sf "${base}/" >/dev/null && break
+          curl -sf -m 5 "${base}/" >/dev/null && break
           [ "$i" = "30" ] && { echo "::error::container never served on :${SMOKE_PORT}"; exit 1; }
           sleep 2
         done
