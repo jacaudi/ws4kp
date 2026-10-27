@@ -4,6 +4,7 @@
 		{
 			"type": "npm",
 			"script": "lint",
+			"path": "web",
 			"problemMatcher": [
 				"$eslint-stylish"
 			],

@@ -3,10 +3,14 @@
   "bootstrap-sha": "7988f62db29f94f621091331a58d7a83c5d83b2a",
   "packages": {
     ".": {
-      "release-type": "node",
+      "release-type": "simple",
+      "package-name": "ws4kp",
       "include-component-in-tag": false,
       "extra-files": [
-        "docs/kubernetes.md"
+        "docs/kubernetes.md",
+        { "type": "json", "path": "web/package.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "web/package-lock.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "web/package-lock.json", "jsonpath": "$.packages[''].version" }
       ],
       "changelog-sections": [
         { "type": "feat", "section": "Features" },

@@ -65,7 +65,7 @@ jobs:
         run: |
           set -euo pipefail
           want="${{ inputs.version }}"
-          have="v$(node -p "require('./package.json').version")"
+          have="v$(node -p "require('./web/package.json').version")"
           echo "tag being stamped: ${want}"
           echo "package.json says: ${have}"
           # A release image whose package.json disagrees with its tag is the bug this

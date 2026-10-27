@@ -9,7 +9,7 @@
 			"request": "launch",
 			"type": "chrome",
 			"url": "http://localhost:8080",
-			"webRoot": "${workspaceFolder}/server",
+			"webRoot": "${workspaceFolder}/web/server",
 			"skipFiles": [
 				"<node_internals>/**",
 				"**/*.min.js",
@@ -26,7 +26,8 @@
 			"skipFiles": [
 				"<node_internals>/**",
 			],
-			"program": "${workspaceFolder}/index.mjs",
+			"program": "${workspaceFolder}/web/index.mjs",
+			"cwd": "${workspaceFolder}/web",
 		},
 		{
 			"type": "node",
@@ -35,14 +36,15 @@
 			"skipFiles": [
 				"<node_internals>/**",
 			],
-			"program": "${workspaceFolder}/index.mjs",
+			"program": "${workspaceFolder}/web/index.mjs",
+			"cwd": "${workspaceFolder}/web",
 			"env": {
 				"DIST": "1"
 			}
 		},
 		{
 			"name": "Test",
-			"program": "${workspaceFolder}/tests/index.mjs",
+			"program": "${workspaceFolder}/web/tests/index.mjs",
 			"request": "launch",
 			"skipFiles": [
 				"<node_internals>/**"
@@ -52,7 +54,8 @@
 		},
 		{
 			"name": "Data:stations",
-			"program": "${workspaceFolder}/datagenerators/stations.mjs",
+			"program": "${workspaceFolder}/web/datagenerators/stations.mjs",
+			"cwd": "${workspaceFolder}/web",
 			"request": "launch",
 			"skipFiles": [
 				"<node_internals>/**"
@@ -64,7 +67,8 @@
 		},
 		{
 			"name": "Data:stations-api",
-			"program": "${workspaceFolder}/datagenerators/stations.mjs",
+			"program": "${workspaceFolder}/web/datagenerators/stations.mjs",
+			"cwd": "${workspaceFolder}/web",
 			"request": "launch",
 			"skipFiles": [
 				"<node_internals>/**"
@@ -73,7 +77,8 @@
 		},
 		{
 			"name": "Data:regionalcities",
-			"program": "${workspaceFolder}/datagenerators/regionalcities.mjs",
+			"program": "${workspaceFolder}/web/datagenerators/regionalcities.mjs",
+			"cwd": "${workspaceFolder}/web",
 			"request": "launch",
 			"skipFiles": [
 				"<node_internals>/**"
@@ -82,7 +87,8 @@
 		},
 		{
 			"name": "Data:travelcities",
-			"program": "${workspaceFolder}/datagenerators/travelcities.mjs",
+			"program": "${workspaceFolder}/web/datagenerators/travelcities.mjs",
+			"cwd": "${workspaceFolder}/web",
 			"request": "launch",
 			"skipFiles": [
 				"<node_internals>/**"

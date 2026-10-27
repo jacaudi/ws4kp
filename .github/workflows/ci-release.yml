@@ -1,7 +1,7 @@
 # Stage e — release cutting. Reusable workflow.
 #
 # release-please reads Conventional Commits on main, maintains a "release PR"
-# (CHANGELOG.md + package.json bump), and on merge creates the vX.Y.Z tag +
+# (CHANGELOG.md + version.txt / web/package.json bump), and on merge creates the vX.Y.Z tag +
 # GitHub Release.
 #
 # Exposes release_created / tag_name / version so the orchestrator can build the

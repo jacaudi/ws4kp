@@ -1,9 +1,10 @@
 FROM node:24-alpine AS node-builder
 WORKDIR /app
 
-COPY package.json .
-COPY package-lock.json .
-COPY . .
+# The Node project lives in web/ (build context is still the repo root)
+COPY web/package.json .
+COPY web/package-lock.json .
+COPY web/ .
 
 RUN npm install
 RUN npm run build

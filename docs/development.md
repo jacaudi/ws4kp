@@ -22,13 +22,15 @@ The codebase is intentionally open, well-commented, and as library-free as possi
 Unit tests for the newer pure-logic modules use Node's built-in test runner:
 
 ```bash
+cd web
 npm run test:unit
-npm run lint        # everything except tests/ (see eslint.config.mjs)
+npm run lint        # everything except tests/ (see web/eslint.config.mjs)
 ```
 
 ## Build & run
 
 ```bash
+cd web
 npm install
 npm start                 # development (individual modules, caching proxy)
 npm run build             # produce dist/
@@ -39,9 +41,9 @@ See [deployment.md](deployment.md) for every run mode and the Docker builds.
 
 ## The custom script hook
 
-`server/scripts/custom.js` lets you customize your own fork without pushing changes back upstream. A sample lives at `server/scripts/custom.sample.js` — copy it to `custom.js` to activate it.
+`web/server/scripts/custom.js` lets you customize your own fork without pushing changes back upstream. A sample lives at `web/server/scripts/custom.sample.js` — copy it to `custom.js` to activate it.
 
-`server/scripts/custom.mjs` is also loaded, as an ES module (`type="module"`), so you can use `import`. Both are checked independently and either or both may be present. Anything matching `server/scripts/custom*.*` is git-ignored, so additional files like `custom-config.json` stay local too.
+`web/server/scripts/custom.mjs` is also loaded, as an ES module (`type="module"`), so you can use `import`. Both are checked independently and either or both may be present. Anything matching `web/server/scripts/custom*.*` is git-ignored, so additional files like `custom-config.json` stay local too.
 
 > **Logo hook vs. the Custom Logo PNG setting.** The sample script's example — reassigning `src` on `.logo img` — targets the same images as the **Custom Logo PNG** setting. `custom.js` is injected after the page's `DOMContentLoaded` work, so on first load your script wins. But the setting re-applies on every change, so ticking, unticking, or clearing it will overwrite your logo until the next reload. Use one mechanism or the other, not both.
 
@@ -74,3 +76,15 @@ Workflow changes are worth linting before pushing, since CI cannot catch a bad `
 ```bash
 go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/*.y*ml
 ```
+
+## Upgrading a clone from before the web/ move
+
+The browser app and its Node toolchain now live under `web/`. In a clone made before the move,
+local-only files sit at their old root paths and are no longer used: move any you want to keep.
+
+- `server/music/*.mp3` (your own tracks) → `web/server/music/`
+- `server/scripts/custom*.*` → `web/server/scripts/`
+- `.env` → `web/.env`
+- `dist/` and `node_modules/` are build output: delete them, then run `npm ci` in `web/`
+
+The root `.gitignore` keeps the old `/dist/` and `/server/` paths ignored, so these leftovers are never committed by accident.

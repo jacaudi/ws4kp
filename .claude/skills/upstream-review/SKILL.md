@@ -16,7 +16,7 @@ covers both:
 | Source key | Repo | What it feeds | Baseline | Procedure |
 |---|---|---|---|---|
 | `ws4kp` | netbymatt/ws4kp | all the code | release tag + sha | Steps 1–7 |
-| `ws4kp-music` | netbymatt/ws4kp-music | `server/music/default` | commit sha (no tags) | [Music source](#music-source-ws4kp-music) |
+| `ws4kp-music` | netbymatt/ws4kp-music | `web/server/music/default` | commit sha (no tags) | [Music source](#music-source-ws4kp-music) |
 
 A new upstream is a new key under `sources` plus its own procedure section here.
 
@@ -91,10 +91,17 @@ baseline. Never force-fetch upstream tags into `refs/tags/`.
 
 ## Step 2 — Partition the files (this is the whole trick)
 
+**Paths.** The fork keeps the browser app under `web/` (`sources.ws4kp.pathMap` in
+`.upstream-sync.json`). Every path in this skill, and every `divergences`/`skipped` entry, is an
+**upstream** path; its copy here is that path piped through
+`node .claude/skills/upstream-review/path-map.mjs --to-fork`. A plain `git diff $B..main` cannot
+pair a moved file with its original, so the fork side of the partition comes from the map-aware
+`changed` listing, which also names every file the fork added. `changed` compares against `HEAD`, so run the partition with `main` checked out, not mid-catch-up on a branch where some files are already applied.
+
 ```bash
 S="${TMPDIR:-/tmp}"                      # or the session scratchpad
-git diff --no-renames --name-only $B..main    | sort > "$S/fork.txt"
-git diff --no-renames --name-only $B..$TARGET | sort > "$S/up.txt"
+node .claude/skills/upstream-review/path-map.mjs changed $B   | sort > "$S/fork.txt"   # upstream-side paths the fork differs on or added
+git diff --no-renames --name-only $B..$TARGET                  | sort > "$S/up.txt"
 
 comm -12 "$S/fork.txt" "$S/up.txt"   # CONTESTED — both sides changed
 comm -13 "$S/fork.txt" "$S/up.txt"   # upstream-only — clean apply
@@ -107,12 +114,22 @@ The v8.0.1 review misclassified three files this way: the fork moved `nginx.conf
 `views/partials/radar.ejs` to `radar-common.ejs` — all three read as upstream-only
 "clean apply" when they were contested or deleted here.
 
-The upstream-only set applies with `git checkout $TARGET -- <file>` — the release tag,
-not `upstream/main`, unless you are deliberately taking unreleased work — and needs no
-judgement.
+The upstream-only set applies at the mapped path — the release tag, not `upstream/main`,
+unless you are deliberately taking unreleased work — and needs no judgement. Write through a
+temp file so a failed `git show` (an upstream deletion) never truncates the fork's copy:
+
+```bash
+git rev-parse -q --verify "$TARGET^{commit}" >/dev/null || { echo "TARGET is not a commit: $TARGET"; exit 1; }   # a typo must not fall into git rm below
+f=<upstream path>; dest=$(echo "$f" | node .claude/skills/upstream-review/path-map.mjs --to-fork)
+if git cat-file -e "$TARGET:$f" 2>/dev/null; then
+  tmp=$(mktemp) && git show "$TARGET:$f" > "$tmp" && mkdir -p "$(dirname "$dest")" && mv "$tmp" "$dest"
+else
+  git rm -q "$dest"                    # upstream deleted it
+fi
+```
 
 Files **only the fork changed** (`comm -23`) are out of scope. That side of the diff
-lists everything the fork has ever diverged on (91 files today); do not read them.
+lists everything the fork has ever diverged on; do not read them.
 
 Expect the contested set to be small and mostly boring. The 7.1.3 catch-up had 9 of 17
 files upstream-only; the 7.1.4–7.1.6 catch-up had 5 of 8 upstream-only, and the 3
@@ -124,7 +141,7 @@ the fork rewrote, classify it and move on. Do this partition **before** reading 
 Within the contested set, sort further:
 
 - **Generated** (`server/styles/ws.min.css`, `.map`) — never hand-merge. Take the
-  `.scss` source, then `npm run build:css`, and confirm the rule actually compiled.
+  `.scss` source, then `npm run build:css` (from `web/`), and confirm the rule actually compiled.
 - **Metadata** (`package.json`, `package-lock.json`) — the fork intentionally runs
   ahead (ejs 6, suncalc 2, eslint 10). Take only specific dependency *additions*
   upstream needs for a file you adopted.
@@ -145,7 +162,7 @@ Read it before agonising. Real example: upstream's regional-city commit changed
 `targetDist 1 → 1.5` — constants of the selection algorithm this fork replaced
 wholesale. Nothing to port.
 
-Conversely, check whether a fork file is byte-identical to the baseline `$B`. If it is,
+Conversely, check whether a fork file is byte-identical to the baseline `$B` (`git diff --quiet $B:<upstream path> HEAD:<mapped path>`, or: it is absent from `path-map.mjs changed $B`). If it is,
 upstream's fix to it is a **live bug here** and applies cleanly. That is how the
 offshore-marine null-grid 404 fix was found.
 
@@ -155,12 +172,12 @@ The most dangerous upstream changes are not code conflicts — they are **data f
 changes that silently break fork-specific code**. Always:
 
 1. Diff the **shape** of any adopted data file, not just its size. Both feeds live in
-   `datagenerators/output/`, and they are not the same shape — `regionalcities.json` is an
+   `web/datagenerators/output/`, and they are not the same shape — `regionalcities.json` is an
    **array** of objects with **string** `lat`/`lon`; `stations.json` is an **object keyed by
    station id** with **number** `lat`/`lon`. Check `Array.isArray` before indexing, or
    `a[0].lat` prints `undefined` and you have "checked" nothing:
    ```bash
-   node -e "const a=require('./datagenerators/output/regionalcities.json'); console.log(Array.isArray(a), typeof a[0].lat)"
+   node -e "const a=require('./web/datagenerators/output/regionalcities.json'); console.log(Array.isArray(a), typeof a[0].lat)"
    ```
 2. Compare against every other feed merged into the same structure.
 3. Grep fork-only helpers for `+` on values from that data. Subtraction and `<`/`>`
@@ -177,7 +194,7 @@ Prove such a finding with real data before claiming it:
 
 ```bash
 node --input-type=module -e "
-import { selectRegionalCities } from './server/scripts/modules/regionalforecast-select.mjs';
+import { selectRegionalCities } from './web/server/scripts/modules/regionalforecast-select.mjs';
 // build the pool both ways and print the counts
 "
 ```
@@ -230,25 +247,25 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
 
 ## Step 7 — Verify like you mean it
 
-- `npm run test:unit` — the CI-relevant suite. It includes
+- `npm run test:unit` (from `web/`) — the CI-relevant suite. It includes
   `tests/unit/build-consistency.test.mjs`, which fails if `server/styles/ws.min.css` is not
-  a byte-match for a fresh compile — so a forgotten `npm run build:css` after adopting an
+  a byte-match for a fresh compile — so a forgotten `npm run build:css` (from `web/`) after adopting an
   upstream `.scss` fails the unit suite, not just review.
-- `rtk proxy npm run lint` — raw/uncached. Since v8 it is `eslint .` with upstream's flat
+- `rtk proxy npm run lint` (from `web/`) — raw/uncached. Since v8 it is `eslint .` with upstream's flat
   config, which ignores `tests/`. Compare against clean `main` before blaming your change.
 - Integration test (Puppeteer, 5 cities, live NWS) — what `ci-test.yml` runs:
   ```bash
-  npm ci --prefix tests            # tests/ is its own npm package (puppeteer, chalk)
-  WS4KP_PORT=8136 node index.mjs > "${TMPDIR:-/tmp}/ws4kp.log" 2>&1 &
+  npm ci --prefix web/tests        # web/tests/ is its own npm package (puppeteer, chalk)
+  (cd web && WS4KP_PORT=8136 node index.mjs > "${TMPDIR:-/tmp}/ws4kp.log" 2>&1 &)
   until curl -sf http://localhost:8136/ >/dev/null; do node -e "setTimeout(()=>{},500)"; done
-  WS4KP_TEST_URL=http://localhost:8136 node tests/index.mjs; echo "exit=$?"
+  WS4KP_TEST_URL=http://localhost:8136 node web/tests/index.mjs; echo "exit=$?"
   pkill -f "node index.mjs"
   ```
   Exit **0** = clean, **1** = a real regression, **75** = api.weather.gov / Open-Meteo was
   down, i.e. inconclusive, *not* a failure. `WS4KP_PORT`, not `PORT`. Neither `timeout` nor
   `gtimeout` exists on this box, and the harness blocks foreground `sleep` — hence the
   `node -e setTimeout` stand-in.
-- `npm run build:css` after any `.scss` change, then grep the minified output for the
+- `npm run build:css` (from `web/`) after any `.scss` change, then grep the minified output for the
   compiled rule.
 - **Rendering changes require a browser.** Unit tests did not catch that decluttering
   was a silent no-op. See `.claude/skills/upstream-review/browser-verify.md`.
@@ -270,7 +287,7 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
 
 ## Music source (ws4kp-music)
 
-`netbymatt/ws4kp-music` holds the tracks this fork bundles in `server/music/default`,
+`netbymatt/ws4kp-music` holds the tracks this fork bundles in `web/server/music/default`,
 organised as album folders. It has **no release tags**, so its baseline is a commit on
 `main` (`sources.ws4kp-music.sha`), and adoption is tracked **per album** under `albums`:
 `status` (adopted / skipped), `tracks`, `license`, `source`, and any `renamed` files.
@@ -304,8 +321,8 @@ Adopting tracks:
    must equal the tree entry's `sha`.
 3. Read the tags (`music-metadata`): the player shows the title/artist tags, falling back
    to the file name.
-4. Flatten into `server/music/default`: the reader scans only `server/music` and falls back
-   to `server/music/default`, with no subfolders. Name each file `<album>--<song>.mp3`, all lower
+4. Flatten into `web/server/music/default`: the reader scans only `web/server/music` and falls back
+   to `web/server/music/default`, with no subfolders. Name each file `<album>--<song>.mp3`, all lower
    case, with every space a single dash (`sources.ws4kp-music.naming`); the album prefix keeps same-named
    songs apart (both albums have *Rolling Clouds*).
 5. Stage and confirm Git LFS took them (`git show :<path>` prints a pointer, not audio).

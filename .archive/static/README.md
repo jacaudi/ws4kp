@@ -9,14 +9,14 @@ It is **not** built by CI.
 
 ## What it is
 
-A pure client-side deployment: `npm run build` produces the static `dist/` bundle, and
+A pure client-side deployment: `npm run build` (in `web/`) produces the static `web/dist/` bundle, and
 **nginx** serves it. There is no server component — every browser calls the weather
 services (NWS, Open-Meteo) **directly**.
 
 Trade-offs vs. the server deployment:
 
 - **No shared caching.** Each viewer makes its own upstream calls, so N viewers ≈ N×
-  the upstream load. The server deployment's in-process proxy (`proxy/cache.mjs`)
+  the upstream load. The server deployment's in-process proxy (`web/proxy/cache.mjs`)
   instead deduplicates in-flight requests and honors ETag/`max-age`, collapsing many
   viewers into few upstream calls.
 - **Smallest footprint / most robust to operate** — just static files behind nginx,
@@ -29,7 +29,7 @@ Trade-offs vs. the server deployment:
 |---|---|
 | `Dockerfile` | Multi-stage build: `node:24-alpine` runs `npm run build`, then `nginx:alpine` serves `dist/`. |
 | `nginx.conf` | nginx server block (port 8080, `.mjs` MIME type, SPA `try_files`, music autoindex). Installed to `/etc/nginx/conf.d/default.conf`. |
-| `static-env-handler.sh` | nginx entrypoint (`/docker-entrypoint.d/01-…`) that turns `WSQS_*` environment variables into the default permalink query string at container start-up (the static analogue of what `index.mjs` does at request time in server mode). |
+| `static-env-handler.sh` | nginx entrypoint (`/docker-entrypoint.d/01-…`) that turns `WSQS_*` environment variables into the default permalink query string at container start-up (the static analogue of what `web/index.mjs` does at request time in server mode). |
 
 ## Build & run
 
@@ -48,5 +48,5 @@ by `static-env-handler.sh` on start-up.
 ## No Docker needed
 
 If you just want static hosting, you don't need this Dockerfile at all — run
-`npm run build` and upload the resulting `dist/` to any web server (Apache, nginx, a
+`npm run build` in `web/` and upload the resulting `web/dist/` to any web server (Apache, nginx, a
 CDN, object storage, etc.). No server-side scripting is required.

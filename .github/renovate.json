@@ -10,7 +10,7 @@
   "semanticCommitScope": "deps",
   "packageRules": [
     {
-      "description": "Vendored packages are copied into server/scripts/vendor/auto/ and served to the browser, so the lockfile bump alone leaves the shipped bundle stale (proj4 is rebuilt from gulp/proj4-minimal.mjs rather than copied). npm ci first: Renovate resolves lockfiles with --package-lock-only, so node_modules does not exist and updateVendor has nothing to copy from.",
+      "description": "Vendored packages are copied into web/server/scripts/vendor/auto/ and served to the browser, so the lockfile bump alone leaves the shipped bundle stale (proj4 is rebuilt from web/gulp/proj4-minimal.mjs rather than copied). npm ci first: Renovate resolves lockfiles with --package-lock-only, so node_modules does not exist and updateVendor has nothing to copy from. The commands run in web/ via workingDirTemplate and must stay byte-identical: the home-ops runner allowlists them.",
       "matchPackageNames": [
         "luxon",
         "@zakj/no-sleep",
@@ -24,8 +24,9 @@
           "npm ci --ignore-scripts",
           "npx gulp updateVendor"
         ],
+        "workingDirTemplate": "web",
         "fileFilters": [
-          "server/scripts/vendor/auto/**"
+          "web/server/scripts/vendor/auto/**"
         ],
         "executionMode": "branch"
       }
