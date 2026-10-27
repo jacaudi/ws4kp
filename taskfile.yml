@@ -1,8 +1,43 @@
+# THE CI CONTRACT — `task ci` is what CI runs and what you run locally. Rationale: github-actions-align/templates/README.md#taskfiles
 # https://taskfile.dev
-# PR 3 adds the CI contract (task ci, task integration); this file starts with the dev loop.
 version: '3'
 
+includes:
+  repo:
+    taskfile: .taskfiles/repo.yml
+
+  go:
+    taskfile: .taskfiles/go.yml
+
 tasks:
+  default:
+    desc: List all tasks
+    cmds:
+      - task --list
+
+  ci:
+    desc: Everything CI runs. Run this before pushing.
+    cmds:
+      - task: repo:ci
+      - task: go:ci
+
+  lint:
+    desc: Static checks only
+    cmds:
+      - task: repo:ci
+      - task: go:fmt:check
+      - task: go:lint
+
+  test:
+    desc: Tests only
+    cmds:
+      - task: go:test
+
+  build:
+    desc: Build artefacts
+    cmds:
+      - task: go:build
+
   dev:
     desc: Serve web/ from disk with the Go server and rebuild the dev index and CSS on change (Ctrl-C stops both)
     cmds:
