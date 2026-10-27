@@ -2,7 +2,7 @@
 
 This folder holds the **legacy static deployment** of WeatherStar 4000+. It was the
 default container image before the project standardized on the **server deployment**
-(the caching Node/Express proxy — now the default `Dockerfile` in the repo root).
+(the caching Go server — the default `Dockerfile` in the repo root).
 
 It's kept here for reference and for anyone who still wants a pure client-side build.
 It is **not** built by CI.
@@ -16,7 +16,7 @@ services (NWS, Open-Meteo) **directly**.
 Trade-offs vs. the server deployment:
 
 - **No shared caching.** Each viewer makes its own upstream calls, so N viewers ≈ N×
-  the upstream load. The server deployment's in-process proxy (`web/proxy/cache.mjs`)
+  the upstream load. The server deployment's in-process proxy (`internal/proxy/cache.go`)
   instead deduplicates in-flight requests and honors ETag/`max-age`, collapsing many
   viewers into few upstream calls.
 - **Smallest footprint / most robust to operate** — just static files behind nginx,
@@ -29,7 +29,7 @@ Trade-offs vs. the server deployment:
 |---|---|
 | `Dockerfile` | Multi-stage build: `node:24-alpine` runs `npm run build`, then `nginx:alpine` serves `dist/`. |
 | `nginx.conf` | nginx server block (port 8080, `.mjs` MIME type, SPA `try_files`, music autoindex). Installed to `/etc/nginx/conf.d/default.conf`. |
-| `static-env-handler.sh` | nginx entrypoint (`/docker-entrypoint.d/01-…`) that turns `WSQS_*` environment variables into the default permalink query string at container start-up (the static analogue of what `web/index.mjs` does at request time in server mode). |
+| `static-env-handler.sh` | nginx entrypoint (`/docker-entrypoint.d/01-…`) that turns `WSQS_*` environment variables into the default permalink query string at container start-up (the static analogue of what the Go server does at request time in server mode). |
 
 ## Build & run
 

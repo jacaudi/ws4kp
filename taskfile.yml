@@ -1,0 +1,22 @@
+# https://taskfile.dev
+# PR 3 adds the CI contract (task ci, task integration); this file starts with the dev loop.
+version: '3'
+
+tasks:
+  dev:
+    desc: Serve web/ from disk with the Go server and rebuild the dev index and CSS on change (Ctrl-C stops both)
+    cmds:
+      - npm --prefix web run dev:index
+      - task: dev:run
+
+  dev:run:
+    internal: true
+    deps: [dev:watch, dev:serve]
+
+  dev:watch:
+    internal: true
+    cmd: npm --prefix web run dev:watch
+
+  dev:serve:
+    internal: true
+    cmd: go run ./cmd/ws4kp --dev --log-format text

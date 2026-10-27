@@ -80,19 +80,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify the source image reports the version being tagged
+      # The image is distroless (no node, no shell, no package.json), so the check reads the
+      # OCI revision label docker/metadata-action stamps at build time: the image must have
+      # been built from the commit the tag points at.
+      - name: Verify the source image was built from the tagged commit
         env:
           SRC: ${{ env.IMAGE }}:${{ steps.commit.outputs.short }}
+          WANT: ${{ steps.commit.outputs.sha }}
           TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
           echo "source image: ${SRC}"
-          have="v$(docker run --rm --entrypoint node "${SRC}" -p "require('/app/package.json').version")"
-          echo "tag being applied: ${TAG}"
-          echo "image reports:     ${have}"
+          docker pull -q "${SRC}"
+          have=$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "${SRC}")
+          echo "tag commit:     ${WANT}"
+          echo "image revision: ${have}"
           # Retagging the wrong image is exactly the failure being repaired, so
           # refuse rather than move the release tags onto it.
-          [ "${TAG}" = "${have}" ] || { echo "::error::${SRC} reports ${have}, refusing to tag it ${TAG}"; exit 1; }
+          [ "${WANT}" = "${have}" ] || { echo "::error::${SRC} was built from ${have}, refusing to retag it as ${TAG}"; exit 1; }
 
       - name: Point the semver tags at that image
         id: out

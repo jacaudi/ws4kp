@@ -98,6 +98,12 @@ baseline. Never force-fetch upstream tags into `refs/tags/`.
 pair a moved file with its original, so the fork side of the partition comes from the map-aware
 `changed` listing, which also names every file the fork added. `changed` compares against `HEAD`, so run the partition with `main` checked out, not mid-catch-up on a branch where some files are already applied.
 
+**No Node server here.** Upstream's server files were deleted when the fork moved to Go, and
+each maps to a package: `index.mjs` → `internal/server` (routes, index injection, static
+files) and `cmd/ws4kp`; `proxy/cache.mjs` and `proxy/handlers.mjs` → `internal/proxy`;
+`src/playlist.mjs` → `internal/playlist`; `src/com.chrome.devtools.mjs` → `internal/server`
+(`serveDevtools`). An upstream change to one of them is ported to Go by hand, never applied.
+
 ```bash
 S="${TMPDIR:-/tmp}"                      # or the session scratchpad
 node .claude/skills/upstream-review/path-map.mjs changed $B   | sort > "$S/fork.txt"   # upstream-side paths the fork differs on or added
@@ -256,10 +262,12 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
 - Integration test (Puppeteer, 5 cities, live NWS) — what `ci-test.yml` runs:
   ```bash
   npm ci --prefix web/tests        # web/tests/ is its own npm package (puppeteer, chalk)
-  (cd web && WS4KP_PORT=8136 node index.mjs > "${TMPDIR:-/tmp}/ws4kp.log" 2>&1 &)
-  until curl -sf http://localhost:8136/ >/dev/null; do node -e "setTimeout(()=>{},500)"; done
+  npm --prefix web run build && go build -o "${TMPDIR:-/tmp}/ws4kp-review" ./cmd/ws4kp
+  WS4KP_PORT=8136 "${TMPDIR:-/tmp}/ws4kp-review" > "${TMPDIR:-/tmp}/ws4kp.log" 2>&1 & pid=$!
+  for i in $(seq 1 60); do curl -sf http://localhost:8136/ >/dev/null && break; node -e "setTimeout(()=>{},500)"; done
+  curl -sf http://localhost:8136/ >/dev/null || echo "TIMEOUT: the server did not start; see ${TMPDIR:-/tmp}/ws4kp.log"
   WS4KP_TEST_URL=http://localhost:8136 node web/tests/index.mjs; echo "exit=$?"
-  pkill -f "node index.mjs"
+  kill "$pid"
   ```
   Exit **0** = clean, **1** = a real regression, **75** = api.weather.gov / Open-Meteo was
   down, i.e. inconclusive, *not* a failure. `WS4KP_PORT`, not `PORT`. Neither `timeout` nor

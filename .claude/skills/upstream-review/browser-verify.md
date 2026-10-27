@@ -7,10 +7,15 @@ layout gets checked in a real browser.
 
 ## Start a server on a free port
 
-`WS4KP_PORT`, **not** `PORT` (`web/index.mjs`). Setting `PORT` silently does nothing.
+`WS4KP_PORT` (or `--port`), **not** `PORT` (`internal/config`). Setting `PORT` silently does nothing.
+Dev mode serves the browser modules from `web/server/` on disk, so an edit shows on reload:
 
 ```bash
-(cd web && WS4KP_PORT=8136 node index.mjs &)
+go build -o "${TMPDIR:-/tmp}/ws4kp-verify" ./cmd/ws4kp && npm --prefix web run dev:index
+WS4KP_PORT=8136 "${TMPDIR:-/tmp}/ws4kp-verify" --dev --log-format text > "${TMPDIR:-/tmp}/ws4kp-verify.log" 2>&1 &
+echo $! > "${TMPDIR:-/tmp}/ws4kp-verify.pid"
+for i in $(seq 1 40); do curl -sf http://localhost:8136/ >/dev/null && break; node -e "setTimeout(()=>{},250)"; done
+curl -sf http://localhost:8136/ >/dev/null && echo serving || echo "TIMEOUT: see ${TMPDIR:-/tmp}/ws4kp-verify.log"
 ```
 
 Use a fresh port per run. A stale server on the old port will happily serve the
@@ -79,5 +84,5 @@ pinned to the border at coordinates that did not match their real locations.
 
 ## Clean up
 
-`pkill -f "node index.mjs"`, and delete `.playwright-mcp/` and any stray screenshots
+`kill "$(cat "${TMPDIR:-/tmp}/ws4kp-verify.pid")"`, and delete `.playwright-mcp/` and any stray screenshots
 before committing.

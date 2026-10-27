@@ -92,6 +92,8 @@ const extraneousDependencies = {
 		'gulpfile.mjs',
 		'eslint.config.mjs',
 		'datagenerators/**/*',
+		// build-time helpers gulp imports; the Go server replaced their runtime use
+		'src/**/*',
 	],
 	rules: {
 		'import-x/no-extraneous-dependencies': 'off',

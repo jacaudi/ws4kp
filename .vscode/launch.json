@@ -20,27 +20,24 @@
 			],
 		},
 		{
-			"type": "node",
+			// dev mode serves web/ from disk; run `npm --prefix web run dev:index` first
+			"type": "go",
 			"request": "launch",
 			"name": "Server",
-			"skipFiles": [
-				"<node_internals>/**",
-			],
-			"program": "${workspaceFolder}/web/index.mjs",
-			"cwd": "${workspaceFolder}/web",
+			"mode": "auto",
+			"program": "${workspaceFolder}/cmd/ws4kp",
+			"cwd": "${workspaceFolder}",
+			"args": ["--dev", "--log-format", "text"],
 		},
 		{
-			"type": "node",
+			// serves the embedded build; run `npm --prefix web run build` first
+			"type": "go",
 			"request": "launch",
 			"name": "Server-dist",
-			"skipFiles": [
-				"<node_internals>/**",
-			],
-			"program": "${workspaceFolder}/web/index.mjs",
-			"cwd": "${workspaceFolder}/web",
-			"env": {
-				"DIST": "1"
-			}
+			"mode": "auto",
+			"program": "${workspaceFolder}/cmd/ws4kp",
+			"cwd": "${workspaceFolder}",
+			"args": ["--log-format", "text"],
 		},
 		{
 			"name": "Test",

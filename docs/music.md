@@ -10,7 +10,7 @@ The WeatherStar had wonderful smooth-jazz / new-age background music. The origin
 
 ## What ships in this fork
 
-Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `web/server/music/default/` and **baked into the container image**, so music plays out of the box.
+Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `web/server/music/default/` and **built into the server binary** (and so the container image), so music plays out of the box.
 
 | Album | Tracks | Bundled |
 |---|---|---|
@@ -38,7 +38,7 @@ For commercial use, play only the Latest Observations tracks: mount a folder con
 
 ## Adding or overriding music
 
-The server generates `playlist.json` by scanning its music folder (`web/server/music` in a checkout, `/app/server/music` in the image) for `.mp3` files; if none are found it falls back to that folder's `default/`. The playlist is served at `/playlist.json`, and the browser randomizes track order (reshuffling each loop). Subdirectories are not scanned.
+The server generates `playlist.json` by scanning its music folder (`web/server/music` under `task dev`, `/app/server/music` in the image, or `--music-dir`) for `.mp3` files; if none are found it falls back to that folder's `default/`, then, by the same rule, to the `music/` folder built into the binary: the `.mp3` files that were in `web/server/music/` when the image was built, else the bundled `default/` set. A non-empty mount always wins. To measure each track's length it reads every listed file in full once, in the background at startup: about a third of a second for the 23 bundled tracks (81 MB). A large mounted library takes proportionally longer, and `/playlist.json` waits until the scan is done. The playlist is served at `/playlist.json`, and the browser randomizes track order (reshuffling each loop). Subdirectories are not scanned.
 
 **Add your own tracks:** drop `.mp3` files into `web/server/music/`.
 
@@ -47,6 +47,8 @@ The server generates `playlist.json` by scanning its music folder (`web/server/m
 ```bash
 docker run -p 8080:8080 -v /path/to/your/music:/app/server/music ws4kp
 ```
+
+The container runs as uid 65532, so the folder and its files must be world-readable (`chmod -R a+rX /path/to/your/music`); the server logs a warning for anything it cannot read.
 
 Because the scanner uses the music folder first and only falls back to `default/`, a non-empty mount replaces the bundled tracks.
 

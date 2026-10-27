@@ -260,6 +260,30 @@
             ".vscode/tasks.json"
           ],
           "reason": "launch and task paths point into web/ after the browser app moved under web/"
+        },
+        {
+          "paths": [
+            "views/index.ejs",
+            "gulp/build.mjs",
+            "gulpfile.mjs",
+            "package.json"
+          ],
+          "reason": "the Go server injects the server flag, runtime OVERRIDES and kiosk class into the built index between <!--ws4kp:server--> and /*ws4kp:overrides*/ markers; gulp gains buildDevIndex and watch for its dev mode (task dev)"
+        },
+        {
+          "paths": [
+            "index.mjs",
+            "proxy/cache.mjs",
+            "proxy/handlers.mjs",
+            "src/playlist.mjs",
+            "src/com.chrome.devtools.mjs",
+            "package.json",
+            "package-lock.json",
+            "eslint.config.mjs",
+            "Dockerfile",
+            ".dockerignore"
+          ],
+          "reason": "runtime replaced by the Go server (cmd/ws4kp, internal/): the Express entry, proxy, playlist route and devtools route are deleted; express is dropped and ejs, dotenv and music-metadata become build-time devDependencies (eslint allows them in src/); the image is a distroless Go binary"
         }
       ]
     },

@@ -16,12 +16,14 @@ The codebase is intentionally open, well-commented, and as library-free as possi
 - Practical API-rate and static-asset caching
 - Straightforward hand-written HTML
 - A Gulp + Webpack build to bundle scripts
+- A Go server (`cmd/ws4kp`, `internal/`) that embeds the built site and proxies and caches the weather APIs
 - Hand-written CSS managed with SASS
 - ESLint (airbnb-extended, flat config) for consistent style
 
-Unit tests for the newer pure-logic modules use Node's built-in test runner:
+The Go server's tests run from the repo root; unit tests for the newer pure-logic browser modules use Node's built-in test runner:
 
 ```bash
+go vet ./... && go test -race ./...
 cd web
 npm run test:unit
 npm run lint        # everything except tests/ (see web/eslint.config.mjs)
@@ -30,12 +32,13 @@ npm run lint        # everything except tests/ (see web/eslint.config.mjs)
 ## Build & run
 
 ```bash
-cd web
-npm install
-npm start                 # development (individual modules, caching proxy)
-npm run build             # produce dist/
-DIST=1 npm start          # production (minified bundles)
+npm --prefix web ci
+task dev                      # development: web/server/ from disk, caching proxy, rebuilds on change
+npm --prefix web run build    # produce web/dist/
+go run ./cmd/ws4kp            # production: the build embedded in the binary
 ```
+
+`task dev` renders `views/index.ejs` to `web/.dev/index.html` and recompiles `ws.min.css` whenever their sources change, while the Go server serves `web/server/` from disk; reload the page to pick up an edit. The binary embeds `web/dist/` when it is compiled, so after `npm run build` restart `go run` to serve the new build.
 
 See [deployment.md](deployment.md) for every run mode and the Docker builds.
 
@@ -49,7 +52,7 @@ See [deployment.md](deployment.md) for every run mode and the Docker builds.
 
 In Docker, mount your file in:
 
-- **Server deployment:** `/app/server/scripts/custom.js` (or `custom.mjs`)
+- **Server deployment:** `/app/server/scripts/custom.js` (or `custom.mjs`). The container runs as uid 65532, so the file must be world-readable.
 - **Static deployment (archived):** `/usr/share/nginx/html/scripts/custom.js` (or `custom.mjs`)
 
 For custom scrolling text in the bottom bar, you don't need a custom script — use the **Enable RSS Feed/Text** setting ([usage.md](usage.md#custom-scrolling-text)).
@@ -88,3 +91,10 @@ local-only files sit at their old root paths and are no longer used: move any yo
 - `dist/` and `node_modules/` are build output: delete them, then run `npm ci` in `web/`
 
 The root `.gitignore` keeps the old `/dist/` and `/server/` paths ignored, so these leftovers are never committed by accident.
+
+## Upgrading a clone to the Go server (v8)
+
+The Node/Express server is gone; `npm start` in `web/` now only prints where to go instead.
+
+- Run `task dev` (or `go run ./cmd/ws4kp --dev`) from the **repo root**.
+- `.env` moves again: the server reads `.env` from its working directory, which is now the repo root. Move `web/.env` back to `.env` at the root. `web/.env` is still read by `npm run build` for build-time `OVERRIDE_*` values (static hosting only); see [deployment.md](deployment.md#configuration).

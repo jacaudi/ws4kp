@@ -1,58 +1,37 @@
-# Build stage: needs the full toolchain (gulp, webpack, terser, sass) to emit dist/.
-# The Node project lives in web/; the build stage copies only that directory.
-FROM node:24-alpine AS build
-WORKDIR /app
+# Three stages: the browser app (Node, build time only), the Go binary that embeds it, and
+# a distroless runtime that holds nothing but that binary. Base images are pinned by digest;
+# Renovate's docker:pinDigests keeps them current.
 
+# The site: gulp, webpack and sass emit web/dist/. The output is architecture-independent,
+# so this stage always runs on the build machine's own platform.
+FROM --platform=$BUILDPLATFORM node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS web
+WORKDIR /src/web
 COPY web/package.json web/package-lock.json ./
-RUN npm ci --legacy-peer-deps
-COPY web/ .
+RUN npm ci
+COPY web/ ./
+RUN npm run build && node -p "require('./package.json').version" > /src/version
 
-# buildDist copies the music into dist/ for static hosting; this image serves /music from
-# server/music (index.mjs, DIST=1), so the dist copy would only double the music in the image.
-RUN npm run build && rm -rf dist/music
+# The binary, cross-compiled for the target platform, so no emulation is needed.
+FROM --platform=$BUILDPLATFORM golang:1.27.3-alpine@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c AS go
+ARG TARGETOS
+ARG TARGETARCH
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY cmd/ cmd/
+COPY internal/ internal/
+COPY web/embed.go web/
+COPY web/server/scripts/ web/server/scripts/
+COPY --from=web /src/web/dist/ web/dist/
+COPY --from=web /src/version /src/version
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
+	go build -trimpath -ldflags "-s -w -X main.version=$(cat /src/version)" -o /out/ws4kp ./cmd/ws4kp
 
-# Runtime stage: production dependencies only, so none of the build toolchain
-# reaches the shipped image. Only the paths the server actually touches with
-# DIST=1 are copied -- everything else is either inside dist/ or build-time only.
-# The runtime layout under /app is unchanged by the move to web/: documented mounts
-# (/app/server/music, /app/server/scripts/custom.js) and release-republish's
-# /app/package.json read depend on it.
-FROM node:24-alpine
+# The runtime: no shell, no package manager, uid 65532. Mounts under /app/server/music and
+# /app/server/scripts must be readable by that user.
+FROM gcr.io/distroless/static-debian13:nonroot@sha256:18f4cc26c9ffa7f20a359298be7deadac5c607c8e03a02b8119f1a5fc2f82c99
 WORKDIR /app
-
-COPY web/package.json web/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force
-
-# Built output: served at / and holds the compiled JS/CSS, images and fonts.
-COPY --from=build /app/dist ./dist
-
-# Server entry point and its imports.
-COPY web/index.mjs ./
-COPY web/proxy ./proxy
-COPY web/src ./src
-
-# EJS templates: index.mjs sets the ejs view engine and renders 'index' per
-# request, so views/ is needed at runtime, not only at build time.
-COPY web/views ./views
-
-# Served by express.static under DIST=1. src/playlist-reader.mjs also reads
-# server/music (and server/music/default) at startup to build the playlist.
-COPY web/server/scripts ./server/scripts
-COPY web/server/music ./server/music
-
-# Read and parsed at startup by index.mjs.
-COPY web/datagenerators/output ./datagenerators/output
-
+COPY --from=go /out/ws4kp /app/ws4kp
 EXPOSE 8080
-
-# busybox wget ships with alpine; manifest.json is a small static file from dist/
-HEALTHCHECK --interval=60s --timeout=5s --start-period=15s --retries=3 \
-	CMD wget -q --spider "http://127.0.0.1:8080/manifest.json" || exit 1
-
-# NODE_ENV=production is read by Express, not by this project's own code
-# (nothing here branches on it). It enables the view cache, so the EJS
-# templates are compiled once instead of re-read on every request, and it
-# stops finalhandler from putting err.stack into 5xx response bodies.
-ENV NODE_ENV=production
-ENV DIST=1
-CMD ["npm", "start"]
+HEALTHCHECK --interval=60s --timeout=5s --start-period=15s --retries=3 CMD ["/app/ws4kp", "healthcheck"]
+ENTRYPOINT ["/app/ws4kp"]
