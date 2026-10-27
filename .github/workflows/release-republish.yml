@@ -1,16 +1,12 @@
-# Repair the container image for an existing release tag.
+# Manual repair of a release image — retag (registry-side copy, preferred) or rebuild. Rationale: github-actions-align/templates/README.md#release-republishyml
 #
 # The normal path publishes a release image exactly once, from ci.yaml's
 # release-image job. There is no way to ask for it again, so when an image is
 # published wrong there is nothing to re-run — v7.2.0 was built from the wrong
 # commit and could only be corrected by hand. This is that missing operation.
 #
-# Nothing here touches git tags or GitHub Releases; only the container image.
-#
-# retag (default) — point the semver tags at the image CI already built and
-#   smoke-tested for the tagged commit. A registry-side manifest copy, so the
-#   release image is bit-identical to the tested artifact and no second digest
-#   for the same source is created. Rebuilding instead is not reproducible: the
+# retag (default) — a registry-side manifest copy, so the release image is
+#   bit-identical to the tested artifact. Rebuilding instead is not reproducible: the
 #   v7.2.0 repair produced sha256:0fcbc1e7 from the same commit that had already
 #   yielded sha256:e3082db0, leaving :v7.2.0 and :sha-44230d8 as different images.
 #
@@ -22,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing release tag to repair (e.g. v7.2.0)
+        description: Existing release tag to repair (e.g. v8.0.0)
         required: true
         type: string
       mode:
@@ -41,9 +37,6 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  IMAGE: ghcr.io/jacaudi/ws4kp
-
 jobs:
   retag:
     name: retag ${{ inputs.tag }}
@@ -54,6 +47,8 @@ jobs:
       packages: write
     outputs:
       image: ${{ steps.out.outputs.image }}
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
     steps:
       - name: Resolve the tag to its commit
         id: commit
@@ -63,18 +58,18 @@ jobs:
         run: |
           set -euo pipefail
           sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" --jq '.object.sha')
-          # annotated tags point at a tag object; dereference to the commit
           type=$(gh api "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" --jq '.object.type')
           if [ "${type}" = "tag" ]; then
             sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/tags/${sha}" --jq '.object.sha')
           fi
           echo "sha=${sha}" >> "$GITHUB_OUTPUT"
-          # docker/metadata-action's type=sha uses the 7-char short sha
           echo "short=sha-${sha:0:7}" >> "$GITHUB_OUTPUT"
           echo "${TAG} -> ${sha} (${sha:0:7})"
 
+      # GITHUB_TOKEN, as before this pipeline: pushing to and pulling from this repo's own GHCR
+      # namespace needs no App token. The template's scoped App tokens are a follow-up.
       - name: Log in to GHCR
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -95,8 +90,6 @@ jobs:
           have=$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "${SRC}")
           echo "tag commit:     ${WANT}"
           echo "image revision: ${have}"
-          # Retagging the wrong image is exactly the failure being repaired, so
-          # refuse rather than move the release tags onto it.
           [ "${WANT}" = "${have}" ] || { echo "::error::${SRC} was built from ${have}, refusing to retag it as ${TAG}"; exit 1; }
 
       - name: Point the semver tags at that image
@@ -106,8 +99,16 @@ jobs:
           TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
-          # vX.Y.Z -> also vX.Y and vX, matching the release tag set ci-build applies
           ver="${TAG#v}"
+          # Refuse prereleases: metadata-action never produced :v1 / :v1.2 for
+          # them, so moving those tags here would clobber the last stable release.
+          case "${ver}" in
+            *-*|*+*) echo "::error::${TAG} is a prerelease; ci-build publishes no moving tags for it"; exit 1 ;;
+          esac
+          case "${ver}" in
+            [0-9]*.[0-9]*.[0-9]*) ;;
+            *) echo "::error::${TAG} is not vMAJOR.MINOR.PATCH"; exit 1 ;;
+          esac
           major="${ver%%.*}"
           minor="${ver%.*}"
           docker buildx imagetools create \
@@ -125,8 +126,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    # ci-build refuses to publish when the checked-out package.json disagrees
-    # with the tag, so a typo'd or non-release tag fails there rather than ships.
     uses: ./.github/workflows/ci-build.yml
     with:
       version: ${{ inputs.tag }}

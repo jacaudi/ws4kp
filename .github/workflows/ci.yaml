@@ -1,16 +1,14 @@
-# CI/CD pipeline orchestrator — the single entry point. Every stage is a reusable
-# workflow (a job-level module). GitHub requires reusable workflows to live in
-# .github/workflows/ ("Subdirectories of the workflows directory are not
-# supported"), so a .github/ci/ folder is not possible for them.
+# Orchestrator (service variant) — local reusable stages, PR-gated builds, one required check `ci`. Rationale: github-actions-align/templates/README.md#ciserviceyaml
 #
-#   test (a) -> build (c) -> smoke (d) -> release (e) -> release image -> release smoke
-#                                            ^ main only    ^ only if a release was cut
+#   test ─┬─ context ─ build ─ smoke ─┬─ release ─ release-image ─ release-smoke
+#         │                           │   ^ main only, after integration too
+#   integration ──────────────────────┘
+#   ci   = the single required status check: context, test, integration, build, smoke
 #
-#   scan (b) is deferred (stubbed below)
-#
-# Triggers (on: push only; no pull_request — branch-push checks surface on the PR):
-#   push to a non-default branch : test -> build -> smoke                    (sha)
-#   push to main                 : the full chain above           (sha + latest [+ semver])
+# test runs `task ci` (lint, type check, static analysis, unit tests, govulncheck);
+# integration runs `task integration` (Puppeteer against live NWS). A scan stage (CodeQL,
+# image scanning) is not wired: CodeQL was dropped, and image scanning is on hold until a
+# scanner is chosen (ci-scan.yml is the stub).
 #
 # Version tags do NOT trigger anything. release-please cuts the tag, and the
 # release image is built from its `release_created` output — not from the tag
@@ -25,48 +23,107 @@
 # appears, push the contributor's branch here and the normal chain runs.
 name: CI
 
+# push only, no pull_request — branch-push checks surface on the PR anyway, and
+# adding pull_request would double-run every same-repo PR.
+#
+# THIS REQUIRES APP SECRETS. GITHUB_TOKEN cannot trigger workflows, so without
+# them release-please's own release PR gets no run, `ci` never reports, and the
+# PR is unmergeable forever. See README#github-app-handling.
 on:
   push:
     branches:
       - '**'
       - '!screen-enhance'
       - '!screen-enhance/**'
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   # Superseded feature-branch runs are noise; cancel them. NEVER cancel on main —
   # a run cancelled between "release-please cut the tag" and "release image built"
-  # leaves a published release with nothing in the registry behind it.
+  # leaves a published release with nothing in the registry behind it. A third main
+  # push can still cancel the one sitting pending — GitHub allows only one pending
+  # run per group.
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: read
 
 jobs:
-  # a — code testing.
+  # Decides whether this push warrants building an image. Code testing always
+  # runs; building does not — most feature-branch commits are WIP, and a
+  # multi-arch build plus smoke on each is the bulk of the runner time and
+  # registry churn. A DRAFT PR counts.
+  #
+  # `needs: [test]` is NOT a data dependency — it is a freshness one, and it is
+  # load-bearing. This job's only input is "does an open PR exist for this
+  # branch?", which is a fact about the world that CHANGES while the run is in
+  # flight. Evaluated at push time it answers in ~4 s; `build`, the job it
+  # gates, cannot start until `test` finishes minutes later. `gh pr create`
+  # right after `git push` therefore lands inside that window, `context`
+  # answers "no open PR", build and smoke skip, and the `ci` rollup goes green
+  # having never built the image. That produced SEVEN silent false greens in
+  # one repo before this fix.
+  #
+  # Waiting for `test` does not make the query race-free, it makes the window
+  # minutes instead of seconds, which covers the push-then-open-PR flow
+  # completely. The residual case — a PR opened well after the push — is caught
+  # loudly by the `ci` gate's re-query below rather than passing silently.
+  context:
+    name: context
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      build: ${{ steps.q.outputs.build }}
+    steps:
+      - id: q
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF}" = "refs/heads/main" ] || [ "${EVENT}" = "workflow_dispatch" ]; then
+            echo "main or manual dispatch -> build"
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          n=$(gh pr list --repo "${GITHUB_REPOSITORY}" --head "${GITHUB_REF_NAME}" \
+                --state open --json number --jq 'length')
+          if [ "${n}" -gt 0 ]; then
+            echo "${n} open PR(s) for ${GITHUB_REF_NAME} -> build"
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "no open PR for ${GITHUB_REF_NAME} -> test only (open a draft PR to get an image)"
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # a — code testing: `task ci`.
   test:
     uses: ./.github/workflows/ci-test.yml
 
-  # b — code scanning. DEFERRED (see the design doc). Left stubbed and NOT wired
-  # in until the scanning approach (CodeQL + image scanning) is decided.
-  # scan:
-  #   uses: ./.github/workflows/ci-scan.yml
+  # a — the Puppeteer integration test, its own job so it runs beside test rather
+  # than after it. An upstream outage (exit 75) is a warning, not a failure; the
+  # nightly run (ci-nightly.yml) re-checks with strict set.
+  integration:
+    uses: ./.github/workflows/ci-test.yml
+    with:
+      task: integration
 
-  # c — artifact building. Requires tests to have actually passed — `!= 'failure'`
-  # would also let a SKIPPED test stage through, which is not the intent and reads
-  # differently from every other gate here.
+  # c — artifact building.
   build:
-    needs: [test]
-    if: ${{ !cancelled() && needs.test.result == 'success' }}
+    needs: [context, test]
+    if: ${{ needs.context.outputs.build == 'true' }}
     permissions:
       contents: read
       packages: write
     uses: ./.github/workflows/ci-build.yml
 
-  # d — artifact testing (smoke). Boots the freshly built image and asserts it serves.
+  # d — artifact testing (smoke). Boots the freshly built image and runs `task smoke`.
   smoke:
     needs: [build]
-    if: ${{ !cancelled() && needs.build.result == 'success' }}
     permissions:
       contents: read
       packages: read
@@ -75,10 +132,10 @@ jobs:
       image: ${{ needs.build.outputs.image }}
 
   # e — release cutting. Main only, and only once the image for this commit has
-  # been built and proven to boot, so a release is never cut on a commit whose
-  # artifact is broken.
+  # been built and proven to boot AND the integration test passed, so a release is
+  # never cut on a commit whose artifact or browser behavior is broken.
   release:
-    needs: [smoke]
+    needs: [smoke, integration]
     if: ${{ github.ref == 'refs/heads/main' }}
     permissions:
       contents: write
@@ -92,7 +149,7 @@ jobs:
     uses: ./.github/workflows/ci-release.yml
 
   # Re-run stage c with the release tag so the image picks up its semver tags
-  # (v7.1.5 / v7.1 / v7).
+  # (v8.1.0 / v8.1 / v8).
   #
   # `ref` pins the checkout to the tag rather than to this run's commit. Those are
   # not always the same: merging a release PR while an earlier main run is still in
@@ -107,16 +164,83 @@ jobs:
     uses: ./.github/workflows/ci-build.yml
     with:
       version: ${{ needs.release.outputs.tag_name }}
-      ref: ${{ needs.release.outputs.tag_name }}
+      ref: ${{ needs.release.outputs.tag_name }}   # pin to the TAG, not this run's commit
 
   # Re-run stage d against the released image. A release image that doesn't boot
   # should surface here, not in someone's deployment.
   release-smoke:
     needs: [release-image]
-    if: ${{ !cancelled() && needs.release-image.result == 'success' }}
     permissions:
       contents: read
       packages: read
     uses: ./.github/workflows/ci-smoke.yml
     with:
       image: ${{ needs.release-image.outputs.image }}
+
+  # b — scanning. Not wired: CodeQL was dropped, and image scanning waits on a
+  # scanner choice. When it lands it goes in build's needs, never after.
+  # scan:
+  #   uses: ./.github/workflows/ci-scan.yml
+
+  # THE single required status check — point every ruleset at `ci` and nothing else.
+  ci:
+    # `context` MUST be here. Without it, a failing context skips build and
+    # smoke, this gate accepts `skipped`, and the required check goes GREEN on a
+    # PR whose image was never built or tested.
+    needs: [context, test, integration, build, smoke]
+    if: ${{ !cancelled() }}   # required: else this is SKIPPED on failure, which can satisfy protection
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read   # for the skipped-build re-query below
+    steps:
+      - name: Assert required stages
+        env:
+          CONTEXT: ${{ needs.context.result }}
+          TEST: ${{ needs.test.result }}
+          INTEGRATION: ${{ needs.integration.result }}
+          BUILD: ${{ needs.build.result }}
+          SMOKE: ${{ needs.smoke.result }}
+        run: |
+          set -euo pipefail
+          fail=0
+          for stage in context:"${CONTEXT}" test:"${TEST}" integration:"${INTEGRATION}"; do
+            name="${stage%%:*}"; result="${stage##*:}"
+            printf '%-12s %s (must be success)\n' "${name}" "${result}"
+            [ "${result}" = "success" ] || fail=1
+          done
+          # build/smoke skip legitimately when context says "no open PR" — and
+          # context is asserted successful above, so a skip here is a real
+          # decision rather than an upstream failure leaking through.
+          for stage in build:"${BUILD}" smoke:"${SMOKE}"; do
+            name="${stage%%:*}"; result="${stage##*:}"
+            printf '%-12s %s (success, or skipped when no PR is open)\n' "${name}" "${result}"
+            case "${result}" in success|skipped) ;; *) fail=1 ;; esac
+          done
+          [ "${fail}" = "0" ] || { echo "::error::one or more required stages did not pass"; exit 1; }
+
+      # The backstop for the assertion directly above. That loop accepts a
+      # skipped build/smoke on `context`'s word, and `context` answered minutes
+      # ago — so a PR opened after it ran turns "correctly skipped" into "green
+      # on an image that was never built". Re-asking HERE, at the end of the
+      # run, is the latest and therefore most accurate point available.
+      #
+      # This cannot fire on the normal flow now that `context` waits for
+      # `test`; it exists so the residual case is LOUD rather than silent.
+      - name: Reject a skipped image build while a PR is open
+        if: ${{ needs.build.result == 'skipped' || needs.smoke.result == 'skipped' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            echo "on main — build/smoke are unconditional there, nothing to re-check"
+            exit 0
+          fi
+          n=$(gh pr list --repo "${GITHUB_REPOSITORY}" --head "${GITHUB_REF_NAME}" \
+                --state open --json number --jq 'length')
+          if [ "${n}" -gt 0 ]; then
+            echo "::error::build/smoke were skipped, but ${n} open PR(s) now exist for ${GITHUB_REF_NAME}. The image was never built or booted, so this run is not evidence the PR is mergeable. Re-run this workflow (gh run rerun <run-id>) now that the PR exists."
+            exit 1
+          fi
+          echo "no open PR for ${GITHUB_REF_NAME} — skipping build/smoke is correct"
