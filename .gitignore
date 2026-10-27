@@ -1,6 +1,9 @@
 node_modules
 **/debug.log
 
+#the binary `go build ./cmd/ws4kp` leaves at the root
+/ws4kp
+
 #environment variables
 .env
 
