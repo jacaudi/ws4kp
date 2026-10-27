@@ -1,23 +1,26 @@
-# Dependencies + build output are (re)generated inside the image
+# Dependencies and build output are regenerated inside the image
 **/node_modules
-web/dist/
+web/dist/*
+!web/dist/readme.txt
+web/.dev/
 
 # Local secrets, tests, and source artwork never belong in the image
 **/.env
 web/tests/
 web/image-templates/
 
-# VCS, CI, editor, OS, and agent-session scratch — not needed in the image
+# VCS, CI, docs, editor, OS, and agent-session scratch
 .git/
 .github/
 .vscode/
 .superpowers/
 .claude/
+docs/
 **/.DS_Store
 
 # The build's own Dockerfile doesn't need to be copied into the image
 Dockerfile
 
 # NOTE: do NOT ignore .archive/ (the archived static Dockerfile COPYs
-# .archive/static/{nginx.conf,static-env-handler.sh}) or web/datagenerators/
-# (the server reads datagenerators/output/*.json at startup).
+# .archive/static/{nginx.conf,static-env-handler.sh}), web/server/scripts/ (embedded and
+# served at /scripts/) or web/datagenerators/ (gulp copies its output into dist/data/).

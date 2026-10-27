@@ -41,8 +41,24 @@ jobs:
             if [ "$i" = "30" ]; then echo "container failed to serve"; docker logs ws4kp; exit 1; fi
             sleep 2
           done
-          echo "GET /            -> $(curl -fsS -o /dev/null -w '%{http_code}' http://localhost:8080/)"
-          echo "GET /playlist.json -> $(curl -fsS -o /dev/null -w '%{http_code}' http://localhost:8080/playlist.json)"
+          # Each probe fails the job on anything but 200; an echo around curl would not.
+          test "$(curl -sS -o /dev/null -w '%{http_code}' http://localhost:8080/)" = 200 || { echo "FAIL: http://localhost:8080/"; exit 1; }
+          echo "GET / -> 200"
+          test "$(curl -sS -o /dev/null -w '%{http_code}' http://localhost:8080/playlist.json)" = 200 || { echo "FAIL: http://localhost:8080/playlist.json"; exit 1; }
+          echo "GET /playlist.json -> 200"
+          test "$(curl -sS -o /dev/null -w '%{http_code}' http://localhost:8080/data/stations.json)" = 200 || { echo "FAIL: http://localhost:8080/data/stations.json"; exit 1; }
+          echo "GET /data/stations.json -> 200"
+          # media.mjs tells a static deployment's 404 from a failure by this header.
+          curl -fsS -D - -o /dev/null http://localhost:8080/ | tr -d '\r' | grep -ix 'x-weatherstar: true' >/dev/null \
+            || { echo "X-Weatherstar: true missing on /"; exit 1; }
+          echo "X-Weatherstar on / -> true"
+          # The index carries the server flag, so the browser routes through the proxies.
+          curl -fsS http://localhost:8080/ | grep -F 'WS4KP_SERVER_AVAILABLE = true' >/dev/null \
+            || { echo "server flag missing from /"; exit 1; }
+          echo "GET / carries WS4KP_SERVER_AVAILABLE = true"
+          # The image's own HEALTHCHECK command; the image has no shell, so it runs directly.
+          docker exec ws4kp /app/ws4kp healthcheck
+          echo "docker exec ws4kp /app/ws4kp healthcheck -> exit 0"
 
       - name: Container logs + teardown
         if: always()
