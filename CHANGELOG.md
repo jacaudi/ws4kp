@@ -1,5 +1,21 @@
 # Changelog
 
+## [8.0.0](https://github.com/jacaudi/ws4kp/compare/v7.5.0...v8.0.0) (2026-10-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **server:** the container runs as uid 65532 (distroless nonroot) and has no shell, node or npm. Make mounted music (/app/server/music) and custom scripts (/app/server/scripts/custom*.*) world-readable. The entrypoint is /app/ws4kp and arguments are its flags: replace any command: override that ran npm start or node, and any wget healthcheck with /app/ws4kp healthcheck, which the image's HEALTHCHECK now uses and which reads its port from WS4KP_PORT, not from flags. A mounted /app/.env must be world-readable too. DIST is ignored with a warning. DOTENV_* options (DOTENV_CONFIG_PATH, DOTENV_PATH, DOTENV_OVERRIDE, DOTENV_ENCODING, DOTENV_QUIET) are no longer read; the server reads ./.env in its working directory only. Upstreams are reached over TLS 1.3 only: an OVERRIDE_RADAR_HOST mirror limited to TLS 1.2 stops working. Logs are JSON lines on stdout by default (--log-format text for plain lines). Unknown paths answer with Go's plain-text 404 page instead of Express's HTML page. Proxied query strings keep the parameters' original order. From a clone, npm start is gone: run task dev or go run ./cmd/ws4kp from the repo root, which reads .env from the repo root instead of web/.env. Environment variable names, port 8080 and the mount paths are unchanged.
+
+### Features
+
+* **server:** serve ws4kp from a single Go binary ([#128](https://github.com/jacaudi/ws4kp/issues/128)) ([75d868a](https://github.com/jacaudi/ws4kp/commit/75d868ad4c34dabbee13f05c776f7b7a353cb5b6))
+
+
+### Miscellaneous
+
+* **deps:** update golang:1.27.3-alpine docker digest to d200d2d ([#131](https://github.com/jacaudi/ws4kp/issues/131)) ([280c96d](https://github.com/jacaudi/ws4kp/commit/280c96d5be4c72e4d5402e07f38ea8564b0596cf))
+
 ## [7.5.0](https://github.com/jacaudi/ws4kp/compare/v7.4.0...v7.5.0) (2026-10-25)
 
 
