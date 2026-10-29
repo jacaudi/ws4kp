@@ -12,7 +12,7 @@ COPY web/ ./
 RUN npm run build && node -p "require('./package.json').version" > /src/version
 
 # The binary, cross-compiled for the target platform, so no emulation is needed.
-FROM --platform=$BUILDPLATFORM golang:1.27.3-alpine@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c AS go
+FROM --platform=$BUILDPLATFORM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS go
 ARG TARGETOS
 ARG TARGETARCH
 WORKDIR /src
