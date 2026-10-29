@@ -45,7 +45,9 @@ const blankObservation = () => ({
 	icon: null,
 });
 
-beforeEach(() => { globalThis.mapclickTestCalls.length = 0; });
+beforeEach(() => {
+	globalThis.mapclickTestCalls.length = 0;
+});
 
 test('an observation missing a required field asks MapClick for the gap', async () => {
 	await enhanceObservationWithMapClick(blankObservation(), { requiredFields, stationId: 'KMIA' });

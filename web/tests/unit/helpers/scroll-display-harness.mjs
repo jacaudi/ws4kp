@@ -46,7 +46,6 @@ const SPECIFIER = /(\bfrom\s*)'(\.[^']*)'/g;
 
 const toDataUrl = (source) => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 
-// eslint-disable-next-line no-use-before-define -- stubUrlFor and rewriteImports recurse through each other
 const rewriteImports = (source) => source.replace(SPECIFIER, (match, prefix, specifier) => `${prefix}'${stubUrlFor(specifier)}'`);
 
 const stubUrlFor = (specifier) => {

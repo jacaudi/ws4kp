@@ -253,26 +253,21 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
 
 ## Step 7 — Verify like you mean it
 
-- `npm run test:unit` (from `web/`) — the CI-relevant suite. It includes
+- `npm test` (from `web/`) — the CI-relevant suite. It includes
   `tests/unit/build-consistency.test.mjs`, which fails if `server/styles/ws.min.css` is not
   a byte-match for a fresh compile — so a forgotten `npm run build:css` (from `web/`) after adopting an
   upstream `.scss` fails the unit suite, not just review.
-- `rtk proxy npm run lint` (from `web/`) — raw/uncached. Since v8 it is `eslint .` with upstream's flat
-  config, which ignores `tests/`. Compare against clean `main` before blaming your change.
-- Integration test (Puppeteer, 5 cities, live NWS) — what `ci-test.yml` runs:
+- `rtk proxy task ci` (from the repo root) — raw/uncached: everything CI's `test` job runs,
+  eslint over `web/` (tests included) and the type-check ratchet among it. Compare against clean
+  `main` before blaming your change.
+- Integration test (Puppeteer, 5 cities, live NWS) — what CI's `integration` job runs:
   ```bash
-  npm ci --prefix web/tests        # web/tests/ is its own npm package (puppeteer, chalk)
-  npm --prefix web run build && go build -o "${TMPDIR:-/tmp}/ws4kp-review" ./cmd/ws4kp
-  WS4KP_PORT=8136 "${TMPDIR:-/tmp}/ws4kp-review" > "${TMPDIR:-/tmp}/ws4kp.log" 2>&1 & pid=$!
-  for i in $(seq 1 60); do curl -sf http://localhost:8136/ >/dev/null && break; node -e "setTimeout(()=>{},500)"; done
-  curl -sf http://localhost:8136/ >/dev/null || echo "TIMEOUT: the server did not start; see ${TMPDIR:-/tmp}/ws4kp.log"
-  WS4KP_TEST_URL=http://localhost:8136 node web/tests/index.mjs; echo "exit=$?"
-  kill "$pid"
+  WS4KP_PORT=8136 task integration; echo "exit=$?"
   ```
-  Exit **0** = clean, **1** = a real regression, **75** = api.weather.gov / Open-Meteo was
-  down, i.e. inconclusive, *not* a failure. `WS4KP_PORT`, not `PORT`. Neither `timeout` nor
-  `gtimeout` exists on this box, and the harness blocks foreground `sleep` — hence the
-  `node -e setTimeout` stand-in.
+  It builds the site and the binary, serves it on that port, runs `web/tests/index.mjs` and
+  stops the server. Exit **0** = clean (an upstream-only failure, exit 75 from `index.mjs`,
+  prints a warning and still exits 0), anything else = a failure; read the output (a busy port or a failed build is not a regression). `STRICT=1` makes an
+  upstream outage fail. `WS4KP_PORT`, not `PORT`.
 - `npm run build:css` (from `web/`) after any `.scss` change, then grep the minified output for the
   compiled rule.
 - **Rendering changes require a browser.** Unit tests did not catch that decluttering

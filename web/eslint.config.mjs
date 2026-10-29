@@ -71,7 +71,8 @@ const ignores = [
 	'*.min.*',
 	'server/scripts/vendor/*',
 	'dist/**/*',
-	'tests',
+	// declarations for tsc only (the type-check ratchet); this config has no TypeScript parser
+	'types/**/*.d.ts',
 ];
 
 const htmlSpecial = {
@@ -100,6 +101,36 @@ const extraneousDependencies = {
 	},
 };
 
+// web/tests/ is its own npm package (Puppeteer and chalk, kept out of the image's npm ci), so its
+// imports resolve outside web/package.json by design, and only once `npm ci --prefix tests` has
+// run, which task ci does not do: its two packages are exempt from no-unresolved so the result does
+// not depend on what is installed. Its package.json declares no engines, which leaves
+// eslint-plugin-n assuming Node 16; the tests run on the Node in .node-version, and use node:test's
+// describe and Map.groupBy (Node 22). Reading fixtures synchronously is fine in a test.
+const testsConfig = {
+	files: ['tests/**/*.{js,mjs,cjs}'],
+	settings: {
+		n: { version: '>=22' },
+	},
+	rules: {
+		'import-x/no-relative-packages': 'off',
+		'import-x/no-extraneous-dependencies': 'off',
+		'import-x/no-unresolved': ['error', { commonjs: true, caseSensitive: true, ignore: ['^puppeteer$', '^chalk$'] }],
+		'n/no-sync': 'off',
+	},
+};
+
+// The upstream-review scripts live at the repo root (.claude/skills/upstream-review/), outside
+// this directory and with no package.json, so eslint-plugin-n would assume Node 16 for them too.
+// The root taskfile lints them with this config from the repo root (task tooling:lint), where
+// this pattern matches; from web/ it matches nothing.
+const upstreamReviewConfig = {
+	files: ['.claude/skills/upstream-review/*.mjs'],
+	settings: {
+		n: { version: '>=20' },
+	},
+};
+
 export default defineConfig([
 	{
 		ignores,
@@ -118,4 +149,6 @@ export default defineConfig([
 	},
 	htmlSpecial,
 	extraneousDependencies,
+	testsConfig,
+	upstreamReviewConfig,
 ]);

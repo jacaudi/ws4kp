@@ -1,8 +1,137 @@
+# THE CI CONTRACT — `task ci` is what CI runs and what you run locally. Rationale: github-actions-align/templates/README.md#taskfiles
 # https://taskfile.dev
-# PR 3 adds the CI contract (task ci, task integration); this file starts with the dev loop.
 version: '3'
 
+includes:
+  repo:
+    taskfile: .taskfiles/repo.yml
+
+  go:
+    taskfile: .taskfiles/go.yml
+
+  node:
+    taskfile: .taskfiles/node.yml
+    dir: web
+
 tasks:
+  default:
+    desc: List all tasks
+    cmds:
+      - task --list
+
+  ci:
+    desc: Everything CI runs. Run this before pushing.
+    cmds:
+      - task: repo:ci
+      # Go first: it needs nothing from npm, and go.mod's `ignore ./web/node_modules` keeps
+      # npm's bundled Go files out of ./... once npm ci has run.
+      - task: go:ci
+      - task: node:ci
+      - task: tooling:lint
+      - task: tooling:test
+
+  lint:
+    desc: Static checks only (run `npm --prefix web ci` first)
+    cmds:
+      - task: repo:ci
+      - task: go:fmt:check
+      - task: go:lint
+      - task: node:lint
+      - task: node:typecheck
+      - task: tooling:lint
+
+  test:
+    desc: Tests only (run `npm --prefix web ci` first)
+    cmds:
+      - task: go:test
+      - task: node:test
+      - task: tooling:test
+
+  build:
+    desc: Build the site, then the binary that embeds it, into ./bin/
+    cmds:
+      - task: node:build
+      - task: go:build
+
+  # The upstream-review scripts live outside web/, where node:lint and node:test cannot reach
+  # them. web/eslint.config.mjs carries their Node range; run from the repo root, its patterns
+  # are relative to here.
+  tooling:lint:
+    desc: eslint the upstream-review scripts (.claude/skills/upstream-review/)
+    cmds:
+      - web/node_modules/.bin/eslint --max-warnings 0 -c web/eslint.config.mjs .claude/skills/upstream-review/
+
+  tooling:test:
+    desc: Unit-test the upstream-review scripts
+    cmds:
+      - node --test ".claude/skills/upstream-review/*.test.mjs"
+
+  # Puppeteer, five cities, server mode against live NWS. Not part of `ci`: it depends on
+  # api.weather.gov, so CI runs it as its own job (integration) and nightly with STRICT=1.
+  # Another port: WS4KP_PORT=8137 task integration
+  integration:
+    desc: Build the site and the binary, serve it, and run the Puppeteer integration test (STRICT=1 fails on upstream outages)
+    vars:
+      STRICT: '{{.STRICT | default "0"}}'
+    env:
+      STRICT_INTEGRATION: '{{.STRICT}}'
+    cmds:
+      - task: node:install
+      # web/tests/ is its own npm package, kept out of the image's npm ci
+      - npm ci --prefix web/tests
+      - npm --prefix web run build
+      - sh web/tests/integration.sh
+
+  # Runs locally: IMAGE=ghcr.io/jacaudi/ws4kp@sha256:... task smoke  (SMOKE_PORT=8138 for another host port)
+  smoke:
+    desc: Boot the built image and assert it behaves
+    requires:
+      vars: [IMAGE]
+    # Accepts BOTH `IMAGE=… task smoke` and `task smoke IMAGE=…`. Without this,
+    # the CLI form satisfies `requires` but leaves $IMAGE empty in the shell.
+    env:
+      IMAGE: '{{.IMAGE}}'
+      SMOKE_PORT: '{{.SMOKE_PORT | default "8080"}}'
+    cmds:
+      # Local endpoints only (no upstream), so it is deterministic. Each probe fails the task
+      # on anything but 200.
+      - |
+        set -eu
+        echo "smoke testing ${IMAGE}"
+        base="http://localhost:${SMOKE_PORT}"
+        # Something already answering would be probed in place of the container.
+        if curl -s -m 5 -o /dev/null "${base}/"; then
+          echo "::error::something already answers on :${SMOKE_PORT}; set SMOKE_PORT to a free port"
+          exit 1
+        fi
+        # create, trap, start: a name conflict fails before the trap (the existing container is
+        # left alone), and a port or start failure afterwards is cleaned up.
+        docker create --name ws4kp-smoke -p "${SMOKE_PORT}:8080" "${IMAGE}"
+        trap 'docker logs ws4kp-smoke || true; docker rm -f ws4kp-smoke >/dev/null 2>&1 || true' EXIT
+        docker start ws4kp-smoke
+        for i in $(seq 1 30); do
+          curl -sf -m 5 "${base}/" >/dev/null && break
+          [ "$i" = "30" ] && { echo "::error::container never served on :${SMOKE_PORT}"; exit 1; }
+          sleep 2
+        done
+        echo "ok: container serves"
+        for path in / /playlist.json /data/stations.json; do
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "${base}${path}")
+          [ "${code}" = "200" ] || { echo "::error::GET ${path} -> ${code}"; exit 1; }
+          echo "GET ${path} -> 200"
+        done
+        # media.mjs tells a static deployment's 404 from a failure by this header.
+        curl -fsS -D - -o /dev/null "${base}/" | tr -d '\r' | grep -ix 'x-weatherstar: true' >/dev/null \
+          || { echo "::error::X-Weatherstar: true missing on /"; exit 1; }
+        echo "X-Weatherstar on / -> true"
+        # The index carries the server flag, so the browser routes through the proxies.
+        curl -fsS "${base}/" | grep -F 'WS4KP_SERVER_AVAILABLE = true' >/dev/null \
+          || { echo "::error::server flag missing from /"; exit 1; }
+        echo "GET / carries WS4KP_SERVER_AVAILABLE = true"
+        # The image's own HEALTHCHECK command; the image has no shell, so it runs directly.
+        docker exec ws4kp-smoke /app/ws4kp healthcheck
+        echo "docker exec ws4kp-smoke /app/ws4kp healthcheck -> exit 0"
+
   dev:
     desc: Serve web/ from disk with the Go server and rebuild the dev index and CSS on change (Ctrl-C stops both)
     cmds:

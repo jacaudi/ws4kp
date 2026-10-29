@@ -12,7 +12,9 @@ import {
 // a label that fits nowhere but the middle of a 640x282 standard-mode map
 const AREA = { width: 640, height: 282 };
 const identity = { forward: ([lon, lat]) => [lon, lat] };
-const cand = (id, x, y, width = 72) => ({ id, lon: x, lat: y, labelWidth: width });
+const cand = (id, x, y, width = 72) => ({
+	id, lon: x, lat: y, labelWidth: width,
+});
 
 test('labelWidth: short names take the temp and icon row width', () => {
 	assert.equal(labelWidth('Hays'), LABEL_BOX.minWidth);
