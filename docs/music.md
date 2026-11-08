@@ -10,13 +10,14 @@ The WeatherStar had wonderful smooth-jazz / new-age background music. The origin
 
 ## What ships in this fork
 
-Two of the three [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `web/server/music/default/` and **built into the server binary** (and so the container image), so music plays out of the box.
+Two of the four [ws4kp-music](https://github.com/netbymatt/ws4kp-music) albums, 23 tracks in all, are bundled in `web/server/music/default/` and **built into the server binary** (and so the container image), so music plays out of the box.
 
 | Album | Tracks | Bundled |
 |---|---|---|
 | Current Conditions | 10 | yes: the original release that shipped with ws4kp, 192 kbps except *First snow* (128 kbps, as it was first published); ws4kp-music now holds 128 kbps re-encodes of it |
 | Latest Observations | 13 | yes: copied from ws4kp-music commit [`8e3ecf6`](https://github.com/netbymatt/ws4kp-music/tree/8e3ecf67dd1f752c651780d239e94704e922c970) |
 | Holiday | 10 | no: there is no seasonal scheduling, so it would play year-round. Add its files to `web/server/music/` to use it. |
+| Local on the 13s | 9 | not yet: the Halloween album, recorded for a later import. Same no-seasonal-scheduling caveat. Add its files to `web/server/music/` to use it. |
 
 The bundled tracks are named `<album>--<song>.mp3`, all lower case, with each space a single dash: `current-conditions--rolling-clouds.mp3`, `latest-observations--rolling-clouds.mp3`. The album prefix keeps the two albums' *Rolling Clouds* apart. The player shows each track's own title and artist tags, not its file name.
 
@@ -31,6 +32,7 @@ To keep the git repository lean, the `.mp3` files are stored with **[Git LFS](ht
 | Latest Observations | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | allowed, with attribution |
 | Current Conditions | owned by Suno, non-commercial only | not allowed |
 | Holiday (not bundled) | owned by Suno, non-commercial only | not allowed |
+| Local on the 13s (not bundled) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | allowed, with attribution |
 
 Attribution for the Latest Observations tracks: *Music from [ws4kp-music](https://github.com/netbymatt/ws4kp-music) by netbymatt, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).*
 
