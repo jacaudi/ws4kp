@@ -24,6 +24,7 @@ A rotating set of forecast "displays," most toggle-able on the page:
 - **Regional Forecast** map — user-centered, denser city selection *(reworked in this fork)*
 - **Air Quality** *(new in this fork; key-free [Open-Meteo](https://open-meteo.com/) data)*
 - **Travel Cities**, **Almanac**, **Radar**, **Hazards**, and the **SPC Severe-Weather Outlook**
+- **Climate Information** — month-to-date precipitation against normal, and today's normal high/low, from the nearest NOAA climate station
 - **Future Radar** — forecast radar reflectivity for the next several hours from NOAA's [HRRR](https://rapidrefresh.noaa.gov/hrrr/) model (continental US only)
 - Retro **background music**, scan-line CRT effect, kiosk mode, and shareable permalinks
 
@@ -37,6 +38,7 @@ All weather data comes from free, public services (the server proxies and caches
 | **[NWS Radar](https://radar.weather.gov/)** + **[Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/)** — `radar.weather.gov`, `mesonet.agron.iastate.edu` | Radar imagery (Mesonet is the default tile source; override with `RADAR_HOST`) |
 | **[NOAA Storm Prediction Center](https://www.spc.noaa.gov/)** — `www.spc.noaa.gov` | The severe-weather (SPC) outlook |
 | **[HRRR Zarr archive](https://mesowest.utah.edu/html/hrrr/)** (University of Utah, on AWS) — `hrrrzarr.s3.amazonaws.com` | Forecast reflectivity for **Future Radar** |
+| **[RCC ACIS](https://www.rcc-acis.org/docs_webservices.html)** (NOAA Regional Climate Centers) — `data.rcc-acis.org` | Station history and normals for **Climate Information** — called directly by the browser, not proxied |
 | **[Open-Meteo Air Quality API](https://open-meteo.com/en/docs/air-quality-api)** — `air-quality-api.open-meteo.com` | US AQI for the **Air Quality** display *(added in [#7](https://github.com/jacaudi/ws4kp/pull/7))* — key-free |
 
 ## Quick start

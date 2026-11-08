@@ -124,30 +124,6 @@
           "reason": "points reporters at netbymatt/ws4kp advisories, which do not cover this fork's deployments; removed with its /.well-known route, build copy and Docker COPY"
         },
         {
-          "path": "server/scripts/modules/climate.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
-        },
-        {
-          "path": "views/partials/climate.ejs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
-        },
-        {
-          "path": "server/styles/scss/_climate.scss",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
-        },
-        {
-          "path": "server/scripts/modules/utils/fetch.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
-        },
-        {
-          "path": "server/scripts/modules/radar.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
-        },
-        {
-          "path": "server/scripts/modules/future-radar.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
-        },
-        {
           "path": "server/scripts/modules/utils/map-projection.mjs",
           "reason": "fork keeps its 7.4.0 Alaska/Hawaii maps (STATE_MAPS); upstream's mercator maps halve Anchorage's label count under density selection"
         },
@@ -332,6 +308,12 @@
             "server/scripts/modules/utils/is-obs-fresh.mjs"
           ],
           "reason": "always fresh: upstream's 75-minute cutoff blanked Current Conditions, Latest Observations and Regional Forecast whenever the NWS API lags (94-121 min on 2026-11-08), and the fork's MapClick fallback stamps rescued data with the stale NWS timestamp. Callers stay at upstream parity; this file holds the policy"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/climate.mjs"
+          ],
+          "reason": "adds the missing return after STATUS.noData when ACIS returns no stations; upstream falls through and throws on rawStations.meta"
         }
       ]
     },
