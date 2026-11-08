@@ -59,7 +59,7 @@ class Climate extends WeatherDisplay {
 		// filter for stations that have all three elems with data, and where the data is as recent as yesterday
 		const stationsWithData = rawStations.meta
 			.filter((station) => station.valid_daterange.every((d) => d.length === 2))
-			.filter((station) => station.valid_daterange.every((d) => (DateTime.fromISO(d[0]) <= sDate) && (DateTime.fromISO(d[1]) >= eDate)));
+			.filter((station) => station.valid_daterange.every((d) => (DateTime.fromISO(d[0], { zone: timeZone() }) <= sDate) && (DateTime.fromISO(d[1], { zone: timeZone() }) >= eDate)));
 
 		if (debugFlag('climate')) {
 			console.log(`Climate: found ${stationsWithData.length} stations with complete data`);

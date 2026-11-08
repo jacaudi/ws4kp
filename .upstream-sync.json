@@ -313,7 +313,7 @@
           "paths": [
             "server/scripts/modules/climate.mjs"
           ],
-          "reason": "adds the missing return after STATUS.noData when ACIS returns no stations; upstream falls through and throws on rawStations.meta"
+          "reason": "adds the missing return after STATUS.noData when ACIS returns no stations; upstream falls through and throws on rawStations.meta; parses ACIS valid_daterange dates in the location's time zone (upstream parses them in the browser's, so every station is filtered out when the location is west of the viewer, e.g. Anchorage from Pacific time)"
         }
       ]
     },
