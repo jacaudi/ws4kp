@@ -15,6 +15,9 @@ tools:
   - Glob
   - Bash
   - WebFetch
+skills:
+  - upstream-review
+  - ponytail:ponytail
 ---
 
 You analyse this fork (`jacaudi/ws4kp`) against upstream (`netbymatt/ws4kp`) and report
