@@ -4,10 +4,10 @@
     "ws4kp": {
       "repo": "netbymatt/ws4kp",
       "kind": "code",
-      "tag": "v8.0.1",
-      "sha": "e93fc8ea31dc37e4e1353df607e68f04c8b73316",
-      "adopted": "2026-10-23",
-      "pr": 99,
+      "tag": "v8.2.2",
+      "sha": "237c60d242f9d70e0ee9c1bab87f3119c4b3b729",
+      "adopted": "2026-11-08",
+      "pr": 139,
       "pathMap": [
         {
           "from": "server/",
@@ -101,7 +101,7 @@
         },
         {
           "path": ".vscode/settings.json",
-          "reason": "upstream deleted it in favour of the workspace file; this fork keeps it"
+          "reason": "upstream re-created it as a liveSassCompile stub (expanded output, savePath ~/..); this fork's targets web/server/styles compressed and carries eslint/cSpell settings"
         },
         {
           "path": "server/scripts/modules/utils/cache.mjs",
@@ -122,6 +122,42 @@
         {
           "path": "server/.well-known/security.txt",
           "reason": "points reporters at netbymatt/ws4kp advisories, which do not cover this fork's deployments; removed with its /.well-known route, build copy and Docker COPY"
+        },
+        {
+          "path": "server/scripts/modules/climate.mjs",
+          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+        },
+        {
+          "path": "views/partials/climate.ejs",
+          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+        },
+        {
+          "path": "server/styles/scss/_climate.scss",
+          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+        },
+        {
+          "path": "server/scripts/modules/utils/fetch.mjs",
+          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+        },
+        {
+          "path": "server/scripts/modules/radar.mjs",
+          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+        },
+        {
+          "path": "server/scripts/modules/future-radar.mjs",
+          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+        },
+        {
+          "path": "server/scripts/modules/utils/map-projection.mjs",
+          "reason": "fork keeps its 7.4.0 Alaska/Hawaii maps (STATE_MAPS); upstream's mercator maps halve Anchorage's label count under density selection"
+        },
+        {
+          "path": "server/images/maps/forecast-alaska.webp",
+          "reason": "fork keeps its 7.4.0 Alaska/Hawaii maps (STATE_MAPS); upstream's mercator maps halve Anchorage's label count under density selection"
+        },
+        {
+          "path": "server/images/maps/forecast-hawaii.webp",
+          "reason": "fork keeps its 7.4.0 Alaska/Hawaii maps (STATE_MAPS); upstream's mercator maps halve Anchorage's label count under density selection"
         }
       ],
       "divergences": [
@@ -284,6 +320,18 @@
             ".dockerignore"
           ],
           "reason": "runtime replaced by the Go server (cmd/ws4kp, internal/): the Express entry, proxy, playlist route and devtools route are deleted; express is dropped and ejs, dotenv and music-metadata become build-time devDependencies (eslint allows them in src/); the image is a distroless Go binary"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/navigation.mjs"
+          ],
+          "reason": "guards upstream's v8.0.2 autoplay fallback: displays.find() returns undefined when no enabled display has loaded, and showDisplay(undefined) throws inside updateStatus, aborting the setStatus caller"
+        },
+        {
+          "paths": [
+            "server/scripts/modules/utils/is-obs-fresh.mjs"
+          ],
+          "reason": "always fresh: upstream's 75-minute cutoff blanked Current Conditions, Latest Observations and Regional Forecast whenever the NWS API lags (94-121 min on 2026-11-08), and the fork's MapClick fallback stamps rescued data with the stale NWS timestamp. Callers stay at upstream parity; this file holds the policy"
         }
       ]
     },
