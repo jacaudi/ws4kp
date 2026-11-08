@@ -340,9 +340,9 @@
       "kind": "music",
       "$comment": "No release tags: the baseline is a commit on main. Albums are folders; the playlist reader scans only web/server/music and falls back to web/server/music/default (no subfolders, no seasonal logic), so adopted albums are flattened into web/server/music/default under the naming below.",
       "naming": "<album>--<song>.mp3, all lower case, each space a single dash (latest-observations--rolling-clouds.mp3): the album prefix keeps same-named songs apart (both albums have Rolling Clouds) without a per-file rename list",
-      "sha": "8e3ecf67dd1f752c651780d239e94704e922c970",
-      "adopted": "2026-10-24",
-      "pr": 104,
+      "sha": "04b2f24ae8bc35eab1ebaf550b177f900d191070",
+      "adopted": "2026-11-08",
+      "pr": 139,
       "albums": {
         "Current Conditions": {
           "status": "adopted",
@@ -363,6 +363,15 @@
           "tracks": 10,
           "license": "owned by Suno, non-commercial only",
           "reason": "no seasonal scheduling, so it would play year-round"
+        },
+        "Local on the 13s": {
+          "status": "deferred",
+          "tracks": 9,
+          "size": "27 MiB",
+          "folder": "Local  on the 13s (two spaces in the upstream folder name; its README spells it with one)",
+          "license": "CC BY 4.0, same credit as Latest Observations",
+          "source": "ws4kp-music 04b2f24 (Halloween album)",
+          "reason": "Halloween album, recorded for a later import (user, 2026-11-08). Not bundled yet: the playlist has no seasonal scheduling, so it would play year-round. Import with the Music source procedure, pinned to this sha"
         }
       }
     }

@@ -298,7 +298,7 @@ Split into separate PRs when risk profiles differ; fold trivia into the open PR:
 `netbymatt/ws4kp-music` holds the tracks this fork bundles in `web/server/music/default`,
 organised as album folders. It has **no release tags**, so its baseline is a commit on
 `main` (`sources.ws4kp-music.sha`), and adoption is tracked **per album** under `albums`:
-`status` (adopted / skipped), `tracks`, `license`, `source`, and any `renamed` files.
+`status` (adopted / skipped / deferred, where deferred means the user wants it imported later), `tracks`, `license`, `source`, and any `renamed` files.
 
 ```bash
 M=$(node -p "require('./.upstream-sync.json').sources['ws4kp-music'].sha")
