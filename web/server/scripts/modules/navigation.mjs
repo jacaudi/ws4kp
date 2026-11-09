@@ -49,18 +49,18 @@ const updateStatus = (value) => {
 	// first display is hazards and it must load before evaluating the first display
 	if (!displays[0] || displays[0].status === STATUS.loading) return;
 
-	// calculate first enabled display
+	// calculate first enabled display (-1 until one has loaded screens, so the hot-wires below wait for it)
 	const firstDisplayIndex = displays.findIndex((display) => display?.enabled && display?.timing?.totalScreens > 0);
 
 	// value.id = 0 is hazards, if they fail to load hot-wire a new value.id to the current display to see if it needs to be loaded
 	// typically this plays out as current conditions loads, then hazards fails.
-	if (value.id === 0 && (value.status === STATUS.failed || value.status === STATUS.retrying)) {
+	if (value.id === 0 && firstDisplayIndex >= 0 && (value.status === STATUS.failed || value.status === STATUS.retrying)) {
 		value.id = firstDisplayIndex;
 		value.status = displays[firstDisplayIndex].status;
 	}
 
 	// if hazards data arrives after the firstDisplayIndex loads, then we need to hot wire this to the first display
-	if (value.id === 0 && value.status === STATUS.loaded && displays[0] && displays[0].timing && displays[0].timing.totalScreens === 0) {
+	if (value.id === 0 && firstDisplayIndex >= 0 && value.status === STATUS.loaded && displays[0] && displays[0].timing && displays[0].timing.totalScreens === 0) {
 		value.id = firstDisplayIndex;
 		value.status = displays[firstDisplayIndex].status;
 	}
