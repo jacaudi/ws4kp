@@ -258,7 +258,7 @@ Standing decisions (do not silently reverse):
 - **Every fork change to an upstream file is recorded.** When a review (or any other
   work) changes a file that exists upstream, add it to `sources.ws4kp.divergences` with a
   reason in the same PR. Prefer a fork-owned file over editing an upstream one — new
-  modules, and fork-owned SCSS partials (`_custom-logo`, `_current-weather-icon`,
+  modules, and fork-owned SCSS partials (`_custom-logo`, `_current-weather-layout`,
   `_list-text`) that restyle upstream markup without touching upstream's partials —
   so the list stays short and each entry is a real decision.
 
