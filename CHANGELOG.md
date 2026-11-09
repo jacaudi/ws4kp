@@ -1,5 +1,22 @@
 # Changelog
 
+## [8.0.1](https://github.com/jacaudi/ws4kp/compare/v8.0.0...v8.0.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* **current-conditions:** restore the canvas row spacing so text fills the box ([ccafcc8](https://github.com/jacaudi/ws4kp/commit/ccafcc8a7118afa421fd182439e36b1da09729e3))
+* **navigation:** guard the hazards hot-wire when no display has loaded ([9aa3596](https://github.com/jacaudi/ws4kp/commit/9aa3596148c8206d1fa4d90749fc4330f1bbf096))
+* **observations:** adopt upstream v8.2.2 observation fixes, keep old readings ([f6db432](https://github.com/jacaudi/ws4kp/commit/f6db43212bf379d623a36e8156424e1064ec7627))
+
+
+### Miscellaneous
+
+* **agents:** preload upstream-review and ponytail skills in upstream-analyst ([df483e6](https://github.com/jacaudi/ws4kp/commit/df483e6407b81cb959cc93b7608c20e16e561602))
+* **claude:** spell out every frontmatter setting for upstream-analyst and upstream-review ([52236e9](https://github.com/jacaudi/ws4kp/commit/52236e9467c0d84a91bef3eef233ce9d37cc8d0f))
+* **music:** record ws4kp-music's Halloween album for a later import ([b83a687](https://github.com/jacaudi/ws4kp/commit/b83a687433efab865bac7f8848af8228fe894bbe))
+* **upstream-sync:** record the climate display as not wanted ([64f2175](https://github.com/jacaudi/ws4kp/commit/64f21756daf110c2f9cc0828ad9d2aa31f8cc817))
+
 ## [8.0.0](https://github.com/jacaudi/ws4kp/compare/v7.5.0...v8.0.0) (2026-10-29)
 
 
