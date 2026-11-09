@@ -292,6 +292,12 @@
         },
         {
           "paths": [
+            "server/scripts/modules/future-radar.mjs"
+          ],
+          "reason": "expected HRRR run-lookup 404s are logged only with future-radar debugging enabled, and the hrrrzarr host name is spelled correctly"
+        },
+        {
+          "paths": [
             ".vscode/launch.json",
             ".vscode/tasks.json"
           ],
