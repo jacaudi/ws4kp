@@ -1,0 +1,63 @@
+// Fork-owned: current conditions laid out on the canvas version's grid (before 2022), which
+// placed the right-column rows 40px apart (baselines 165, 205 ... 365) with Wind level with
+// Pressure and Gusts level with Heat Index / Wind Chill. Upstream's HTML packs the rows 36px
+// apart, so each row rides 4px higher than the last and the text bunches into the top of the
+// box. Kept out of upstream's _current-weather.scss so that file stays at parity.
+
+// right-column row pitch: upstream's 24px line-height plus this margin
+$row-pitch: 40px;
+$row-margin: $row-pitch - 24px;
+// the icon slot spans the Dewpoint, Ceiling and Visibility rows, so Wind lands level with Pressure
+$icon-slot-height: 3 * $row-pitch;
+// the canvas drew Gusts 45px below Wind; both rows are 37px tall
+$gusts-offset: 45px - 37px;
+// the condition text draws its glyphs above the bottom of its box and the wind row below the top of
+// its own, so the box centre sits above the centre of what is visible; 4px balances the clear space
+// above and below across the gifs (measured from the rendered pixels)
+$icon-optical-offset: 4px;
+// tallest icon: leaves clear space above and below, so a full-height gif (Fog, Rain)
+// doesn't crowd the condition text and read as sitting high
+$icon-max-height: 96px;
+
+.weather-display .main.current-weather .col.left .icon {
+	box-sizing: border-box;
+	height: $icon-slot-height;
+	padding-top: $icon-optical-offset;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	img {
+		margin: 0;
+		// the canvas version's max_width; it brings every gif, Fog included (148x122), inside the slot
+		max-width: 126px;
+		max-height: $icon-max-height;
+	}
+
+	// portrait enhanced has its own scaled icon layout upstream
+	.portrait.enhanced & {
+		height: auto;
+		padding-top: 0;
+		display: block;
+
+		img {
+			margin: 0 auto;
+			max-width: none;
+			max-height: none;
+		}
+	}
+}
+
+// same selector as upstream's row rule, loaded after it, so it wins without extra weight
+.weather-display .main.current-weather.main .col.right .row {
+	margin-bottom: $row-margin;
+
+	// portrait enhanced uses its own 36px line-height with upstream's margin
+	.portrait.enhanced & {
+		margin-bottom: 12px;
+	}
+}
+
+.weather-display .main.current-weather .col.left .wind-gusts {
+	margin-top: $gusts-offset;
+}

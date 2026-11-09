@@ -216,7 +216,7 @@
             "server/styles/ws.min.css",
             "server/styles/ws.min.css.map"
           ],
-          "reason": "@use of fork-owned partials (_air-quality, _custom-logo, _current-weather-icon, _list-text, _list-box, _detail-tables) and the CSS compiled from them; fork restyles live in those partials so upstream partials stay byte-identical"
+          "reason": "@use of fork-owned partials (_air-quality, _custom-logo, _current-weather-layout, _list-text, _list-box, _detail-tables) and the CSS compiled from them; fork restyles live in those partials so upstream partials stay byte-identical"
         },
         {
           "paths": [
