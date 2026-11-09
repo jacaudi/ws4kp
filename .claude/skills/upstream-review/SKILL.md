@@ -1,6 +1,24 @@
 ---
 name: upstream-review
 description: Use when comparing this fork against its upstreams — netbymatt/ws4kp (code) and netbymatt/ws4kp-music (the bundled music) — checking what changed, deciding what to adopt, or planning a catch-up. Triggers on "check upstream", "how far behind are we", "upstream catch-up", "what's new upstream", "compare with upstream", "new music", "check the music repo".
+disable-model-invocation: false  # documented default; must stay false or upstream-analyst can't preload it
+user-invocable: true             # documented default
+shell: bash                      # documented default
+# Every other field is unset on purpose; each line records the effective setting.
+# Source: https://code.claude.com/docs/en/skills (checked 2026-11-08)
+# when_to_use:       unset = `description` alone drives automatic use
+# argument-hint:     unset = no autocomplete hint
+# arguments:         unset = no named $arguments
+# allowed-tools:     unset = normal permission prompts
+# disallowed-tools:  unset = no tools removed while the skill is active
+# model:             unset = the session model
+# effort:            unset = the session effort level
+# context:           unset = runs inline in the current conversation (`fork` is the only value)
+# agent:             only used with `context: fork` (then defaults to general-purpose)
+# background:        only used with `context: fork` (default true)
+# hooks:             unset = no skill hooks
+# paths:             unset = available whatever files are being worked on
+# metadata, license, compatibility: unset (Claude Code doesn't act on them)
 ---
 
 # Upstream Review (ws4kp fork)

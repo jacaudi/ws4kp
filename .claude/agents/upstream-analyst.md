@@ -7,17 +7,33 @@ description: >
   changes that would silently break fork-specific code. Read-only: it researches and
   reports, it never edits, commits, or opens PRs. Use for "check upstream", "what's new
   upstream", "plan an upstream catch-up".
-model: sonnet
-effort: high
-tools:
+model: sonnet          # overrides the subagent model order
+effort: high           # overrides the session effort level
+tools:                 # unset would inherit every tool; listing them keeps the agent read-only
   - Read
   - Grep
   - Glob
   - Bash
   - WebFetch
-skills:
+skills:                # preloaded in full at startup
   - upstream-review
-  - ponytail:ponytail
+  - ponytail:ponytail  # plugin skill; the docs only show plain names here
+# Every other field is unset on purpose: none has a literal value that behaves the same
+# as leaving it out. Each line records the effective setting.
+# Source: https://code.claude.com/docs/en/sub-agents (checked 2026-11-08)
+# disallowedTools:    unset = nothing removed from `tools`
+# permissionMode:     unset = inherits the main conversation's mode (`default` would force Manual)
+# maxTurns:           unset = no limit set (the docs state no default)
+# autoCompactWindow:  unset = the session's auto-compact window, not lowered
+# mcpServers:         unset = no MCP servers configured for this agent
+# hooks:              unset = no hooks scoped to this agent
+# memory:             unset = no persistent cross-session memory
+# background:         unset = starts in the background, but Claude can wait for it
+# omitClaudeMd:       unset = user, project and local CLAUDE.md files load
+# isolation:          unset = runs in the caller's checkout (`worktree` is the only value)
+# color:              unset = no colour set (the docs state no default)
+# initialPrompt:      unset = none (only used when this runs as the main session agent)
+# experimental:       unset = cacheTtl follows the normal cache-lifetime precedence
 ---
 
 You analyse this fork (`jacaudi/ws4kp`) against upstream (`netbymatt/ws4kp`) and report
