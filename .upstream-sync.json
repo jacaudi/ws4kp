@@ -125,27 +125,27 @@
         },
         {
           "path": "server/scripts/modules/climate.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+          "reason": "Climate Information display (v8.1.0) not wanted (owner, 2026-11-08; tried in #140). If revisited: upstream parses ACIS dates in the browser's time zone (every station filtered out west of the viewer) and lacks a return after STATUS.noData (throws when ACIS is down); it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
         },
         {
           "path": "views/partials/climate.ejs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+          "reason": "Climate Information display (v8.1.0) not wanted (owner, 2026-11-08; tried in #140). If revisited: upstream parses ACIS dates in the browser's time zone (every station filtered out west of the viewer) and lacks a return after STATUS.noData (throws when ACIS is down); it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
         },
         {
           "path": "server/styles/scss/_climate.scss",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+          "reason": "Climate Information display (v8.1.0) not wanted (owner, 2026-11-08; tried in #140). If revisited: upstream parses ACIS dates in the browser's time zone (every station filtered out west of the viewer) and lacks a return after STATUS.noData (throws when ACIS is down); it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
         },
         {
           "path": "server/scripts/modules/utils/fetch.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+          "reason": "Climate Information display (v8.1.0) not wanted (owner, 2026-11-08; tried in #140). If revisited: upstream parses ACIS dates in the browser's time zone (every station filtered out west of the viewer) and lacks a return after STATUS.noData (throws when ACIS is down); it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
         },
         {
           "path": "server/scripts/modules/radar.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+          "reason": "Climate Information display (v8.1.0) not wanted (owner, 2026-11-08; tried in #140). If revisited: upstream parses ACIS dates in the browser's time zone (every station filtered out west of the viewer) and lacks a return after STATUS.noData (throws when ACIS is down); it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
         },
         {
           "path": "server/scripts/modules/future-radar.mjs",
-          "reason": "Climate Information display (v8.1.0) not adopted yet, pending review; it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
+          "reason": "Climate Information display (v8.1.0) not wanted (owner, 2026-11-08; tried in #140). If revisited: upstream parses ACIS dates in the browser's time zone (every station filtered out west of the viewer) and lacks a return after STATUS.noData (throws when ACIS is down); it also renumbers Radar/Future Radar navIds onto Air Quality's 13"
         },
         {
           "path": "server/scripts/modules/utils/map-projection.mjs",
