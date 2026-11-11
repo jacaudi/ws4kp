@@ -1,11 +1,13 @@
-# Stage b — code scanning. STUB / PLACEHOLDER — deferred.
+# Stage b — scanning. STUB, not wired into ci.yaml.
 #
-# TODO: design the scanning approach and wire this into ci.yaml (uncomment the
-# `scan` job there). Decisions to make in that discussion:
-#   - source scanning: keep/extend CodeQL (codeql-analysis.yml); add dependency-review / secret scanning?
-#   - image scanning: Trivy (SHA-pinned to a KNOWN-SAFE version after the March 2026
-#     trivy-action supply-chain compromise) vs. Grype / Docker Scout.
-#   - block vs. report-only.
+# Source analysis is NOT this stage's job any more: golangci-lint (which runs gosec
+# and staticcheck), govulncheck and eslint run in ci-test through `task ci`. CodeQL
+# was considered for this stage and dropped (2026-10-26).
+#
+# What is left for it is image scanning, on hold until a scanner is chosen (Trivy,
+# SHA-pinned to a known-safe version after the March 2026 trivy-action supply-chain
+# compromise, vs. Grype / Docker Scout; block vs. report-only). When it lands, wire
+# it into ci.yaml's build needs, never after build.
 name: ci-scan
 
 on:
@@ -16,8 +18,8 @@ permissions:
 
 jobs:
   scan:
-    name: code scanning (placeholder)
+    name: image scanning (placeholder)
     runs-on: ubuntu-latest
     steps:
       - name: Not yet implemented
-        run: echo "Code scanning (b) is deferred — see docs/designs/2026-07-20-ci-pipeline-design.md"
+        run: echo "Image scanning is on hold until a scanner is chosen; see the header of ci-scan.yml"

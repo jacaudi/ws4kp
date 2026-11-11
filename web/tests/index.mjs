@@ -57,6 +57,7 @@ const EXPECTED_DISPLAY_COUNT = (await readdir(modulesDir))
 // screen is hidden and is not redrawn once loading finishes, so those rows freeze
 // mid-load and report ~3 of 13 loaded on a perfectly healthy build. The rotation is
 // the live signal; the status classes are a stale snapshot.
+/* global document -- read inside page.evaluate(), which runs in the browser */
 const readAppState = (page) => page.evaluate(() => {
 	const shown = [...document.querySelectorAll('.weather-display.show')]
 		.filter((el) => el.id !== 'progress-html' && el.querySelector('.main'));
@@ -131,7 +132,10 @@ const checkLocation = async (location) => {
 		while (Date.now() < deadline && appProblems.length === 0) {
 			// eslint-disable-next-line no-await-in-loop
 			const grid = await page.$eval('#divInfo [data-headend="grid"]', (el) => el.textContent.trim()).catch(() => '');
-			if (grid) { resolved = true; break; }
+			if (grid) {
+				resolved = true;
+				break;
+			}
 			// eslint-disable-next-line no-await-in-loop
 			await delay(POLL_MS);
 		}
@@ -226,7 +230,7 @@ for (let i = 0; i < LOCATIONS.length; i += 1) {
 
 await browser.close();
 
-// Exit codes are the contract with CI (see .github/workflows/ci-test.yml):
+// Exit codes are the contract with CI (see web/tests/integration.sh, which `task integration` runs):
 //   0  everything loaded
 //   1  at least one APP failure — a real regression, must block
 //   75 upstream-only failure (EX_TEMPFAIL). Nothing here is broken; NOAA is. The
@@ -236,11 +240,11 @@ await browser.close();
 const EX_TEMPFAIL = 75;
 if (appFailed > 0) {
 	console.error(`\n${appFailed}/${LOCATIONS.length} location(s) failed the integration check`);
-	process.exit(1);
-}
-if (upstreamFailed > 0) {
+	process.exitCode = 1;
+} else if (upstreamFailed > 0) {
 	const strict = process.env.STRICT_INTEGRATION === '1';
 	console.error(`\n${upstreamFailed}/${LOCATIONS.length} location(s) did not load because upstream was failing`);
-	process.exit(strict ? 1 : EX_TEMPFAIL);
+	process.exitCode = strict ? 1 : EX_TEMPFAIL;
+} else {
+	console.log(`\nAll ${LOCATIONS.length} locations loaded cleanly`);
 }
-console.log(`\nAll ${LOCATIONS.length} locations loaded cleanly`);

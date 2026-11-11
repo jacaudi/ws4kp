@@ -35,13 +35,6 @@ const spread = [
 	{ id: 'c', lat: 44.55, lon: -100.65 },
 	{ id: 'd', lat: 46.75, lon: -100.85 },
 ];
-const asCandidates = (rows, stringify) => rows.map((r) => ({
-	...r,
-	lat: stringify ? String(r.lat) : r.lat,
-	lon: stringify ? String(r.lon) : r.lon,
-	baked: false,
-	priority: 13,
-}));
 
 test('geoDistance returns NaN for string coordinates (the underlying hazard)', () => {
 	assert.ok(Number.isNaN(geoDistance('-100.15', '40.25', '-100.45', '42.35')));
@@ -133,10 +126,10 @@ test('regionalforecast.mjs coerces both city and station feeds', () => {
 	const stations = src.match(/const stations = Object\.values\(await StationInfo\)\.map\([\s\S]*?\)\);/);
 	assert.ok(cities, 'could not locate the RegionalCities candidate mapping; this guard needs updating');
 	assert.ok(stations, 'could not locate the StationInfo candidate mapping; this guard needs updating');
-	for (const [name, block] of [['cities', cities[0]], ['stations', stations[0]]]) {
+	[['cities', cities[0]], ['stations', stations[0]]].forEach(([name, block]) => {
 		assert.match(block, /lat:\s*Number\(/, `${name} feed must coerce lat with Number()`);
 		assert.match(block, /lon:\s*Number\(/, `${name} feed must coerce lon with Number()`);
-	}
+	});
 });
 
 test('the shipped data files still have the types this guard assumes', () => {
@@ -145,10 +138,10 @@ test('the shipped data files still have the types this guard assumes', () => {
 	assert.ok(cities.length > 0 && stations.length > 0);
 	// Not asserting a specific type — only that whatever ships stays numeric-parseable,
 	// which is the real contract the coercion depends on.
-	for (const c of cities) {
+	cities.forEach((c) => {
 		assert.ok(Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lon)), `regionalcities entry has unparseable coords: ${JSON.stringify(c)}`);
-	}
-	for (const s of stations) {
+	});
+	stations.forEach((s) => {
 		assert.ok(Number.isFinite(Number(s.lat)) && Number.isFinite(Number(s.lon)), `stations entry has unparseable coords: ${JSON.stringify(s)}`);
-	}
+	});
 });

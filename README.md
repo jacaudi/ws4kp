@@ -146,7 +146,18 @@ Beyond the upstream project, this fork adds:
 | `web/server/music/default/` | Bundled music (Git LFS) baked into the image |
 | `web/datagenerators/` | Build-time scripts and their baked JSON (weather stations, regional cities) |
 | `.archive/static/` | The archived static (nginx) deployment |
+| `taskfile.yml`, `.taskfiles/` | Every check and build, run the same way locally and in CI (`task ci`) |
+| `.github/` | CI workflows, the shared setup action, Renovate and release-please config, the `main` ruleset |
 | `docs/` | The guides linked below |
+
+## Tech stack
+
+| Layer | What it uses |
+|---|---|
+| Server | Go 1.27 (one static binary that embeds the built site), Cobra + Viper, `log/slog`; distroless `nonroot` image |
+| Browser app | Plain ES modules, hand-written HTML and SCSS, built with Node 24 + Gulp + Webpack + Sass + EJS |
+| Checks | golangci-lint (with gosec and staticcheck), govulncheck, eslint, a `tsc --checkJs` ratchet, `go test -race`, `node --test`, a Puppeteer integration test |
+| CI/CD | GitHub Actions calling [Task](https://taskfile.dev/) targets, one required check (`ci`), release-please releases, multi-arch images on GHCR, Renovate |
 
 ---
 

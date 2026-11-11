@@ -6,6 +6,10 @@
 // Those files are byte-identical to upstream and must stay that way, so nothing here may be
 // imported by them. Instead scroll-display-harness.mjs rewrites their import specifiers to point at
 // this module, which means the code under test is the unmodified source on disk.
+//
+// The two classes stand in for the real WeatherDisplay and its DOM, so they keep the real method
+// names and signatures even where a stub body has no use for `this`.
+/* eslint-disable max-classes-per-file, class-methods-use-this -- stand-ins for the real classes */
 
 import { Settings } from '../../../server/scripts/vendor/auto/luxon.mjs';
 
@@ -108,7 +112,9 @@ const takeRegistered = () => registered.pop();
 const timeZone = () => 'UTC';
 
 // network and browser-only edges: never reached by the draw paths under test
-const notReached = (name) => () => { throw new Error(`${name} must not be called in these tests`); };
+const notReached = (name) => () => {
+	throw new Error(`${name} must not be called in these tests`);
+};
 const safeJson = notReached('safeJson');
 const safePromiseAll = notReached('safePromiseAll');
 const smallIcon = notReached('smallIcon');

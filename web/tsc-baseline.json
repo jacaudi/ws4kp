@@ -1,0 +1,173 @@
+{
+	"datagenerators/https.mjs": {
+		"TS2322": 1
+	},
+	"datagenerators/regionalcities.mjs": {
+		"TS2345": 1
+	},
+	"datagenerators/travelcities.mjs": {
+		"TS2345": 1
+	},
+	"gulp/build.mjs": {
+		"TS2345": 1
+	},
+	"server/scripts/index.mjs": {
+		"TS2339": 15,
+		"TS2554": 1
+	},
+	"server/scripts/modules/airquality.mjs": {
+		"TS2339": 5,
+		"TS2416": 1
+	},
+	"server/scripts/modules/almanac.mjs": {
+		"TS2416": 1
+	},
+	"server/scripts/modules/autocomplete.mjs": {
+		"TS2322": 1,
+		"TS2339": 1
+	},
+	"server/scripts/modules/currentweather.mjs": {
+		"TS2339": 5,
+		"TS2345": 1,
+		"TS2416": 1
+	},
+	"server/scripts/modules/currentweatherscroll.mjs": {
+		"TS2339": 2
+	},
+	"server/scripts/modules/custom-scroll-text.mjs": {
+		"TS2345": 1
+	},
+	"server/scripts/modules/extendedforecast.mjs": {
+		"TS2416": 1
+	},
+	"server/scripts/modules/filmstrip-weather-display.mjs": {
+		"TS1345": 1,
+		"TS2322": 1,
+		"TS2339": 6,
+		"TS2416": 1,
+		"TS2554": 1
+	},
+	"server/scripts/modules/future-radar/render.mjs": {
+		"TS2362": 1,
+		"TS2363": 2,
+		"TS2365": 2
+	},
+	"server/scripts/modules/hazards.mjs": {
+		"TS2416": 1
+	},
+	"server/scripts/modules/hourly-graph.mjs": {
+		"TS2339": 10,
+		"TS2416": 1
+	},
+	"server/scripts/modules/hourly.mjs": {
+		"TS2339": 2,
+		"TS2416": 1,
+		"TS2554": 1
+	},
+	"server/scripts/modules/latestobservations.mjs": {
+		"TS2345": 1,
+		"TS2365": 1,
+		"TS2416": 1
+	},
+	"server/scripts/modules/localforecast.mjs": {
+		"TS2322": 1,
+		"TS2339": 3,
+		"TS2416": 1
+	},
+	"server/scripts/modules/media.mjs": {
+		"TS2339": 1,
+		"TS2345": 1
+	},
+	"server/scripts/modules/navigation.mjs": {
+		"TS2339": 6,
+		"TS2345": 1
+	},
+	"server/scripts/modules/progress.mjs": {
+		"TS2339": 3,
+		"TS2415": 1
+	},
+	"server/scripts/modules/radar/get-recent.mjs": {
+		"TS2554": 1
+	},
+	"server/scripts/modules/radar/processor.mjs": {
+		"TS2339": 2
+	},
+	"server/scripts/modules/radar/tiles.mjs": {
+		"TS2339": 4
+	},
+	"server/scripts/modules/regionalforecast-utils.mjs": {
+		"TS2345": 1
+	},
+	"server/scripts/modules/regionalforecast.mjs": {
+		"TS2339": 3,
+		"TS2416": 1
+	},
+	"server/scripts/modules/scroll-weather-display.mjs": {
+		"TS2339": 2,
+		"TS2345": 1,
+		"TS2416": 1,
+		"TS2551": 1
+	},
+	"server/scripts/modules/settings.mjs": {
+		"TS2339": 7
+	},
+	"server/scripts/modules/share.mjs": {
+		"TS2339": 3,
+		"TS2345": 1
+	},
+	"server/scripts/modules/spc-outlook.mjs": {
+		"TS2416": 1
+	},
+	"server/scripts/modules/tabs.mjs": {
+		"TS2339": 6,
+		"TS2345": 1
+	},
+	"server/scripts/modules/travelforecast.mjs": {
+		"TS2416": 1
+	},
+	"server/scripts/modules/utils/create-canvas.mjs": {
+		"TS2339": 1
+	},
+	"server/scripts/modules/utils/debug.mjs": {
+		"TS2339": 5
+	},
+	"server/scripts/modules/utils/fetch.mjs": {
+		"TS2339": 5
+	},
+	"server/scripts/modules/utils/mapclick.mjs": {
+		"TS1064": 3,
+		"TS2362": 1,
+		"TS2363": 3,
+		"TS2739": 1,
+		"TS2740": 1,
+		"TS8032": 2
+	},
+	"server/scripts/modules/utils/nosleep.mjs": {
+		"TS2339": 4
+	},
+	"server/scripts/modules/utils/scaling.mjs": {
+		"TS2339": 16
+	},
+	"server/scripts/modules/utils/scanlines.mjs": {
+		"TS2339": 1
+	},
+	"server/scripts/modules/utils/scroll-timing.mjs": {
+		"TS2739": 1
+	},
+	"server/scripts/modules/utils/setting.mjs": {
+		"TS2322": 1,
+		"TS2339": 4
+	},
+	"server/scripts/modules/utils/units.mjs": {
+		"TS2339": 10
+	},
+	"server/scripts/modules/weatherdisplay.mjs": {
+		"TS2322": 1,
+		"TS2339": 5,
+		"TS2367": 1,
+		"TS2554": 1
+	},
+	"tests/unit/regionalforecast-placement.test.mjs": {
+		"TS2345": 1
+	}
+}

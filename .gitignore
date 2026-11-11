@@ -1,8 +1,9 @@
 node_modules
 **/debug.log
 
-#the binary `go build ./cmd/ws4kp` leaves at the root
+#the binary `go build ./cmd/ws4kp` leaves at the root, and `task build`'s output
 /ws4kp
+/bin/
 
 #environment variables
 .env

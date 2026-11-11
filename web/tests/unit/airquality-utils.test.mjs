@@ -40,8 +40,14 @@ test('negative AQI maps to GOOD', () => {
 test('parseAirQuality charts the PM2.5 AQI', () => {
 	const raw = {
 		current: {
-			us_aqi_pm2_5: 63.4, us_aqi_pm10: 40, us_aqi_ozone: 155, us_aqi_nitrogen_dioxide: 12,
-			pm2_5: 17.2, pm10: 22.0, ozone: 88.0, nitrogen_dioxide: 9.4,
+			us_aqi_pm2_5: 63.4,
+			us_aqi_pm10: 40,
+			us_aqi_ozone: 155,
+			us_aqi_nitrogen_dioxide: 12,
+			pm2_5: 17.2,
+			pm10: 22.0,
+			ozone: 88.0,
+			nitrogen_dioxide: 9.4,
 		},
 	};
 	const result = parseAirQuality(raw);
@@ -82,8 +88,14 @@ test('aqiBandCenterX snaps to the band center regardless of value within the ban
 // portrait detail box: one row per pollutant, in POLLUTANT_LABELS order
 const sample = {
 	us_aqi: 21,
-	us_aqi_pm2_5: 12.4, us_aqi_pm10: 5, us_aqi_ozone: 21, us_aqi_nitrogen_dioxide: 2,
-	pm2_5: 3.44, pm10: 7.1, ozone: 45.25, nitrogen_dioxide: 3,
+	us_aqi_pm2_5: 12.4,
+	us_aqi_pm10: 5,
+	us_aqi_ozone: 21,
+	us_aqi_nitrogen_dioxide: 2,
+	pm2_5: 3.44,
+	pm10: 7.1,
+	ozone: 45.25,
+	nitrogen_dioxide: 3,
 };
 
 test('pollutantRows lists each pollutant with its AQI and concentration', () => {
